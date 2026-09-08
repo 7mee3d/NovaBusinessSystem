@@ -48,11 +48,23 @@ namespace EmployeesPL
 
     }
 
-    private static void _EmployeesList()
+    private static void _EmployeesList(string? FullName = null, string? DepartmentName = null, string? JobTitle = null, string? Status = null)
     {
 
       Console.Clear();
-      DataTable DT_AllEmployees = EmployeesBL.GetAllEmployees();
+      DataTable DT_AllEmployees = EmployeesBL.GetAllEmployees(FullName, DepartmentName, JobTitle, Status);
+
+      if (DT_AllEmployees is null || DT_AllEmployees.Rows.Count == 0)
+      {
+        Console.WriteLine("\t\t╔══════════════════════════════════════════╗");
+        Console.WriteLine("\t\t║             ❌ NO RESULTS                ║");
+        Console.WriteLine("\t\t╠══════════════════════════════════════════╣");
+        Console.WriteLine("\t\t║ No employees matched your search.        ║");
+        Console.WriteLine("\t\t╚══════════════════════════════════════════╝\n\n");
+
+        return ; 
+      }
+
 
       System.Console.WriteLine($"\n\n\t\t {"ID",-10} {"Name",-35} {"Department",-20} {"Job Title",-30} {"Salary",-20} {"Status",-15}");
       System.Console.WriteLine("\t\t" + new string('-', 125));
@@ -85,7 +97,7 @@ namespace EmployeesPL
         Console.WriteLine($"\t\t║ {"ID",-12}: {EmployeeInfo.ID,-27}║");
         Console.WriteLine($"\t\t║ {"Name",-12}: {string.Join(" ", EmployeeInfo.FirstName, EmployeeInfo.LastName),-27}║");
         Console.WriteLine($"\t\t║ {"Department",-12}: {EmployeeInfo.DepartmentInfo.DepartmentName.Trim(),-27}║");
-        Console.WriteLine($"\t\t║ {"Manager",-12}: {((EmployeeInfo.ManagerInfo is not null ) ? string.Join(" " , EmployeeInfo.ManagerInfo?.FirstName , EmployeeInfo.ManagerInfo?.LastName) : "Unknown").Trim(),-27}║");
+        Console.WriteLine($"\t\t║ {"Manager",-12}: {((EmployeeInfo.ManagerInfo is not null) ? string.Join(" ", EmployeeInfo.ManagerInfo?.FirstName, EmployeeInfo.ManagerInfo?.LastName) : "Unknown").Trim(),-27}║");
         Console.WriteLine($"\t\t║ {"Job Title",-12}: {EmployeeInfo.JobTitle.Trim(),-27}║");
         Console.WriteLine($"\t\t║ {"Salary",-12}: {EmployeeInfo.Salary,-27:N2}║");
         Console.WriteLine($"\t\t║ {"Hire Date",-12}: {EmployeeInfo.HireDate,-27:dd/MM/yyyy}║");
@@ -115,7 +127,7 @@ namespace EmployeesPL
 
       Console.Write($"\n\n\t\t{"First Name",-16}: ");
 
-      string ? FirstName = Console.ReadLine()!;
+      string? FirstName = Console.ReadLine()!;
 
       while (true)
       {
@@ -195,7 +207,7 @@ namespace EmployeesPL
 
       Console.Write($"\t\t{"Job Title",-16}: ");
 
-      string ? JobTitle = Console.ReadLine()!;
+      string? JobTitle = Console.ReadLine()!;
 
       while (true)
       {
@@ -235,7 +247,7 @@ namespace EmployeesPL
 
       Console.Write($"\t\t{"Phone",-16}: ");
 
-      string ? Phone = Console.ReadLine()!;
+      string? Phone = Console.ReadLine()!;
 
       while (true)
       {
@@ -395,7 +407,7 @@ namespace EmployeesPL
             Console.WriteLine($"\t\t║ First Name   : {InfoEmployee.FirstName,-26}║");
             Console.WriteLine($"\t\t║ Last Name    : {InfoEmployee.LastName,-26}║");
             Console.WriteLine($"\t\t║ Department ID: {InfoEmployee.DepartmentID,-26}║");
-            Console.WriteLine($"\t\t║ Manager ID   : {((InfoEmployee.ManagerInfo is not null ) ? string.Join(" " , InfoEmployee.ManagerInfo?.FirstName , InfoEmployee.ManagerInfo?.LastName) : "Unknown"),-26}║");
+            Console.WriteLine($"\t\t║ Manager ID   : {((InfoEmployee.ManagerInfo is not null) ? string.Join(" ", InfoEmployee.ManagerInfo?.FirstName, InfoEmployee.ManagerInfo?.LastName) : "Unknown"),-26}║");
             Console.WriteLine($"\t\t║ Job Title    : {InfoEmployee.JobTitle,-26}║");
             Console.WriteLine($"\t\t║ Salary       : {InfoEmployee.Salary,-26:N2}║");
             Console.WriteLine($"\t\t║ Hire Date    : {InfoEmployee.HireDate,-26:dd/MM/yyyy}║");
@@ -507,6 +519,96 @@ namespace EmployeesPL
 
     }
 
+    private static void SearchEmployee()
+    {
+      while (true)
+      {
+        Console.Clear();
+
+        Console.WriteLine("\t\t╔══════════════════════════════════════════╗");
+        Console.WriteLine("\t\t║             🔍 SEARCH EMPLOYEES          ║");
+        Console.WriteLine("\t\t╚══════════════════════════════════════════╝");
+
+        Console.WriteLine();
+        Console.WriteLine("\t\tSearch by:\n\n");
+        Console.WriteLine("\t\t1. Name");
+        Console.WriteLine("\t\t2. Department");
+        Console.WriteLine("\t\t3. Job Title");
+        Console.WriteLine("\t\t4. Status");
+
+        Console.WriteLine("\t\t0. Back\n\n");
+
+        Console.Write("\t\tSelect: ");
+        byte Choice = 0;
+
+        while (!byte.TryParse(Console.ReadLine(), out Choice) || Choice > 4)
+          System.Console.WriteLine("\t\tInvalid!! Choice Search Employee");
+          
+
+        Enumerations.EnChoicesSearchEmployees ChoiceSearchEmployee = (Enumerations.EnChoicesSearchEmployees)Choice;
+
+        switch (ChoiceSearchEmployee)
+        {
+          case Enumerations.EnChoicesSearchEmployees._kSEARCH_BY_FULL_NAME:
+            {
+
+              System.Console.Write("\n\n\t\tEnter Full Name : ");
+              string? FullName = Console.ReadLine()!;
+
+              _EmployeesList(FullName);
+              break;
+            }
+
+          case Enumerations.EnChoicesSearchEmployees._kSEARCH_BY_DEPARTMENT_NAME:
+            {
+
+              System.Console.Write("\n\n\t\tEnter Department Name : ");
+              string? DepartmentName = Console.ReadLine()!;
+
+              _EmployeesList(null, DepartmentName);
+
+              break;
+            }
+
+          case Enumerations.EnChoicesSearchEmployees._kSEARCH_BY_JOB_TITLE:
+            {
+
+              System.Console.Write("\n\n\t\tEnter Job Title : ");
+              string? JobTitle = Console.ReadLine()!;
+
+              _EmployeesList(null, null, JobTitle);
+
+              break;
+            }
+
+          case Enumerations.EnChoicesSearchEmployees._kSEARCH_BY_STATUS:
+            {
+
+              Console.Write($"\n\t\t{"Enter Status(Active:1 , Inactive:0 , Suspended:2)",-16}: ");
+
+              byte status = 0;
+              while (!byte.TryParse(Console.ReadLine(), out status) || status > 2)
+                System.Console.WriteLine("\t\tInvalid!! Status Employee");
+
+
+              _EmployeesList(null, null, null, _GetStatusEmployee((Enumerations.EnStatus)status));
+
+              break;
+            }
+
+          case Enumerations.EnChoicesSearchEmployees._kBACK_MAIN_MENU_EMPLOYEES:
+            {
+              StartupEmployeesModule();
+              break;
+            }
+        }
+
+        System.Console.WriteLine("\n\n\t\tPress any key to continue...");
+        Console.ReadKey();
+      }
+
+    }
+
     public static void StartupEmployeesModule()
     {
 
@@ -533,6 +635,7 @@ namespace EmployeesPL
               Console.WriteLine();
               Console.Write($"\n\n\t\tEnter Employee ID: ");
               int.TryParse(Console.ReadLine(), out int EmployeeID);
+              Console.WriteLine("\n\t\t╚══════════════════════════════════════════╝\n\n");
               _GetEmployeeBy(EmployeeID);
               break;
 
@@ -551,6 +654,12 @@ namespace EmployeesPL
           case Enumerations.EnCategoriesEmployees._kDELETE_EMPLOYEE:
             {
               _DeleteEmployee();
+              break;
+            }
+
+          case Enumerations.EnCategoriesEmployees._kSEARCH_EMPLOYEES:
+            {
+              SearchEmployee();
               break;
             }
         }

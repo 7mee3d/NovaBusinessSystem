@@ -30,5 +30,15 @@ namespace nEnumeration
 
 
         }
+
+        public enum EnChoicesSearchEmployees
+        {
+            _kBACK_MAIN_MENU_EMPLOYEES = 0 ,
+            _kSEARCH_BY_FULL_NAME = 1 ,
+            _kSEARCH_BY_DEPARTMENT_NAME = 2 , 
+            _kSEARCH_BY_JOB_TITLE = 3 , 
+            _kSEARCH_BY_STATUS = 4 
+        }
+
     }
 }

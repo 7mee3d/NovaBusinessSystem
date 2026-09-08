@@ -7,7 +7,14 @@ namespace DataAccessLayer;
 public class EmployeesDAL
 {
 
-    public static DataTable GetListEmployees()
+    public static DataTable GetListEmployees(
+
+        string? FullName = null,
+        string? DepartmentName = null,
+        string? JobTitle = null,
+        string? Status = null
+
+        )
     {
 
         DataTable DT_AllEmployees = new DataTable();
@@ -19,14 +26,28 @@ public class EmployeesDAL
             using (SqlCommand command = new SqlCommand("[dbo].[usp_ListEmployees]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                connection.Open();
-                // way one useing Data Adapter (DOn't use SqlConnection ) 
-                //Way Two using Data Reader (Must declare SqlConnection )
 
-                using (SqlDataReader reader = command.ExecuteReader())
+                command.Parameters.AddWithValue("@FullName", FullName is not null ? FullName : DBNull.Value);
+                command.Parameters.AddWithValue("@DepartmentName", DepartmentName is not null ? DepartmentName : DBNull.Value);
+                command.Parameters.AddWithValue("@JobTitle", JobTitle is not null ? JobTitle : DBNull.Value);
+                command.Parameters.AddWithValue("@Status", Status is not null ? Status : DBNull.Value);
+
+                try
                 {
-                    if (reader.HasRows)
-                        DT_AllEmployees.Load(reader);
+                    connection.Open();
+                    // way one useing Data Adapter (DOn't use SqlConnection ) 
+                    //Way Two using Data Reader (Must declare SqlConnection )
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                            DT_AllEmployees.Load(reader);
+                    }
+
+                }
+                catch (SqlException SEX)
+                {
+                    throw;
                 }
             }
         }
@@ -273,5 +294,6 @@ public class EmployeesDAL
         }
 
     }
+
 
 }

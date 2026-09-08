@@ -90,8 +90,16 @@ public class EmployeesBL
         this.enMode = Enumerations.EnMode._kUPDATE;
     }
 
-    public static DataTable GetAllEmployees()
-    => EmployeesDAL.GetListEmployees();
+    public static DataTable GetAllEmployees(
+
+        string? FullName = null,
+        string? DepartmentName = null,
+        string? JobTitle = null,
+        string? Status = null
+
+        )
+            => EmployeesDAL.GetListEmployees(FullName, DepartmentName, JobTitle, Status);
+
 
     public static EmployeesBL FindEmployeeBy(int EmployeeID)
     {
