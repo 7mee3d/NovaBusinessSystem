@@ -13,7 +13,7 @@ namespace nEnumeration
         public enum EnMode
         {
             _kADD = 1 ,
-            _kUPDATE 
+            _kUPDATE = 2 
         }
 
         public enum EnCategoriesEmployees

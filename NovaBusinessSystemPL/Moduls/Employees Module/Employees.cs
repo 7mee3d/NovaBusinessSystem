@@ -74,6 +74,7 @@ namespace EmployeesPL
     {
 
       EmployeesBL EmployeeInfo = EmployeesBL.FindEmployeeBy(EmployeeID);
+
       if (EmployeeInfo is not null)
       {
         System.Console.WriteLine("\n\n\n");
@@ -84,15 +85,7 @@ namespace EmployeesPL
         Console.WriteLine($"\t\t║ {"ID",-12}: {EmployeeInfo.ID,-27}║");
         Console.WriteLine($"\t\t║ {"Name",-12}: {string.Join(" ", EmployeeInfo.FirstName, EmployeeInfo.LastName),-27}║");
         Console.WriteLine($"\t\t║ {"Department",-12}: {EmployeeInfo.DepartmentInfo.DepartmentName.Trim(),-27}║");
-        string FullNameManager = "Unknown";
-
-        if (EmployeeInfo.ManagerID > 0)
-        {
-          EmployeesBL ManagerInfo = EmployeesBL.FindEmployeeBy(EmployeeInfo.ManagerID);
-          FullNameManager = string.Join(" ", ManagerInfo.FirstName, ManagerInfo.LastName);
-        }
-
-        Console.WriteLine($"\t\t║ {"Manager",-12}: {FullNameManager.Trim(),-27}║");
+        Console.WriteLine($"\t\t║ {"Manager",-12}: {((EmployeeInfo.ManagerInfo is not null ) ? string.Join(" " , EmployeeInfo.ManagerInfo?.FirstName , EmployeeInfo.ManagerInfo?.LastName) : "Unknown").Trim(),-27}║");
         Console.WriteLine($"\t\t║ {"Job Title",-12}: {EmployeeInfo.JobTitle.Trim(),-27}║");
         Console.WriteLine($"\t\t║ {"Salary",-12}: {EmployeeInfo.Salary,-27:N2}║");
         Console.WriteLine($"\t\t║ {"Hire Date",-12}: {EmployeeInfo.HireDate,-27:dd/MM/yyyy}║");
@@ -101,6 +94,7 @@ namespace EmployeesPL
         Console.WriteLine($"\t\t║ {"Status",-12}: {_GetStatusEmployee(EmployeeInfo.Status),-27}║");
 
         Console.WriteLine("\t\t╚══════════════════════════════════════════╝");
+
         return EmployeeInfo;
       }
       else
@@ -121,7 +115,8 @@ namespace EmployeesPL
 
       Console.Write($"\n\n\t\t{"First Name",-16}: ");
 
-      string FirstName = Console.ReadLine();
+      string ? FirstName = Console.ReadLine()!;
+
       while (true)
       {
         bool isPass = true;
@@ -141,17 +136,17 @@ namespace EmployeesPL
         if (!isPass)
         {
           Console.Write($"\t\t{"Invalid! First Name",-16}: ");
-          FirstName = Console.ReadLine();
+          FirstName = Console.ReadLine()!;
         }
         else
           break;
       }
 
-      NewEmployee.FirstName = FirstName;
+      NewEmployee.FirstName = FirstName!;
 
       Console.Write($"\t\t{"Last Name",-16}: ");
 
-      string LastName = Console.ReadLine();
+      string? LastName = Console.ReadLine();
       while (true)
       {
         bool isPass = true;
@@ -177,7 +172,7 @@ namespace EmployeesPL
           break;
       }
 
-      NewEmployee.LastName = LastName;
+      NewEmployee.LastName = LastName!;
 
 
       Console.Write($"\t\t{"Department ID",-16}: ");
@@ -199,7 +194,8 @@ namespace EmployeesPL
       NewEmployee.ManagerID = mangeID;
 
       Console.Write($"\t\t{"Job Title",-16}: ");
-      string JobTitle = Console.ReadLine();
+
+      string ? JobTitle = Console.ReadLine()!;
 
       while (true)
       {
@@ -227,7 +223,7 @@ namespace EmployeesPL
       }
 
 
-      NewEmployee.JobTitle = JobTitle;
+      NewEmployee.JobTitle = JobTitle!;
 
       Console.Write($"\t\t{"Salary",-16}: ");
       decimal newSalary = 0.0m;
@@ -239,7 +235,7 @@ namespace EmployeesPL
 
       Console.Write($"\t\t{"Phone",-16}: ");
 
-      string Phone = Console.ReadLine();
+      string ? Phone = Console.ReadLine()!;
 
       while (true)
       {
@@ -267,11 +263,11 @@ namespace EmployeesPL
       }
 
 
-      NewEmployee.Phone = Phone;
+      NewEmployee.Phone = Phone!;
 
       Console.Write($"\t\t{"Email",-16}: ");
 
-      string Email = Console.ReadLine();
+      string Email = Console.ReadLine()!;
 
       while (true)
       {
@@ -288,7 +284,7 @@ namespace EmployeesPL
         if (!isPass)
         {
           Console.Write($"\t\t{"Invalid! Email ",-16}: ");
-          Email = Console.ReadLine();
+          Email = Console.ReadLine()!;
         }
         else
           break;
@@ -381,7 +377,7 @@ namespace EmployeesPL
         Console.Write($"\n\t\t{"Enter Status(Active:1 , Inactive:0 , Suspended:2)",-16}: ");
         byte status = 0;
 
-        while (!byte.TryParse(Console.ReadLine(), out status))
+        while (!byte.TryParse(Console.ReadLine(), out status) || (status > 2))
           Console.Write($"\t\t{"Invalid! Status Employee",-16}: ");
 
         InfoEmployee.Status = (Enumerations.EnStatus)status;
@@ -399,7 +395,7 @@ namespace EmployeesPL
             Console.WriteLine($"\t\t║ First Name   : {InfoEmployee.FirstName,-26}║");
             Console.WriteLine($"\t\t║ Last Name    : {InfoEmployee.LastName,-26}║");
             Console.WriteLine($"\t\t║ Department ID: {InfoEmployee.DepartmentID,-26}║");
-            Console.WriteLine($"\t\t║ Manager ID   : {InfoEmployee.ManagerID,-26}║");
+            Console.WriteLine($"\t\t║ Manager ID   : {((InfoEmployee.ManagerInfo is not null ) ? string.Join(" " , InfoEmployee.ManagerInfo?.FirstName , InfoEmployee.ManagerInfo?.LastName) : "Unknown"),-26}║");
             Console.WriteLine($"\t\t║ Job Title    : {InfoEmployee.JobTitle,-26}║");
             Console.WriteLine($"\t\t║ Salary       : {InfoEmployee.Salary,-26:N2}║");
             Console.WriteLine($"\t\t║ Hire Date    : {InfoEmployee.HireDate,-26:dd/MM/yyyy}║");
@@ -431,7 +427,7 @@ namespace EmployeesPL
     private static void _DeleteEmployee()
     {
       Console.WriteLine("\n\n\t\t╔══════════════════════════════════════════╗");
-      Console.WriteLine("\t\t║            🗑️ DELETE EMPLOYEE            ║");
+      Console.WriteLine("\t\t║            🗑️ DELETE EMPLOYEE             ║");
       Console.WriteLine("\t\t╚══════════════════════════════════════════╝\n");
 
       Console.Write("\n\t\tEnter Employee ID to delete: ");
@@ -501,7 +497,7 @@ namespace EmployeesPL
         else
         {
           Console.WriteLine("\n\n\t\t╔══════════════════════════════════════════╗");
-          Console.WriteLine("\t\t║          ℹ️ DELETE CANCELLED             ║");
+          Console.WriteLine("\t\t║          ℹ️ DELETE CANCELLED              ║");
           Console.WriteLine("\t\t╠══════════════════════════════════════════╣");
           Console.WriteLine("\t\t║ No changes were made.                    ║");
           Console.WriteLine("\t\t╚══════════════════════════════════════════╝");

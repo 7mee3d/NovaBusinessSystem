@@ -18,6 +18,18 @@ public class EmployeesBL
     public string Email { get; set; }
     public Enumerations.EnStatus Status { get; set; }
 
+    private EmployeesBL _InfoManager = null;
+    public EmployeesBL ManagerInfo
+    {
+        get
+        {
+            if (_InfoManager is null)
+                _InfoManager = FindEmployeeBy(this.ManagerID);
+
+            return _InfoManager;
+        }
+
+    }
     private DepartmentsBL _DepartmentInfo = null;
     public DepartmentsBL DepartmentInfo
     {
@@ -130,28 +142,28 @@ public class EmployeesBL
         return this.ID > 0;
     }
 
-   private bool _UpdateEmployee()
+    private bool _UpdateEmployee()
     {
-        string Status = "" ;
-        
+        string Status = "";
+
         switch (this.Status)
         {
-            case Enumerations.EnStatus._kACTIVE : 
+            case Enumerations.EnStatus._kACTIVE:
                 Status = "Active";
-                break; 
-            case Enumerations.EnStatus._kINACTIVE : 
-                Status = "Inactive" ;
                 break;
-            case Enumerations.EnStatus._kSUSPENDED : 
-            Status = "Suspended";
-            break;
+            case Enumerations.EnStatus._kINACTIVE:
+                Status = "Inactive";
+                break;
+            case Enumerations.EnStatus._kSUSPENDED:
+                Status = "Suspended";
+                break;
 
         }
-        return EmployeesDAL.UpdateEmployee(this.ID ,this.FirstName, this.LastName, this.DepartmentID, this.ManagerID, this.JobTitle, this.Salary, this.Phone, this.Email , Status);
+        return EmployeesDAL.UpdateEmployee(this.ID, this.FirstName, this.LastName, this.DepartmentID, this.ManagerID, this.JobTitle, this.Salary, this.Phone, this.Email, Status);
     }
 
-    public static bool DeleteEmployee (int EmployeeID) => EmployeesDAL.DeleteEmployee(EmployeeID) ;
-    
+    public static bool DeleteEmployee(int EmployeeID) => EmployeesDAL.DeleteEmployee(EmployeeID);
+
     public bool SaveModeEmployees()
     {
         switch (this.enMode)
@@ -168,7 +180,7 @@ public class EmployeesBL
                 }
 
             case Enumerations.EnMode._kUPDATE:
-                return  _UpdateEmployee();
+                return _UpdateEmployee();
 
             default: return false;
         }
