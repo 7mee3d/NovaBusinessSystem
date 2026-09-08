@@ -63,3 +63,4 @@
 /home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemPL/obj/Debug/net10.0/NovaBusinessSystemPL.pdb
 /home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemPL/obj/Debug/net10.0/NovaBusinessSystemPL.genruntimeconfig.cache
 /home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemPL/obj/Debug/net10.0/ref/NovaBusinessSystemPL.dll
+/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemPL/obj/Debug/net10.0/NovaBusinessSystemPL.sourcelink.json

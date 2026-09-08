@@ -199,12 +199,12 @@ public class EmployeesDAL
          string jobTitle,
          decimal salary,
          string phone,
-         string email ,
-         string Status 
+         string email,
+         string Status
     )
     {
 
-        bool IsUpdated = false ;
+        bool IsUpdated = false;
 
         using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
         using (SqlCommand command = new SqlCommand("[dbo].usp_UpdateEmployee", connection))
@@ -220,7 +220,7 @@ public class EmployeesDAL
             command.Parameters.Add("@Salary", SqlDbType.Decimal).Value = salary;
             command.Parameters.Add("@Phone", SqlDbType.Char, 11).Value = phone;
             command.Parameters.Add("@Email", SqlDbType.VarChar, -1).Value = email;
-            command.Parameters.Add("@Status", SqlDbType.VarChar , 20).Value = Status;      
+            command.Parameters.Add("@Status", SqlDbType.VarChar, 20).Value = Status;
 
 
             try
@@ -229,12 +229,12 @@ public class EmployeesDAL
 
                 command.ExecuteNonQuery();
 
-                IsUpdated = true ; 
+                IsUpdated = true;
             }
             catch (SqlException SEX)
             {
                 if (SEX.Number >= 50001)
-                    IsUpdated = false ;
+                    IsUpdated = false;
 
                 throw;
             }
@@ -243,36 +243,35 @@ public class EmployeesDAL
         return IsUpdated;
     }
 
-    public static bool DeleteEmployee (int EmployeeID)
+    public static bool DeleteEmployee(int EmployeeID)
     {
-        
-        bool IsDelete = false ;
 
-        using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString)) 
-        using (SqlCommand command = new SqlCommand("[dbo].usp_DeleteEmployee" , connection))
+        using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+        using (SqlCommand command = new SqlCommand("[dbo].usp_DeleteEmployee", connection))
         {
-            
-            command.Parameters.AddWithValue("@EmployeeID" , EmployeeID ) ;
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.AddWithValue("@EmployeeID", EmployeeID);
 
             try
             {
-                connection.Open(); 
+                connection.Open();
 
-                command.ExecuteNonQuery(); 
+                command.ExecuteNonQuery();
 
-                IsDelete = true ; 
-            }catch (SqlException SEX)
+                return true;
+            }
+            catch (SqlException SEX)
             {
-                if(SEX.Number >= 50001) 
-                    IsDelete = false ;
-                
-                throw ; 
+                if (SEX.Number == 50001)
+                    return false;
+
+                throw;
             }
 
-        
+
         }
 
-        return IsDelete ; 
     }
 
 }

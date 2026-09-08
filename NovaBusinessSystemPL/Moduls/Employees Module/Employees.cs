@@ -428,6 +428,89 @@ namespace EmployeesPL
 
     }
 
+    private static void _DeleteEmployee()
+    {
+      Console.WriteLine("\n\n\t\t╔══════════════════════════════════════════╗");
+      Console.WriteLine("\t\t║            🗑️ DELETE EMPLOYEE            ║");
+      Console.WriteLine("\t\t╚══════════════════════════════════════════╝\n");
+
+      Console.Write("\n\t\tEnter Employee ID to delete: ");
+
+      int EmployeeID = 0;
+
+      while (!int.TryParse(Console.ReadLine(), out EmployeeID))
+        System.Console.WriteLine("\n\t\tInvalid!! Employee ID");
+
+
+      EmployeesBL InfoEmployee = EmployeesBL.FindEmployeeBy(EmployeeID);
+
+      if (InfoEmployee is null)
+      {
+        Console.WriteLine(" \n\n\t\t╔══════════════════════════════════════════╗");
+        Console.WriteLine(" \t\t║             ❌ NOT FOUND                 ║");
+        Console.WriteLine(" \t\t╠══════════════════════════════════════════╣");
+        Console.WriteLine($"\t\t║ Employee with ID {EmployeeID} was not found.      ║");
+        Console.WriteLine(" \t\t╚══════════════════════════════════════════╝");
+      }
+      else
+      {
+
+        EmployeesBL CopyInfoEmployee = InfoEmployee;
+
+        _GetEmployeeBy(EmployeeID);
+        System.Console.WriteLine("\n\n");
+
+        Console.Write("\t\tAre you sure you want to delete this employee?\n");
+        System.Console.Write("\t\t(Y = Yes, N = No)\n");
+        System.Console.Write("\t\tChoice: ");
+
+        char choice = 'N';
+
+        while (!char.TryParse(Console.ReadLine(), out choice))
+          System.Console.WriteLine("\t\tInvalid!! Choice");
+
+        if (char.ToLower(choice) == 'y')
+        {
+          try
+          {
+            if (EmployeesBL.DeleteEmployee(EmployeeID))
+            {
+              string FullNameManager = string.Join(" ", CopyInfoEmployee.FirstName, CopyInfoEmployee.LastName);
+
+              Console.WriteLine("\n\n\t\t╔══════════════════════════════════════════╗");
+              Console.WriteLine("\t\t║          ✅ EMPLOYEE DELETED             ║");
+              Console.WriteLine("\t\t╠══════════════════════════════════════════╣");
+              Console.WriteLine($"\t\t║ Employee ID : {CopyInfoEmployee.ID,-27} ║");
+              Console.WriteLine($"\t\t║ Name        : {FullNameManager,-27}║");
+              Console.WriteLine("\t\t╚══════════════════════════════════════════╝");
+
+            }
+          }
+          catch (SqlException SEX)
+          {
+            Console.WriteLine("\n\n\t\t╔════════════════════════════════════════════════════╗");
+            Console.WriteLine("\t\t║                  ❌  ERROR                        ║");
+            Console.WriteLine("\t\t╠════════════════════════════════════════════════════╣");
+            Console.WriteLine("\t\t║ Employee could not be found.                       ║");
+            Console.WriteLine($"\t\t║ Reason: {SEX.Message,-42}║");
+            Console.WriteLine("\t\t╚════════════════════════════════════════════════════╝");
+          }
+
+
+        }
+        else
+        {
+          Console.WriteLine("\n\n\t\t╔══════════════════════════════════════════╗");
+          Console.WriteLine("\t\t║          ℹ️ DELETE CANCELLED             ║");
+          Console.WriteLine("\t\t╠══════════════════════════════════════════╣");
+          Console.WriteLine("\t\t║ No changes were made.                    ║");
+          Console.WriteLine("\t\t╚══════════════════════════════════════════╝");
+        }
+      }
+
+
+    }
+
     public static void StartupEmployeesModule()
     {
 
@@ -466,6 +549,12 @@ namespace EmployeesPL
           case Enumerations.EnCategoriesEmployees._kUPDATE_INFORMATION_EMPLOYEE:
             {
               _UpdateEmployee();
+              break;
+            }
+
+          case Enumerations.EnCategoriesEmployees._kDELETE_EMPLOYEE:
+            {
+              _DeleteEmployee();
               break;
             }
         }
