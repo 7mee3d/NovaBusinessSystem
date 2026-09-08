@@ -1,0 +1,34 @@
+namespace nEnumeration
+{
+
+    public class Enumerations
+    {
+        public enum EnStatus
+        {
+            _kACTIVE = 1,
+            _kINACTIVE = 0 ,
+             _kSUSPENDED = 2
+        }
+
+        public enum EnMode
+        {
+            _kADD = 1 ,
+            _kUPDATE 
+        }
+
+        public enum EnCategoriesEmployees
+        {
+
+            _kBACK = 0,
+            _kLIST_EMPLOYEES = 1,
+            _kGET_EMPLOYEES_BY_ID = 2,
+            _kADD_EMPLOYEE = 3,
+            _kUPDATE_INFORMATION_EMPLOYEE = 4,
+            _kDELETE_EMPLOYEE = 5,
+            _kSEARCH_EMPLOYEES = 6,
+            _kEMPLOYEE_REPORT = 7
+
+
+        }
+    }
+}

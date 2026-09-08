@@ -1,0 +1,12 @@
+/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/bin/Debug/net10.0/DataAccessLayer.deps.json
+/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/bin/Debug/net10.0/DataAccessLayer.dll
+/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/bin/Debug/net10.0/DataAccessLayer.pdb
+/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/obj/Debug/net10.0/DataAccessLayer.csproj.AssemblyReference.cache
+/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/obj/Debug/net10.0/DataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/obj/Debug/net10.0/DataAccessLayer.AssemblyInfoInputs.cache
+/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/obj/Debug/net10.0/DataAccessLayer.AssemblyInfo.cs
+/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/obj/Debug/net10.0/DataAccessLayer.csproj.CoreCompileInputs.cache
+/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/obj/Debug/net10.0/DataAccessLayer.dll
+/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/obj/Debug/net10.0/refint/DataAccessLayer.dll
+/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/obj/Debug/net10.0/DataAccessLayer.pdb
+/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/obj/Debug/net10.0/ref/DataAccessLayer.dll
