@@ -2,6 +2,8 @@ using System.Data;
 using NovaBusinessSystemBL;
 using nEnumeration;
 using Microsoft.Data.SqlClient;
+using System.Linq.Expressions;
+
 
 namespace EmployeesPL
 {
@@ -62,7 +64,7 @@ namespace EmployeesPL
         Console.WriteLine("\t\t║ No employees matched your search.        ║");
         Console.WriteLine("\t\t╚══════════════════════════════════════════╝\n\n");
 
-        return ; 
+        return;
       }
 
 
@@ -475,7 +477,7 @@ namespace EmployeesPL
         char choice = 'N';
 
         while (!char.TryParse(Console.ReadLine(), out choice))
-          System.Console.WriteLine("\t\tInvalid!! Choice");
+          System.Console.Write("\t\tInvalid!! Choice");
 
         if (char.ToLower(choice) == 'y')
         {
@@ -519,7 +521,7 @@ namespace EmployeesPL
 
     }
 
-    private static void SearchEmployee()
+    private static void _SearchEmployee()
     {
       while (true)
       {
@@ -542,8 +544,8 @@ namespace EmployeesPL
         byte Choice = 0;
 
         while (!byte.TryParse(Console.ReadLine(), out Choice) || Choice > 4)
-          System.Console.WriteLine("\t\tInvalid!! Choice Search Employee");
-          
+          System.Console.Write("\t\tInvalid!! Choice Search Employee");
+
 
         Enumerations.EnChoicesSearchEmployees ChoiceSearchEmployee = (Enumerations.EnChoicesSearchEmployees)Choice;
 
@@ -588,7 +590,7 @@ namespace EmployeesPL
 
               byte status = 0;
               while (!byte.TryParse(Console.ReadLine(), out status) || status > 2)
-                System.Console.WriteLine("\t\tInvalid!! Status Employee");
+                System.Console.Write("\t\tInvalid!! Status Employee");
 
 
               _EmployeesList(null, null, null, _GetStatusEmployee((Enumerations.EnStatus)status));
@@ -609,6 +611,88 @@ namespace EmployeesPL
 
     }
 
+    private static void _DepartmentSammary()
+    {
+      Console.Clear();
+
+      Console.WriteLine("\n\n\t\t╔══════════════════════════════════════════╗");
+      Console.WriteLine("\t\t║         📊 DEPARTMENT SUMMARY            ║");
+      Console.WriteLine("\t\t╚══════════════════════════════════════════╝");
+
+      System.Console.WriteLine($"\n\n\t\t{"Department",-25} {"Employees",-15} {"Avg Salary",-20}");
+      System.Console.WriteLine("\t\t" + new string('-', 55));
+
+      DataTable DT_DepartmentSummary = EmployeesBL.GetDepartmentSammary();
+      int CountEmployees = 0 ; 
+
+      foreach (DataRow DR in DT_DepartmentSummary.Rows)
+      {
+
+        CountEmployees += Convert.ToInt32(DR["TotalEmployees"]) ;
+
+        System.Console.WriteLine($"\t\t{DR["DepartmentName"].ToString(),-25} {Convert.ToInt32(DR["TotalEmployees"]).ToString(),-15} {(Convert.ToDouble(DR["Avg Salary"])).ToString("C2"),-20}");
+
+
+      }
+
+      System.Console.WriteLine("\t\t" + new string('-', 55));
+      System.Console.WriteLine("\n\n");
+
+      
+      System.Console.WriteLine($"\t\tTotal Employees: {CountEmployees}\n\n");
+
+
+
+    }
+    private static void _EmployeesReport()
+    {
+
+
+      while (true)
+      {
+        Console.Clear();
+
+        Console.WriteLine("\n\n\t\t╔══════════════════════════════════════════╗");
+        Console.WriteLine("\t\t║             📊 EMPLOYEE REPORT           ║");
+        Console.WriteLine("\t\t╠══════════════════════════════════════════╣");
+        Console.WriteLine("\t\t║                                          ║");
+        Console.WriteLine("\t\t║ 1. Department Summary                    ║");
+        Console.WriteLine("\t\t║ 2. Salary Summary                        ║");
+        Console.WriteLine("\t\t║ 3. Employee Status Summary               ║");
+        Console.WriteLine("\t\t║ 4. Hiring Summary                        ║");
+        Console.WriteLine("\t\t║                                          ║");
+        Console.WriteLine("\t\t║ 0. 🔙 Back                               ║");
+        Console.WriteLine("\t\t╚══════════════════════════════════════════╝");
+
+        Console.Write("\n\n\t\tSelect: ");
+        byte Choice = 0;
+
+
+        while (!byte.TryParse(Console.ReadLine(), out Choice) || (Choice > 4))
+          System.Console.Write("\t\tInvalid Choice : ");
+
+        switch ((Enumerations.EnChoicesEmployeesReport)Choice)
+        {
+          case Enumerations.EnChoicesEmployeesReport._kDEPARTMENT_SUMMARY:
+            {
+              _DepartmentSammary();
+              break;
+            }
+
+
+          case Enumerations.EnChoicesEmployeesReport._kBACK :
+            {
+              StartupEmployeesModule();
+              break;
+            }
+        }
+
+        System.Console.WriteLine("\n\n\t\tPress any key to continue...");
+        Console.ReadKey();
+      }
+
+
+    }
     public static void StartupEmployeesModule()
     {
 
@@ -659,7 +743,13 @@ namespace EmployeesPL
 
           case Enumerations.EnCategoriesEmployees._kSEARCH_EMPLOYEES:
             {
-              SearchEmployee();
+              _SearchEmployee();
+              break;
+            }
+
+          case Enumerations.EnCategoriesEmployees._kEMPLOYEE_REPORT:
+            {
+              _EmployeesReport();
               break;
             }
         }

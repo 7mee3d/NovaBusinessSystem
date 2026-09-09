@@ -40,5 +40,14 @@ namespace nEnumeration
             _kSEARCH_BY_STATUS = 4 
         }
 
+        public enum EnChoicesEmployeesReport
+        {
+            _kBACK = 0 ,
+            _kDEPARTMENT_SUMMARY = 1 ,
+            _kSALARY_SUMMARY = 2 ,
+            _kEMPLOYEE_STATUS_SUMMARY = 3,
+            _kHIRING_SUMMARY = 4 
+        }
+
     }
 }

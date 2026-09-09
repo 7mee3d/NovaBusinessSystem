@@ -56,6 +56,7 @@ public class EmployeesDAL
     }
 
     public static bool GetEmployeeBy(
+
         int employeeID,
         ref string firstName,
         ref string lastName,
@@ -67,7 +68,8 @@ public class EmployeesDAL
         ref string phone,
         ref string email,
         ref byte status
-    )
+
+     )
     {
 
         bool isFound = false;
@@ -295,5 +297,30 @@ public class EmployeesDAL
 
     }
 
+    public static DataTable GetDepartmentSammary()
+    {
+        DataTable DT_GetAllDepartmentSammary = new DataTable();
+
+        using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+        using (SqlCommand command = new SqlCommand("[dbo].usp_DepartmentSummary", connection))
+        {
+            command.CommandType = CommandType.StoredProcedure;
+
+
+            try
+            {
+                connection.Open();
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                    if (reader.HasRows)
+                        DT_GetAllDepartmentSammary.Load(reader);
+
+
+            }catch{}
+
+        }
+
+        return DT_GetAllDepartmentSammary;
+    }
 
 }

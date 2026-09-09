@@ -193,5 +193,8 @@ public class EmployeesBL
             default: return false;
         }
     }
+
+    public static DataTable GetDepartmentSammary() => EmployeesDAL.GetDepartmentSammary();
+    
 }
 
