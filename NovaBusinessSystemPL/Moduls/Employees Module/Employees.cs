@@ -12,6 +12,56 @@ namespace EmployeesPL
   {
 
 
+    private static void _ShowNotFoundMessage(string MessageReason, string MessageHeader, string MessageBody)
+    {
+      Console.WriteLine("\n\n\t\t╔════════════════════════════════════════════════════════════════════════╗");
+      Console.WriteLine($"\t\t║                  {MessageHeader}                                 ║");
+      Console.WriteLine("\t\t╠════════════════════════════════════════════════════════════════════════╣");
+      Console.WriteLine($"\t\t║ {MessageBody,-50}                             ║");
+      Console.WriteLine($"\t\t║ Reason: {MessageReason,-50}  ║");
+      Console.WriteLine("\t\t╚════════════════════════════════════════════════════════════════════════╝");
+    }
+
+    private static void PrintDetail(string label, object? value)
+    {
+      const int ContentWidth = 50;
+
+      string Text = $"{label,-13} : {value ?? " "}";
+
+      if (Text.Length > ContentWidth)
+        Text = Text[..ContentWidth];
+
+
+      Console.WriteLine($"\t\t║ {Text,-48}║");
+    }
+    private static void _ShowSccessMessageAndShowInformationEmployee(EmployeesBL informationEmployee, string message)
+    {
+
+      int width = 50;
+      int contentWidth = width - 2;
+
+      int paddingLeft = (contentWidth - message.Length) / 2;
+      int paddingRight = contentWidth - message.Length - paddingLeft - 1 ;
+
+
+      Console.WriteLine("\n\n\t\t╔═════════════════════════════════════════════════╗");
+      Console.WriteLine($"\t\t║{new string(' ', paddingLeft)}{message}{new string(' ', paddingRight)} ║");
+      Console.WriteLine("\t\t╚═════════════════════════════════════════════════╝");
+
+      PrintDetail("ID", informationEmployee.ID);
+      PrintDetail("First Name", informationEmployee.FirstName);
+      PrintDetail("Last Name", informationEmployee.LastName);
+      PrintDetail("Department ID", informationEmployee.DepartmentID);
+      PrintDetail("Manager ID", informationEmployee.ManagerID);
+      PrintDetail("Job Title", informationEmployee.JobTitle.Trim());
+      PrintDetail("Salary", $"{informationEmployee.Salary:N2}");
+      PrintDetail("Hire Date", DateTime.Now.ToString("dd/MM/yyyy"));
+      PrintDetail("Phone", informationEmployee.Phone);
+      PrintDetail("Email", informationEmployee.Email);
+      PrintDetail("Status", _GetStatusEmployee(informationEmployee.Status));
+
+      Console.WriteLine("\t\t╚═════════════════════════════════════════════════╝");
+    }
 
     private static void PrintScreenMenuEmployeesModule(out byte ChoiseEmployeesModule)
     {
@@ -34,19 +84,8 @@ namespace EmployeesPL
 
       System.Console.Write("\n\n\t\tSelect : ");
 
-      try
-      {
-        ChoiseEmployeesModule = Convert.ToByte(Console.ReadLine());
-      }
-
-      catch (Exception ex)
-      {
-        Console.WriteLine(" \n\n\t\t╔══════════════════════════════════════════╗");
-        Console.WriteLine(" \t\t║             ❌ ERROR                     ║");
-        Console.WriteLine("\t\t╚══════════════════════════════════════════╝");
-        ChoiseEmployeesModule = 0;
-
-      }
+      while (!Byte.TryParse(Console.ReadLine(), out ChoiseEmployeesModule) || ChoiseEmployeesModule > 7)
+        System.Console.Write("\t\tInvalid Choice Employees : ");
 
     }
 
@@ -92,32 +131,12 @@ namespace EmployeesPL
       if (EmployeeInfo is not null)
       {
         System.Console.WriteLine("\n\n\n");
-        Console.WriteLine(" \t\t╔══════════════════════════════════════════╗");
-        Console.WriteLine(" \t\t║             EMPLOYEE DETAILS             ║");
-        Console.WriteLine(" \t\t╠══════════════════════════════════════════╣");
-
-        Console.WriteLine($"\t\t║ {"ID",-12}: {EmployeeInfo.ID,-27}║");
-        Console.WriteLine($"\t\t║ {"Name",-12}: {string.Join(" ", EmployeeInfo.FirstName, EmployeeInfo.LastName),-27}║");
-        Console.WriteLine($"\t\t║ {"Department",-12}: {EmployeeInfo.DepartmentInfo.DepartmentName.Trim(),-27}║");
-        Console.WriteLine($"\t\t║ {"Manager",-12}: {((EmployeeInfo.ManagerInfo is not null) ? string.Join(" ", EmployeeInfo.ManagerInfo?.FirstName, EmployeeInfo.ManagerInfo?.LastName) : "Unknown").Trim(),-27}║");
-        Console.WriteLine($"\t\t║ {"Job Title",-12}: {EmployeeInfo.JobTitle.Trim(),-27}║");
-        Console.WriteLine($"\t\t║ {"Salary",-12}: {EmployeeInfo.Salary,-27:N2}║");
-        Console.WriteLine($"\t\t║ {"Hire Date",-12}: {EmployeeInfo.HireDate,-27:dd/MM/yyyy}║");
-        Console.WriteLine($"\t\t║ {"Phone",-12}: {EmployeeInfo.Phone.Trim(),-27}║");
-        Console.WriteLine($"\t\t║ {"Email",-12}: {EmployeeInfo.Email.Trim(),-27}║");
-        Console.WriteLine($"\t\t║ {"Status",-12}: {_GetStatusEmployee(EmployeeInfo.Status),-27}║");
-
-        Console.WriteLine("\t\t╚══════════════════════════════════════════╝");
-
+        _ShowSccessMessageAndShowInformationEmployee(EmployeeInfo, "EMPLOYEE DETAILS");
         return EmployeeInfo;
       }
       else
       {
-        Console.WriteLine(" \n\n\t\t╔══════════════════════════════════════════╗");
-        Console.WriteLine(" \t\t║             ❌ NOT FOUND                 ║");
-        Console.WriteLine(" \t\t╠══════════════════════════════════════════╣");
-        Console.WriteLine($"\t\t║ Employee with ID {EmployeeID} was not found.      ║");
-        Console.WriteLine(" \t\t╚══════════════════════════════════════════╝");
+        _ShowNotFoundMessage($"Employee with ID {EmployeeID} was not found.", "❌ NOT FOUND", "Employee could not be found.");
       }
 
       return null;
@@ -323,32 +342,12 @@ namespace EmployeesPL
 
         if (NewEmployee.SaveModeEmployees())
         {
-          Console.WriteLine("\n\n\t\t╔══════════════════════════════════════════╗");
-          Console.WriteLine("\t\t║            ✅ EMPLOYEE ADDED            ║");
-          Console.WriteLine("\t\t╚══════════════════════════════════════════╝");
-
-          Console.WriteLine($"\t\t║ ID           : {NewEmployee.ID,-26}║");
-          Console.WriteLine($"\t\t║ First Name   : {NewEmployee.FirstName,-26}║");
-          Console.WriteLine($"\t\t║ Last Name    : {NewEmployee.LastName,-26}║");
-          Console.WriteLine($"\t\t║ Department ID: {NewEmployee.DepartmentID,-26}║");
-          Console.WriteLine($"\t\t║ Manager ID   : {NewEmployee.ManagerID,-26}║");
-          Console.WriteLine($"\t\t║ Job Title    : {NewEmployee.JobTitle,-26}║");
-          Console.WriteLine($"\t\t║ Salary       : {NewEmployee.Salary,-26:N2}║");
-          Console.WriteLine($"\t\t║ Hire Date    : {DateTime.Now,-26:dd/MM/yyyy}║");
-          Console.WriteLine($"\t\t║ Phone        : {NewEmployee.Phone,-26}║");
-          Console.WriteLine($"\t\t║ Email        : {NewEmployee.Email,-26}║");
-          Console.WriteLine($"\t\t║ Status       : {_GetStatusEmployee(NewEmployee.Status),-26}║");
-          Console.WriteLine("\t\t╚══════════════════════════════════════════╝");
+          _ShowSccessMessageAndShowInformationEmployee(NewEmployee, "✅ EMPLOYEE ADDED");
         }
       }
       catch (SqlException SEX)
       {
-        Console.WriteLine("\n\n\t\t╔════════════════════════════════════════════════════╗");
-        Console.WriteLine("\t\t║              ❌ EMPLOYEE NOT ADDED                 ║");
-        Console.WriteLine("\t\t╠════════════════════════════════════════════════════╣");
-        Console.WriteLine("\t\t║ Employee could not be added.                       ║");
-        Console.WriteLine($"\t\t║ Reason: {SEX.Message,-42} ║");
-        Console.WriteLine("\t\t╚════════════════════════════════════════════════════╝");
+        _ShowNotFoundMessage($"Employee with ID {SEX.Message} was not found.", "❌ EMPLOYEE NOT ADDED", "Employee could not be added.");
       }
 
     }
@@ -401,41 +400,15 @@ namespace EmployeesPL
 
           if (InfoEmployee.SaveModeEmployees())
           {
-            Console.WriteLine("\n\n\t\t╔══════════════════════════════════════════╗");
-            Console.WriteLine("\t\t║         ✅ EMPLOYEE UPDATED              ║");
-            Console.WriteLine("\t\t╠══════════════════════════════════════════╣");
-
-            Console.WriteLine($"\t\t║ ID           : {InfoEmployee.ID,-26}║");
-            Console.WriteLine($"\t\t║ First Name   : {InfoEmployee.FirstName,-26}║");
-            Console.WriteLine($"\t\t║ Last Name    : {InfoEmployee.LastName,-26}║");
-            Console.WriteLine($"\t\t║ Department ID: {InfoEmployee.DepartmentID,-26}║");
-            Console.WriteLine($"\t\t║ Manager ID   : {((InfoEmployee.ManagerInfo is not null) ? string.Join(" ", InfoEmployee.ManagerInfo?.FirstName, InfoEmployee.ManagerInfo?.LastName) : "Unknown"),-26}║");
-            Console.WriteLine($"\t\t║ Job Title    : {InfoEmployee.JobTitle,-26}║");
-            Console.WriteLine($"\t\t║ Salary       : {InfoEmployee.Salary,-26:N2}║");
-            Console.WriteLine($"\t\t║ Hire Date    : {InfoEmployee.HireDate,-26:dd/MM/yyyy}║");
-            Console.WriteLine($"\t\t║ Phone        : {InfoEmployee.Phone,-26}║");
-            Console.WriteLine($"\t\t║ Email        : {InfoEmployee.Email,-26}║");
-            Console.WriteLine($"\t\t║ Status       : {(_GetStatusEmployee(InfoEmployee.Status)),-26}║");
-
-            Console.WriteLine("\t\t╚══════════════════════════════════════════╝");
+            _ShowSccessMessageAndShowInformationEmployee(InfoEmployee, "✅ EMPLOYEE UPDATED");
           }
 
         }
         catch (SqlException SEX)
         {
-          Console.WriteLine("\n\n\t\t╔════════════════════════════════════════════════════╗");
-          Console.WriteLine("\t\t║                  ❌ NOT FOUND                     ║");
-          Console.WriteLine("\t\t╠════════════════════════════════════════════════════╣");
-          Console.WriteLine("\t\t║ Employee could not be found.                       ║");
-          Console.WriteLine($"\t\t║ Reason: {SEX.Message,-42} ║");
-          Console.WriteLine("\t\t╚════════════════════════════════════════════════════╝");
+          _ShowNotFoundMessage($"{SEX.Message}", "❌ NOT FOUND", "Employee could not be found.");
         }
       }
-
-
-
-
-
     }
 
     private static void _DeleteEmployee()
@@ -455,13 +428,7 @@ namespace EmployeesPL
       EmployeesBL InfoEmployee = EmployeesBL.FindEmployeeBy(EmployeeID);
 
       if (InfoEmployee is null)
-      {
-        Console.WriteLine(" \n\n\t\t╔══════════════════════════════════════════╗");
-        Console.WriteLine(" \t\t║             ❌ NOT FOUND                 ║");
-        Console.WriteLine(" \t\t╠══════════════════════════════════════════╣");
-        Console.WriteLine($"\t\t║ Employee with ID {EmployeeID} was not found.      ║");
-        Console.WriteLine(" \t\t╚══════════════════════════════════════════╝");
-      }
+        _ShowNotFoundMessage($"Employee with ID {EmployeeID} was not found.", "❌ NOT FOUND", "Employee could not be found.");
       else
       {
 
@@ -496,14 +463,9 @@ namespace EmployeesPL
 
             }
           }
-          catch (SqlException SEX)
+          catch
           {
-            Console.WriteLine("\n\n\t\t╔════════════════════════════════════════════════════╗");
-            Console.WriteLine("\t\t║                  ❌  ERROR                        ║");
-            Console.WriteLine("\t\t╠════════════════════════════════════════════════════╣");
-            Console.WriteLine("\t\t║ Employee could not be found.                       ║");
-            Console.WriteLine($"\t\t║ Reason: {SEX.Message,-42}║");
-            Console.WriteLine("\t\t╚════════════════════════════════════════════════════╝");
+            _ShowNotFoundMessage($"Employee with ID {EmployeeID} was not found.", "❌ ERROR", "Employee could not be found. ");
           }
 
 
