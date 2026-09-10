@@ -623,12 +623,12 @@ namespace EmployeesPL
       System.Console.WriteLine("\t\t" + new string('-', 55));
 
       DataTable DT_DepartmentSummary = EmployeesBL.GetDepartmentSammary();
-      int CountEmployees = 0 ; 
+      int CountEmployees = 0;
 
       foreach (DataRow DR in DT_DepartmentSummary.Rows)
       {
 
-        CountEmployees += Convert.ToInt32(DR["TotalEmployees"]) ;
+        CountEmployees += Convert.ToInt32(DR["TotalEmployees"]);
 
         System.Console.WriteLine($"\t\t{DR["DepartmentName"].ToString(),-25} {Convert.ToInt32(DR["TotalEmployees"]).ToString(),-15} {(Convert.ToDouble(DR["Avg Salary"])).ToString("C2"),-20}");
 
@@ -638,12 +638,40 @@ namespace EmployeesPL
       System.Console.WriteLine("\t\t" + new string('-', 55));
       System.Console.WriteLine("\n\n");
 
-      
+
       System.Console.WriteLine($"\t\tTotal Employees: {CountEmployees}\n\n");
 
 
 
     }
+
+    private static void _SalarySummary()
+    {
+      Console.WriteLine("\n\n\t\t╔══════════════════════════════════════════╗");
+      Console.WriteLine("\t\t║            💰 SALARY SUMMARY             ║");
+      Console.WriteLine("\t\t╚══════════════════════════════════════════╝\n\n");
+
+      DataTable DT_SalarySummary = EmployeesBL.GetSalarySummary();
+
+      if (DT_SalarySummary.Rows.Count > 0)
+      {
+        DataRow DR_SalarySummary = DT_SalarySummary.Rows[0];
+
+        System.Console.WriteLine($"\t\tMinimum Salary : {Convert.ToDouble(DR_SalarySummary["MinimumSalary"]).ToString("C2")}");
+        System.Console.WriteLine($"\t\tMaximum Salary : {Convert.ToDouble(DR_SalarySummary["MaximumSalary"]).ToString("C2")}");
+        System.Console.WriteLine($"\t\tAverage Salary : {Convert.ToDouble(DR_SalarySummary["AverageSalary"]).ToString("C2")}");
+        System.Console.WriteLine($"\t\tTotal Salary   : {Convert.ToDouble(DR_SalarySummary["TotalSalary"]).ToString("C2")}");
+      }
+      else
+      {
+        Console.WriteLine("\n\n\t\t╔══════════════════════════════════════════╗");
+        Console.WriteLine("\t\t║             ❌ NO SALARY DATA            ║");
+        Console.WriteLine("\t\t╠══════════════════════════════════════════╣");
+        Console.WriteLine("\t\t║ No salary data is available.             ║");
+        Console.WriteLine("\t\t╚══════════════════════════════════════════╝");
+      }
+    }
+
     private static void _EmployeesReport()
     {
 
@@ -679,8 +707,13 @@ namespace EmployeesPL
               break;
             }
 
+          case Enumerations.EnChoicesEmployeesReport._kSALARY_SUMMARY:
+            {
+              _SalarySummary();
+              break;
+            }
 
-          case Enumerations.EnChoicesEmployeesReport._kBACK :
+          case Enumerations.EnChoicesEmployeesReport._kBACK:
             {
               StartupEmployeesModule();
               break;

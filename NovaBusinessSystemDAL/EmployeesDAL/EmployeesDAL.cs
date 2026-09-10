@@ -316,11 +316,34 @@ public class EmployeesDAL
                         DT_GetAllDepartmentSammary.Load(reader);
 
 
-            }catch{}
+            }
+            catch { }
 
         }
 
         return DT_GetAllDepartmentSammary;
     }
 
+    public static DataTable GetSalarySummary()
+    {
+        DataTable DT_SalarySummary = new DataTable();
+
+        using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+        using (SqlCommand command = new SqlCommand("[dbo].usp_SalarySummary", connection))
+        {
+
+            command.CommandType = CommandType.StoredProcedure;
+            try
+            {
+                connection.Open();
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                    if (reader.HasRows)
+                        DT_SalarySummary.Load(reader);
+            }catch {};
+            
+        }
+
+        return DT_SalarySummary ;
+    }
 }

@@ -195,6 +195,9 @@ public class EmployeesBL
     }
 
     public static DataTable GetDepartmentSammary() => EmployeesDAL.GetDepartmentSammary();
+
+
+    public static DataTable GetSalarySummary() => EmployeesDAL.GetSalarySummary();
     
 }
 
