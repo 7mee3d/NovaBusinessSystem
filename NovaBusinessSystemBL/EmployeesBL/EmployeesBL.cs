@@ -198,6 +198,8 @@ public class EmployeesBL
 
 
     public static DataTable GetSalarySummary() => EmployeesDAL.GetSalarySummary();
+
+    public static Dictionary<string,int> GetEmployeeStatus() => EmployeesDAL.GetEmployeeStatus();
     
 }
 

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.IO.Pipelines;
 using Microsoft.Data.SqlClient;
 
 namespace DataAccessLayer;
@@ -340,10 +341,46 @@ public class EmployeesDAL
                 using (SqlDataReader reader = command.ExecuteReader())
                     if (reader.HasRows)
                         DT_SalarySummary.Load(reader);
-            }catch {};
-            
+            }
+            catch { }
+            ;
+
         }
 
-        return DT_SalarySummary ;
+        return DT_SalarySummary;
+    }
+
+
+    public static Dictionary<string, int> GetEmployeeStatus ()
+    {
+        Dictionary<string, int> AllStatusEmployees = new Dictionary<string, int>();
+
+        using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+        using (SqlCommand command = new SqlCommand("[dbo].usp_EmployeeStatus", connection))
+        {
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            try
+            {
+
+                connection.Open();
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                        AllStatusEmployees.Add(reader["Status"].ToString()!, Convert.ToInt32(reader["Count"]));
+                }
+
+            }
+            catch
+            {
+
+            }
+            ;
+
+        }
+
+        return AllStatusEmployees;
     }
 }

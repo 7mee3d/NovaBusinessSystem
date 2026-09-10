@@ -3,6 +3,7 @@ using NovaBusinessSystemBL;
 using nEnumeration;
 using Microsoft.Data.SqlClient;
 using System.Linq.Expressions;
+using System.ComponentModel;
 
 
 namespace EmployeesPL
@@ -34,6 +35,7 @@ namespace EmployeesPL
 
       Console.WriteLine($"\t\t║ {Text,-48}║");
     }
+
     private static void _ShowSccessMessageAndShowInformationEmployee(EmployeesBL informationEmployee, string message)
     {
 
@@ -41,7 +43,7 @@ namespace EmployeesPL
       int contentWidth = width - 2;
 
       int paddingLeft = (contentWidth - message.Length) / 2;
-      int paddingRight = contentWidth - message.Length - paddingLeft - 1 ;
+      int paddingRight = contentWidth - message.Length - paddingLeft - 1;
 
 
       Console.WriteLine("\n\n\t\t╔═════════════════════════════════════════════════╗");
@@ -634,6 +636,28 @@ namespace EmployeesPL
       }
     }
 
+    private static void _EmployeeStatus()
+    {
+      Console.WriteLine("\n\n\t\t╔══════════════════════════════════════════╗");
+      Console.WriteLine("\t\t║          👥 EMPLOYEE STATUS             ║");
+      Console.WriteLine("\t\t╚══════════════════════════════════════════╝\n\n");
+
+
+      Dictionary<string, int> AllEmployeeStatus = EmployeesBL.GetEmployeeStatus();
+
+      System.Console.WriteLine($"\t\t{"Status",-15} {"Count",-15}");
+      System.Console.WriteLine($"\t\t{new string('-', 25)}");
+
+
+
+      foreach (var item in AllEmployeeStatus)
+      {
+        Console.WriteLine($"\t\t{item.Key , -15} {item.Value , -15}");
+      }
+
+      System.Console.WriteLine($"\t\t{new string('-', 25)}");
+    }
+
     private static void _EmployeesReport()
     {
 
@@ -680,6 +704,13 @@ namespace EmployeesPL
               StartupEmployeesModule();
               break;
             }
+
+          case Enumerations.EnChoicesEmployeesReport._kEMPLOYEE_STATUS_SUMMARY:
+            {
+              _EmployeeStatus();
+
+              break;
+            }
         }
 
         System.Console.WriteLine("\n\n\t\tPress any key to continue...");
@@ -688,6 +719,7 @@ namespace EmployeesPL
 
 
     }
+
     public static void StartupEmployeesModule()
     {
 
