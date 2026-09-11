@@ -351,7 +351,7 @@ public class EmployeesDAL
     }
 
 
-    public static Dictionary<string, int> GetEmployeeStatus ()
+    public static Dictionary<string, int> GetEmployeeStatus()
     {
         Dictionary<string, int> AllStatusEmployees = new Dictionary<string, int>();
 
@@ -382,5 +382,33 @@ public class EmployeesDAL
         }
 
         return AllStatusEmployees;
+    }
+
+    public static Dictionary<string?, int?> GetHiringSummary()
+    {
+        Dictionary<string?, int?> AllHiringSummary = new Dictionary<string?, int?>();
+
+        using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+        using (SqlCommand command = new SqlCommand("[dbo].usp_HiringSummary", connection))
+        {
+            command.CommandType = CommandType.StoredProcedure;
+
+
+            try
+            {
+                connection.Open();
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                    while (reader.Read())
+                        AllHiringSummary.Add(reader["HireYear"].ToString()!, Convert.ToInt32(reader["Employees Hired"]));
+
+            }catch
+            {
+                
+            };
+        }
+
+        return AllHiringSummary; 
+
     }
 }

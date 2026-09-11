@@ -2,9 +2,6 @@ using System.Data;
 using NovaBusinessSystemBL;
 using nEnumeration;
 using Microsoft.Data.SqlClient;
-using System.Linq.Expressions;
-using System.ComponentModel;
-
 
 namespace EmployeesPL
 {
@@ -610,7 +607,9 @@ namespace EmployeesPL
     }
 
     private static void _SalarySummary()
-    {
+    { 
+      
+      Console.Clear();
       Console.WriteLine("\n\n\t\t╔══════════════════════════════════════════╗");
       Console.WriteLine("\t\t║            💰 SALARY SUMMARY             ║");
       Console.WriteLine("\t\t╚══════════════════════════════════════════╝\n\n");
@@ -638,6 +637,9 @@ namespace EmployeesPL
 
     private static void _EmployeeStatus()
     {
+
+      Console.Clear();
+
       Console.WriteLine("\n\n\t\t╔══════════════════════════════════════════╗");
       Console.WriteLine("\t\t║          👥 EMPLOYEE STATUS             ║");
       Console.WriteLine("\t\t╚══════════════════════════════════════════╝\n\n");
@@ -652,12 +654,32 @@ namespace EmployeesPL
 
       foreach (var item in AllEmployeeStatus)
       {
-        Console.WriteLine($"\t\t{item.Key , -15} {item.Value , -15}");
+        Console.WriteLine($"\t\t{item.Key,-15} {item.Value,-15}");
       }
 
       System.Console.WriteLine($"\t\t{new string('-', 25)}");
     }
 
+    private static void _HiringSummary()
+    {
+      Console.Clear();
+
+      Console.WriteLine("\n\n\t\t╔══════════════════════════════════════════╗");
+      Console.WriteLine("\t\t║            📅 HIRING SUMMARY             ║");
+      Console.WriteLine("\t\t╚══════════════════════════════════════════╝");
+
+      Dictionary<string?, int?> AllEmployessHired = EmployeesBL.GetHiringSummary();
+
+      System.Console.WriteLine($"\n\n\t\t{"Year",-15} {"Employees Hired",-15}");
+      System.Console.WriteLine($"\t\t{new string('-', 33)}");
+
+      foreach (var item in AllEmployessHired)
+        System.Console.WriteLine($"\t\t{item.Key ?? " ",-15} {item.Value ?? 0,-15}");
+   
+      System.Console.WriteLine($"\t\t{new string('-', 33)}");
+
+    }
+    
     private static void _EmployeesReport()
     {
 
@@ -708,7 +730,12 @@ namespace EmployeesPL
           case Enumerations.EnChoicesEmployeesReport._kEMPLOYEE_STATUS_SUMMARY:
             {
               _EmployeeStatus();
+              break;
+            }
 
+          case Enumerations.EnChoicesEmployeesReport._kHIRING_SUMMARY:
+            {
+              _HiringSummary();
               break;
             }
         }
