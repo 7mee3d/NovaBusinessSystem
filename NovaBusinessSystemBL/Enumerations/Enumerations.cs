@@ -3,20 +3,20 @@ namespace nEnumeration
 
     public class Enumerations
     {
-        public enum EnStatus
+        public enum EnStatus: byte
         {
             _kACTIVE = 1,
             _kINACTIVE = 0 ,
              _kSUSPENDED = 2
         }
 
-        public enum EnMode
+        public enum EnMode: byte
         {
             _kADD = 1 ,
             _kUPDATE = 2 
         }
 
-        public enum EnCategoriesEmployees
+        public enum EnCategoriesEmployees: byte
         {
 
             _kBACK = 0,
@@ -31,7 +31,7 @@ namespace nEnumeration
 
         }
 
-        public enum EnChoicesSearchEmployees
+        public enum EnChoicesSearchEmployees: byte
         {
             _kBACK_MAIN_MENU_EMPLOYEES = 0 ,
             _kSEARCH_BY_FULL_NAME = 1 ,
@@ -40,13 +40,28 @@ namespace nEnumeration
             _kSEARCH_BY_STATUS = 4 
         }
 
-        public enum EnChoicesEmployeesReport
+        public enum EnChoicesEmployeesReport : byte
         {
             _kBACK = 0 ,
             _kDEPARTMENT_SUMMARY = 1 ,
             _kSALARY_SUMMARY = 2 ,
             _kEMPLOYEE_STATUS_SUMMARY = 3,
             _kHIRING_SUMMARY = 4 
+        }
+
+        public enum EnChoicesCustomersModule
+        {
+            _kBACK_MAIN_MENU = 0 ,
+            _kLIST_CUSTOMERS = 1 ,
+            _kGET_CUSTOMER_BY_ID = 2 , 
+            _kADD_NEW_CUSTOMER = 3 , 
+            _kUPDATE_INFORMATION_CUSTOMER = 4 ,
+            _kDELETE_CUSTOMER = 5 , 
+            _kSEARCH_CUSTOMERS = 6 ,
+            _kLOYALTY_POINTS = 7 , 
+            _kCUSTOMER_PURCHASES = 8 , 
+            _kCUSTOMER_REPORT = 9 
+
         }
 
     }

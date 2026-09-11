@@ -96,7 +96,7 @@ public class EmployeesDAL
             SqlParameter paramManagerID = command.Parameters.Add("@ManagerID", SqlDbType.Int);
             paramManagerID.Direction = ParameterDirection.Output;
 
-            SqlParameter paramJobTitle = command.Parameters.Add("@JobTitle", SqlDbType.NChar, 200);
+            SqlParameter paramJobTitle = command.Parameters.Add("@JobTitle", SqlDbType.NVarChar, 200);
             paramJobTitle.Direction = ParameterDirection.Output;
 
             SqlParameter paramSalary = command.Parameters.Add("@Salary", SqlDbType.Decimal);

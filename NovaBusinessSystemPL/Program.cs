@@ -8,8 +8,8 @@ namespace NovaBusinessSystem
 
         private static void Main (string[] args)
         {
-            EmployeesPL.EmployeesPL.StartupEmployeesModule();
-            
+        //    EmployeesPL.EmployeesPL.StartupEmployeesModule();
+            CustomersPL.CustomersPL.StartUpCustomersModule();
         }
         
     }
