@@ -1,11 +1,14 @@
+using System.Data;
 using System.Linq.Expressions;
+using nCustomersBL;
 using nEnumeration;
+using nHelpersPL;
 
 namespace CustomersPL
 {
 
 
-    public class CustomersPL
+    public class CustomersPL : HelperPL
     {
         private static void _MainMenuCustomersModule()
         {
@@ -29,6 +32,32 @@ namespace CustomersPL
 
         }
 
+        private static void _CustomersList()
+        {
+            Console.Clear();
+
+            System.Console.WriteLine("\n\n");
+
+            //Console.WriteLine($"\n\n{GenarateTabs(7)}╔══════════════════════════════════════════╗");
+           // Console.WriteLine($"{GenarateTabs(7)}║             📋 CUSTOMER LIST             ║");
+            //Console.WriteLine($"{GenarateTabs(7)}╚══════════════════════════════════════════╝\n\n\n");
+
+            PrintHeader("📋 CUSTOMER LIST" , 7 );
+  // PrintHeader("🔎 GET CUSTOMER BY ID" , 7 );
+            System.Console.WriteLine($"\t\t{"ID",-15} {"Name",-30} {"Email",-40} {"City",-15} {"Points",-10} {"Status",-15}");
+
+            System.Console.WriteLine($"\t\t{new string('-', 123)}");
+            DataTable DT_ALlCustomers = CustomersBL.GetCustomersList();
+
+            foreach (DataRow DR_Customer in DT_ALlCustomers.Rows)
+                System.Console.WriteLine($"\t\t{Convert.ToInt32(DR_Customer["CustomerID"]),-15} {DR_Customer["Name"].ToString(),-30} {DR_Customer["Email"].ToString(),-40} {DR_Customer["City"].ToString(),-15} {Convert.ToInt32(DR_Customer["LoyaltyPoints"]),-10} {DR_Customer["Status"],-15}");
+            System.Console.WriteLine($"\t\t{new string('-', 123)}\n\n");
+
+            System.Console.WriteLine($"\t\tTotal Customers: {DT_ALlCustomers.Rows.Count}\n\n");
+
+
+        }
+
         public static void StartUpCustomersModule()
         {
 
@@ -39,13 +68,18 @@ namespace CustomersPL
                 _MainMenuCustomersModule();
 
                 Console.Write("\n\n\n\t\tSelect: ");
-                byte ChoiceCustomer = 0 ; 
-                while (!byte.TryParse(Console.ReadLine() , out ChoiceCustomer) || ChoiceCustomer > 9 )
+                byte ChoiceCustomer = 0;
+                while (!byte.TryParse(Console.ReadLine(), out ChoiceCustomer) || ChoiceCustomer > 9)
                     System.Console.WriteLine("\t\tInvalid Choice Customer Menu ");
 
                 switch ((Enumerations.EnChoicesCustomersModule)ChoiceCustomer)
                 {
-                    
+                    case Enumerations.EnChoicesCustomersModule._kLIST_CUSTOMERS:
+                        {
+                            _CustomersList();
+                            break;
+
+                        }
                 }
 
 
