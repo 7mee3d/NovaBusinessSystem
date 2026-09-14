@@ -32,6 +32,25 @@ namespace CustomersPL
 
         }
 
+        private static void _PrintCustomerDetails(CustomersBL informationCustomer, string? title)
+        {
+            if ((informationCustomer is null) || string.IsNullOrWhiteSpace(title))
+                return;
+
+            PrintHeader(title, 7);
+
+            Console.WriteLine($"{GenarateTabs(7)}║ {"ID",-16} : {informationCustomer.CustomerID,-20}  ║");
+            Console.WriteLine($"{GenarateTabs(7)}║ {"Name",-16} : {informationCustomer.Name,-20}  ║");
+            Console.WriteLine($"{GenarateTabs(7)}║ {"Email",-16} : {informationCustomer.Email,-20}  ║");
+            Console.WriteLine($"{GenarateTabs(7)}║ {"Phone",-16} : {informationCustomer.Phone,-20}  ║");
+            Console.WriteLine($"{GenarateTabs(7)}║ {"City",-16} : {informationCustomer.City,-20}  ║");
+            Console.WriteLine($"{GenarateTabs(7)}║ {"Registration",-16} : {informationCustomer.RegistrationDate,-20:dd/MM/yyyy}  ║");
+            Console.WriteLine($"{GenarateTabs(7)}║ {"Loyalty Points",-16} : {informationCustomer.LoyaltyPoints,-20}  ║");
+            Console.WriteLine($"{GenarateTabs(7)}║ {"Status",-16} : {informationCustomer.Status,-20}  ║");
+
+            Console.WriteLine($"{GenarateTabs(7)}╚══════════════════════════════════════════╝");
+        }
+
         private static void _CustomersList()
         {
             Console.Clear();
@@ -39,11 +58,11 @@ namespace CustomersPL
             System.Console.WriteLine("\n\n");
 
             //Console.WriteLine($"\n\n{GenarateTabs(7)}╔══════════════════════════════════════════╗");
-           // Console.WriteLine($"{GenarateTabs(7)}║             📋 CUSTOMER LIST             ║");
+            // Console.WriteLine($"{GenarateTabs(7)}║             📋 CUSTOMER LIST             ║");
             //Console.WriteLine($"{GenarateTabs(7)}╚══════════════════════════════════════════╝\n\n\n");
 
-            PrintHeader("📋 CUSTOMER LIST" , 7 );
-  // PrintHeader("🔎 GET CUSTOMER BY ID" , 7 );
+            PrintHeader("📋 CUSTOMER LIST", 7);
+            // PrintHeader("🔎 GET CUSTOMER BY ID" , 7 );
             System.Console.WriteLine($"\t\t{"ID",-15} {"Name",-30} {"Email",-40} {"City",-15} {"Points",-10} {"Status",-15}");
 
             System.Console.WriteLine($"\t\t{new string('-', 123)}");
@@ -56,6 +75,21 @@ namespace CustomersPL
             System.Console.WriteLine($"\t\tTotal Customers: {DT_ALlCustomers.Rows.Count}\n\n");
 
 
+        }
+
+        private static void GetCustomerByID()
+        {
+            Console.Clear();
+
+            PrintHeader("🔎 GET CUSTOMER BY ID", 7);
+            System.Console.WriteLine("\n\n");
+            System.Console.Write($"{GenarateTabs(7)}Enter Customer ID: ");
+            int ID = -1;
+            while (!int.TryParse(Console.ReadLine(), out ID))
+                System.Console.Write($"{GenarateTabs(7)}Invalid Data ID : ");
+
+            System.Console.WriteLine("\n\n");
+            _PrintCustomerDetails(CustomersBL.Find(ID)!, "👤 CUSTOMER DETAILS");
         }
 
         public static void StartUpCustomersModule()
@@ -80,10 +114,15 @@ namespace CustomersPL
                             break;
 
                         }
+                    case Enumerations.EnChoicesCustomersModule._kGET_CUSTOMER_BY_ID:
+                        {
+                            GetCustomerByID();
+                            break;
+                        }
                 }
 
 
-                Console.WriteLine("\n\t\tPress any key to continue...");
+                Console.WriteLine($"\n{GenarateTabs(7)}Press any key to continue...");
                 Console.ReadKey();
             }
         }
