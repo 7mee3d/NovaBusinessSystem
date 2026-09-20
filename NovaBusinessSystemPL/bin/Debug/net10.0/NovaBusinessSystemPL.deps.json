@@ -8,7 +8,8 @@
     ".NETCoreApp,Version=v10.0": {
       "NovaBusinessSystemPL/1.0.0": {
         "dependencies": {
-          "NovaBusinessSystemBL": "1.0.0"
+          "NovaBusinessSystemBL": "1.0.0",
+          "NovaBusinessSystemDTOs": "1.0.0"
         },
         "runtime": {
           "NovaBusinessSystemPL.dll": {}
@@ -370,6 +371,7 @@
         "dependencies": {
           "Microsoft.Data.SqlClient": "7.0.2",
           "Microsoft.Extensions.Configuration": "10.0.11",
+          "NovaBusinessSystemDTOs": "1.0.0",
           "System.Configuration.ConfigurationManager": "10.0.11"
         },
         "runtime": {
@@ -381,10 +383,19 @@
       },
       "NovaBusinessSystemBL/1.0.0": {
         "dependencies": {
-          "DataAccessLayer": "1.0.0"
+          "DataAccessLayer": "1.0.0",
+          "NovaBusinessSystemDTOs": "1.0.0"
         },
         "runtime": {
           "NovaBusinessSystemBL.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "NovaBusinessSystemDTOs/1.0.0": {
+        "runtime": {
+          "NovaBusinessSystemDTOs.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -579,6 +590,11 @@
       "sha512": ""
     },
     "NovaBusinessSystemBL/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "NovaBusinessSystemDTOs/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

@@ -22,7 +22,9 @@ namespace nHelpersPL
 
             foreach(char character in Text)
             {
-                width += char.GetUnicodeCategory(character) switch
+
+
+                width += char.GetUnicodeCategory(character)  switch
                 {
                     System.Globalization.UnicodeCategory.OtherSymbol => 2 ,
                     _ => 1 

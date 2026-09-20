@@ -1,5 +1,6 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
+using NovaBusinessSystemDTOs;
 
 namespace nCustomersDAL
 {
@@ -33,18 +34,9 @@ namespace nCustomersDAL
             return DT_AllCustomers;
 
         }
-        public static bool FindCustomerBy(
-    int CustomerID,
-    ref string name,
-    ref string email,
-    ref string phone,
-    ref string city,
-    ref DateTime registrationDate,
-    ref short loyaltyPoints,
-    ref bool status
-)
+        public static CustomerDTO? FindCustomerBy(int CustomerID)
         {
-            bool isFound = false;
+            CustomerDTO? customerDTO = null;
 
             using (SqlConnection connection = new SqlConnection(
                 HelperDAL.HelperDAL.ConnectionString))
@@ -64,20 +56,24 @@ namespace nCustomersDAL
                 {
                     if (reader.Read())
                     {
-                        isFound = true;
+                        customerDTO = new CustomerDTO(
+                        CustomerID,
+                        (string)reader["Name"],
+                        (string)reader["Email"],
+                        (string)reader["Phone"],
+                        (string)reader["City"],
+                        (DateTime)reader["RegistrationDate"],
+                        Convert.ToInt16(reader["LoyaltyPoints"]),
+                        (bool)reader["Status"]
 
-                        name = (string)reader["Name"];
-                        email = (string)reader["Email"];
-                        phone = (string)reader["Phone"];
-                        city = (string)reader["City"];
-                        registrationDate = (DateTime)reader["RegistrationDate"];
-                        loyaltyPoints = Convert.ToInt16(reader["LoyaltyPoints"]);
-                        status = (bool)reader["Status"];
+                        );
                     }
                 }
             }
 
-            return isFound;
+            return customerDTO;
         }
+
+
     }
 }

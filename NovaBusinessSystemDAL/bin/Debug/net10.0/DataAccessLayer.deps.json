@@ -10,6 +10,7 @@
         "dependencies": {
           "Microsoft.Data.SqlClient": "7.0.2",
           "Microsoft.Extensions.Configuration": "10.0.11",
+          "NovaBusinessSystemDTOs": "1.0.0",
           "System.Configuration.ConfigurationManager": "10.0.11"
         },
         "runtime": {
@@ -367,6 +368,14 @@
             "fileVersion": "10.0.1126.37416"
           }
         }
+      },
+      "NovaBusinessSystemDTOs/1.0.0": {
+        "runtime": {
+          "NovaBusinessSystemDTOs.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
       }
     }
   },
@@ -550,6 +559,11 @@
       "sha512": "sha512-PNoxCTPb+Tlux+GJyq4c89ddYdpioVSqfGx8pqOF6shCSKwUNNctXhQtRkCICjbJmGrJJsW8NY52kVYO/b8mlQ==",
       "path": "system.security.cryptography.protecteddata/10.0.11",
       "hashPath": "system.security.cryptography.protecteddata.10.0.11.nupkg.sha512"
+    },
+    "NovaBusinessSystemDTOs/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

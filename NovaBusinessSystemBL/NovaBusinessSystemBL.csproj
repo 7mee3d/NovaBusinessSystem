@@ -8,5 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="../NovaBusinessSystemDAL/DataAccessLayer.csproj" />
+    <ProjectReference Include="../NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj" />
   </ItemGroup>
 </Project>

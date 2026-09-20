@@ -500,6 +500,16 @@
         "build": {
           "buildTransitive/net8.0/_._": {}
         }
+      },
+      "NovaBusinessSystemDTOs/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/NovaBusinessSystemDTOs.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/NovaBusinessSystemDTOs.dll": {}
+        }
       }
     }
   },
@@ -1276,12 +1286,18 @@
         "system.security.cryptography.protecteddata.nuspec",
         "useSharedDesignerContext.txt"
       ]
+    },
+    "NovaBusinessSystemDTOs/1.0.0": {
+      "type": "project",
+      "path": "../NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj",
+      "msbuildProject": "../NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net10.0": [
       "Microsoft.Data.SqlClient >= 7.0.2",
       "Microsoft.Extensions.Configuration >= 10.0.11",
+      "NovaBusinessSystemDTOs >= 1.0.0",
       "System.Configuration.ConfigurationManager >= 10.0.11"
     ]
   },
@@ -1310,7 +1326,11 @@
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj": {
+              "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

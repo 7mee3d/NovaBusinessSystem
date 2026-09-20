@@ -148,7 +148,8 @@ namespace EmployeesPL
       Console.Write($"\n\n\t\t{"First Name",-16}: ");
 
       string? FirstName = Console.ReadLine()!;
-
+      string Test = Console.ReadLine();
+      
       while (true)
       {
         bool isPass = true;

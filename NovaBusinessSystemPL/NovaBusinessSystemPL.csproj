@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../NovaBusinessSystemBL/NovaBusinessSystemBL.csproj" />
+    <ProjectReference Include="../NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj" />
   </ItemGroup>
 
 </Project>

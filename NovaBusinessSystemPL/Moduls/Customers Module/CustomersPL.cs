@@ -12,23 +12,23 @@ namespace CustomersPL
     {
         private static void _MainMenuCustomersModule()
         {
-            Console.WriteLine("\n\n\n\t\t╔══════════════════════════════════════════╗");
-            Console.WriteLine("\t\t║              👥 CUSTOMERS                ║");
-            Console.WriteLine("\t\t╠══════════════════════════════════════════╣");
-            Console.WriteLine("\t\t║                                          ║");
-            Console.WriteLine("\t\t║  1. 📋 List Customers                    ║");
-            Console.WriteLine("\t\t║  2. 🔎 Get Customer By ID                ║");
-            Console.WriteLine("\t\t║  3. ➕ Add Customer                      ║");
-            Console.WriteLine("\t\t║  4. ✏️  Update Customer                   ║");
-            Console.WriteLine("\t\t║  5. 🗑️  Delete Customer                   ║");
-            Console.WriteLine("\t\t║  6. 🔍 Search Customers                  ║");
-            Console.WriteLine("\t\t║  7. ⭐ Loyalty Points                    ║");
-            Console.WriteLine("\t\t║  8. 🛒 Customer Purchases                ║");
-            Console.WriteLine("\t\t║  9. 📊 Customer Report                   ║");
-            Console.WriteLine("\t\t║                                          ║");
-            Console.WriteLine("\t\t║  0. 🔙 Back                              ║");
-            Console.WriteLine("\t\t║                                          ║");
-            Console.WriteLine("\t\t╚══════════════════════════════════════════╝");
+            Console.WriteLine($"\n\n\n{GenarateTabs(7)}╔══════════════════════════════════════════╗");
+            Console.WriteLine($"{GenarateTabs(7)}║              👥 CUSTOMERS                ║");
+            Console.WriteLine($"{GenarateTabs(7)}╠══════════════════════════════════════════╣");
+            Console.WriteLine($"{GenarateTabs(7)}║                                          ║");
+            Console.WriteLine($"{GenarateTabs(7)}║  1. 📋 List Customers                    ║");
+            Console.WriteLine($"{GenarateTabs(7)}║  2. 🔎 Get Customer By ID                ║");
+            Console.WriteLine($"{GenarateTabs(7)}║  3. ➕ Add Customer                      ║");
+            Console.WriteLine($"{GenarateTabs(7)}║  4. ✏️  Update Customer                   ║");
+            Console.WriteLine($"{GenarateTabs(7)}║  5. 🗑️  Delete Customer                   ║");
+            Console.WriteLine($"{GenarateTabs(7)}║  6. 🔍 Search Customers                  ║");
+            Console.WriteLine($"{GenarateTabs(7)}║  7. ⭐ Loyalty Points                    ║");
+            Console.WriteLine($"{GenarateTabs(7)}║  8. 🛒 Customer Purchases                ║");
+            Console.WriteLine($"{GenarateTabs(7)}║  9. 📊 Customer Report                   ║");
+            Console.WriteLine($"{GenarateTabs(7)}║                                          ║");
+            Console.WriteLine($"{GenarateTabs(7)}║  0. 🔙 Back                              ║");
+            Console.WriteLine($"{GenarateTabs(7)}║                                          ║");
+            Console.WriteLine($"{GenarateTabs(7)}╚══════════════════════════════════════════╝");
 
         }
 
@@ -56,10 +56,6 @@ namespace CustomersPL
             Console.Clear();
 
             System.Console.WriteLine("\n\n");
-
-            //Console.WriteLine($"\n\n{GenarateTabs(7)}╔══════════════════════════════════════════╗");
-            // Console.WriteLine($"{GenarateTabs(7)}║             📋 CUSTOMER LIST             ║");
-            //Console.WriteLine($"{GenarateTabs(7)}╚══════════════════════════════════════════╝\n\n\n");
 
             PrintHeader("📋 CUSTOMER LIST", 7);
             // PrintHeader("🔎 GET CUSTOMER BY ID" , 7 );
@@ -101,7 +97,7 @@ namespace CustomersPL
 
                 _MainMenuCustomersModule();
 
-                Console.Write("\n\n\n\t\tSelect: ");
+                Console.Write($"\n\n\n{GenarateTabs(7)}Select: ");
                 byte ChoiceCustomer = 0;
                 while (!byte.TryParse(Console.ReadLine(), out ChoiceCustomer) || ChoiceCustomer > 9)
                     System.Console.WriteLine("\t\tInvalid Choice Customer Menu ");
@@ -122,7 +118,7 @@ namespace CustomersPL
                 }
 
 
-                Console.WriteLine($"\n{GenarateTabs(7)}Press any key to continue...");
+                Console.WriteLine($"\n{GenarateTabs(5)}Press any key to continue...");
                 Console.ReadKey();
             }
         }

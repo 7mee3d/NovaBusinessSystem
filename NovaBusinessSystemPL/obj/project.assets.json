@@ -507,6 +507,7 @@
         "dependencies": {
           "Microsoft.Data.SqlClient": "7.0.2",
           "Microsoft.Extensions.Configuration": "10.0.11",
+          "NovaBusinessSystemDTOs": "1.0.0",
           "System.Configuration.ConfigurationManager": "10.0.11"
         },
         "compile": {
@@ -520,13 +521,24 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
         "dependencies": {
-          "DataAccessLayer": "1.0.0"
+          "DataAccessLayer": "1.0.0",
+          "NovaBusinessSystemDTOs": "1.0.0"
         },
         "compile": {
           "bin/placeholder/NovaBusinessSystemBL.dll": {}
         },
         "runtime": {
           "bin/placeholder/NovaBusinessSystemBL.dll": {}
+        }
+      },
+      "NovaBusinessSystemDTOs/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/NovaBusinessSystemDTOs.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/NovaBusinessSystemDTOs.dll": {}
         }
       }
     }
@@ -1314,11 +1326,17 @@
       "type": "project",
       "path": "../NovaBusinessSystemBL/NovaBusinessSystemBL.csproj",
       "msbuildProject": "../NovaBusinessSystemBL/NovaBusinessSystemBL.csproj"
+    },
+    "NovaBusinessSystemDTOs/1.0.0": {
+      "type": "project",
+      "path": "../NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj",
+      "msbuildProject": "../NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net10.0": [
-      "NovaBusinessSystemBL >= 1.0.0"
+      "NovaBusinessSystemBL >= 1.0.0",
+      "NovaBusinessSystemDTOs >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -1349,6 +1367,9 @@
           "projectReferences": {
             "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemBL/NovaBusinessSystemBL.csproj": {
               "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemBL/NovaBusinessSystemBL.csproj"
+            },
+            "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj": {
+              "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj"
             }
           }
         }

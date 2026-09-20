@@ -1,11 +1,14 @@
 using System.Data;
 using nCustomersDAL;
 using nEnumeration;
+using NovaBusinessSystemDTOs;
 
 namespace nCustomersBL
 {
     public class CustomersBL
     {
+
+
         public int CustomerID { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
@@ -30,59 +33,29 @@ namespace nCustomersBL
             this.Status = true;
         }
 
-        public CustomersBL(
-            int customerID,
-            string name,
-            string email,
-            string phone,
-            string city,
-            DateTime registrationDate,
-            short loyaltyPoints,
-            bool status)
+        private CustomersBL(
+           CustomerDTO customerDTO
+            )
         {
-            this.CustomerID = customerID;
-            this.Name = name;
-            this.Email = email;
-            this.Phone = phone;
-            this.City = city;
-            this.RegistrationDate = registrationDate;
-            this.LoyaltyPoints = loyaltyPoints;
-            this.Status = status;
+            this.CustomerID = customerDTO.CustomerID;
+            this.Name = customerDTO.Name;
+            this.Email = customerDTO.Email;
+            this.Phone = customerDTO.Phone;
+            this.City = customerDTO.City;
+            this.RegistrationDate = customerDTO.RegistrationDate;
+            this.LoyaltyPoints = customerDTO.LoyaltyPoints;
+            this.Status = customerDTO.Status;
 
             this.enMode = Enumerations.EnMode._kUPDATE;
         }
 
         public static CustomersBL? Find(int id)
         {
-            string name = "", email = "", phone = "", city = "";
-            DateTime registrationDate = DateTime.Now;
-            short loyaltyPoints = 0;
-            bool status = true;
 
-            bool isFound = CustomersDAL.FindCustomerBy(
-                id,
-                ref name,
-                ref email,
-                ref phone,
-                ref city,
-                ref registrationDate,
-                ref loyaltyPoints,
-                ref status
-            );
+            CustomerDTO? infoCustomer = CustomersDAL.FindCustomerBy(id);
 
-            if (isFound)
-            {
-                return new CustomersBL(
-                    id,
-                    name,
-                    email,
-                    phone,
-                    city,
-                    registrationDate,
-                    loyaltyPoints,
-                    status
-                );
-            }
+            if (infoCustomer is not null)
+                return new CustomersBL(infoCustomer);
 
             return null;
         }
