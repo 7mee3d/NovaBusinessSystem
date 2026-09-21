@@ -3,26 +3,29 @@
 public class CustomerDTO
 {
     public int CustomerID { get; private set; }
-    public string Name { get; private set; } = string.Empty;
+    public string FirstName { get; private set; } = string.Empty;
+    public string LastName { get; private set; } = string.Empty;
     public string Email { get; private set; } = string.Empty;
     public string Phone { get; private set; } = string.Empty;
     public string City { get; private set; } = string.Empty;
     public DateTime RegistrationDate { get; private set; }
     public short LoyaltyPoints { get; private set; }
-    public bool Status { get; private set; }
-
+    public string Status { get; private set; }
+    
     public CustomerDTO(
         int customerID,
-        string name,
+        string firstName,
+        string lastName,
         string email,
         string phone,
         string city,
         DateTime registrationDate,
         short loyaltyPoints,
-        bool status)
+        string status)
     {
         this.CustomerID = customerID;
-        this.Name = name;
+        this.FirstName = firstName;
+        this.LastName = lastName;
         this.Email = email;
         this.Phone = phone;
         this.City = city;

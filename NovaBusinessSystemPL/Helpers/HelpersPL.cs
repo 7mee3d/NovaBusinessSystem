@@ -1,3 +1,5 @@
+using System.Reflection.Metadata;
+
 namespace nHelpersPL
 {
 
@@ -16,23 +18,23 @@ namespace nHelpersPL
             return Tab;
         }
 
-        private static int GetDisplayWIdth (string Text )
+        private static int GetDisplayWIdth(string Text)
         {
-            int width = 0 ;
+            int width = 0;
 
-            foreach(char character in Text)
+            foreach (char character in Text)
             {
 
 
-                width += char.GetUnicodeCategory(character)  switch
+                width += char.GetUnicodeCategory(character) switch
                 {
-                    System.Globalization.UnicodeCategory.OtherSymbol => 2 ,
-                    _ => 1 
+                    System.Globalization.UnicodeCategory.OtherSymbol => 2,
+                    _ => 1
                 };
 
             }
 
-            return width ; 
+            return width;
         }
 
         protected static void PrintHeader(string? TitleHeader, int? numberTab)
@@ -41,20 +43,126 @@ namespace nHelpersPL
             if (numberTab is null) return;
 
             const int BoxBorders = 2;
-            int width = 42 ; 
+            int width = 42;
             int contentLength = width - BoxBorders;
             int titleWidth = GetDisplayWIdth(TitleHeader);
 
-            double paddingLeft = Math.Ceiling( (contentLength - titleWidth  ) / 2.0);
-            double paddingRight = contentLength - titleWidth- paddingLeft + 2;
+            double paddingLeft = Math.Ceiling((contentLength - titleWidth) / 2.0);
+            double paddingRight = contentLength - titleWidth - paddingLeft + 2;
 
             string Tabs = GenarateTabs(numberTab.Value);
 
             Console.WriteLine($"{Tabs}╔══════════════════════════════════════════╗");
             Console.WriteLine(
-                $"{Tabs}║{new string(' ',(int)paddingLeft)}{TitleHeader.Trim()}{new string(' ', (int)paddingRight)}║"
+                $"{Tabs}║{new string(' ', (int)paddingLeft)}{TitleHeader.Trim()}{new string(' ', (int)paddingRight)}║"
             );
             Console.WriteLine($"{Tabs}╚══════════════════════════════════════════╝");
+        }
+        protected static void PrintHeaderErrors(string? TitleHeader, int? numberTab)
+        {
+            if (TitleHeader is null) return;
+            if (numberTab is null) return;
+
+            const int BoxBorders = 2;
+            int width = 72;
+            int contentLength = width - BoxBorders;
+            int titleWidth = GetDisplayWIdth(TitleHeader);
+
+            double paddingLeft = Math.Ceiling((contentLength - titleWidth) / 2.0);
+            double paddingRight = contentLength - titleWidth - paddingLeft + 2;
+
+            string Tabs = GenarateTabs(numberTab.Value);
+
+            Console.WriteLine($"{Tabs}╔════════════════════════════════════════════════════════════════════════╗");
+            Console.WriteLine(
+                $"{Tabs}║{new string(' ', (int)paddingLeft)}{TitleHeader.Trim()}{new string(' ', (int)paddingRight)}║"
+            );
+            Console.WriteLine($"{Tabs}╠════════════════════════════════════════════════════════════════════════╣");
+        }
+
+        protected static void ReadInformation(string label, int alignmentNumber, int numberTabs)
+        {
+            Console.Write($"{GenarateTabs(numberTabs)}{label.PadRight(alignmentNumber) + " : "}");
+        }
+
+        protected static string? ReadTheStringWithoutNumbers(string label, int alignemntNumber, int numberTabs)
+        {
+
+            if (alignemntNumber < 0 || numberTabs < 0 || string.IsNullOrWhiteSpace(label))
+                return null;
+
+            string text = string.Empty;
+
+            while (true)
+            {
+                ReadInformation(label, alignemntNumber, numberTabs);
+                text = Console.ReadLine()!;
+                Console.WriteLine();
+                bool isFound = false;
+
+                if (!string.IsNullOrWhiteSpace(text))
+                    foreach (char character in text)
+                    {
+                        if (char.IsDigit(character) || char.IsPunctuation(character) || Char.IsNumber(character) || char.IsSymbol(character) || char.IsWhiteSpace(character))
+                        {
+                            isFound = true;
+                            break;
+                        }
+
+                    }
+
+
+                if (!isFound && !string.IsNullOrWhiteSpace(text))
+                    break;
+            }
+
+            return text;
+        }
+
+
+        protected static T? ReadTheStringWithNumbers<T>(string label, int alignemntNumber, int numberTabs)
+        {
+
+            if (alignemntNumber < 0 || numberTabs < 0 || string.IsNullOrWhiteSpace(label))
+                return default(T);
+
+            string obj = string.Empty;
+
+            string text = "";
+            while (true)
+            {
+                ReadInformation(label, alignemntNumber, numberTabs);
+                text = Console.ReadLine()!;
+                Console.WriteLine();
+
+                bool isFound = false;
+
+                foreach (char character in text)
+                {
+                    if (char.IsLetter(character) || char.IsPunctuation(character) || char.IsSymbol(character))
+                    {
+                        isFound = true;
+                        break;
+                    }
+
+                }
+
+                if (!isFound)
+                    break;
+            }
+
+
+            return (T)Convert.ChangeType(text, typeof(T));
+
+        }
+
+        protected static void ShowNotFoundMessage(string MessageReason, string MessageHeader, string MessageBody)
+        {
+            System.Console.WriteLine("\n\n");
+            PrintHeaderErrors(MessageHeader, 5);
+            Console.WriteLine($"{GenarateTabs(5)}║ {MessageBody.Trim(),-50}                     ║");
+            Console.WriteLine($"{GenarateTabs(5)}║ Reason: {MessageReason.Trim(),-50}             ║");
+            Console.WriteLine($"{GenarateTabs(5)}╚════════════════════════════════════════════════════════════════════════╝");
         }
     }
 }

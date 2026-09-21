@@ -50,24 +50,32 @@ namespace nCustomersDAL
                 parmID.Direction = ParameterDirection.Input;
                 parmID.Value = CustomerID;
 
-                connection.Open();
-
-                using (SqlDataReader reader = command.ExecuteReader())
+                try
                 {
-                    if (reader.Read())
-                    {
-                        customerDTO = new CustomerDTO(
-                        CustomerID,
-                        (string)reader["Name"],
-                        (string)reader["Email"],
-                        (string)reader["Phone"],
-                        (string)reader["City"],
-                        (DateTime)reader["RegistrationDate"],
-                        Convert.ToInt16(reader["LoyaltyPoints"]),
-                        (bool)reader["Status"]
+                    connection.Open();
 
-                        );
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            customerDTO = new CustomerDTO(
+                            CustomerID,
+                            (string)reader["FirstName"],
+                            (string)reader["LastName"],
+                            (string)reader["Email"],
+                            (string)reader["Phone"],
+                            (string)reader["City"],
+                            (DateTime)reader["RegistrationDate"],
+                            Convert.ToInt16(reader["LoyaltyPoints"]),
+                            (string)reader["Status"]
+
+                            );
+                        }
                     }
+                }
+                catch
+                {
+                    throw;
                 }
             }
 
@@ -75,5 +83,56 @@ namespace nCustomersDAL
         }
 
 
+        public static int AddNewCustomer(CustomerDTO customerDTO)
+        {
+            using (SqlConnection connection =
+                   new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+            using (SqlCommand command =
+                   new SqlCommand("[dbo].usp_AddNewCustomer", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.Add("@FirstName", SqlDbType.NVarChar, 50)
+                    .Value = customerDTO.FirstName;
+
+                command.Parameters.Add("@LastName", SqlDbType.NVarChar, 50)
+                    .Value = customerDTO.LastName;
+
+                command.Parameters.Add("@Email", SqlDbType.NVarChar, 150)
+                    .Value = customerDTO.Email;
+
+                command.Parameters.Add("@Phone", SqlDbType.NChar, 11)
+                    .Value = customerDTO.Phone;
+
+                command.Parameters.Add("@City", SqlDbType.NVarChar, 100)
+                    .Value = customerDTO.City;
+
+                command.Parameters.Add("@Status", SqlDbType.NVarChar, 20)
+                    .Value = customerDTO.Status;
+
+                SqlParameter outputParaCustomerID =
+                    new SqlParameter("@CustomerID", SqlDbType.Int)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
+
+                command.Parameters.Add(outputParaCustomerID);
+
+                try
+                {
+                    connection.Open();
+
+                    command.ExecuteNonQuery();
+
+                    return Convert.ToInt32(outputParaCustomerID.Value);
+                }
+                catch (SqlException)
+                {
+                    return -1;
+                }
+            }
+        }
+
     }
+
 }
