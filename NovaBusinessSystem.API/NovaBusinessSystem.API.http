@@ -1,0 +1,6 @@
+@NovaBusinessSystem.API_HostAddress = http://localhost:5276
+
+GET {{NovaBusinessSystem.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

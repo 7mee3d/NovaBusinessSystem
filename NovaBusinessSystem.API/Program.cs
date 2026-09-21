@@ -1,0 +1,17 @@
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddOpenApi();
+builder.Services.AddControllers ();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.UseSwaggerUI (Options => Options.SwaggerEndpoint ("/openapi/v1.json" , "Nova Business System")) ;
+}
+
+app.UseHttpsRedirection();
+
+app.Run();
+
