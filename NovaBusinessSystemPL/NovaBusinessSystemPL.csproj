@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../NovaBusinessSystemBL/NovaBusinessSystemBL.csproj" />
-    <ProjectReference Include="../NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj" />
+    <ProjectReference Include="../NovaBusinessSystem.BL/NovaBusinessSystemBL.csproj" />
+    <ProjectReference Include="../NovaBusinessSystem.DTOs/NovaBusinessSystemDTOs.csproj" />
   </ItemGroup>
 
 </Project>

@@ -66,3 +66,6 @@
 /home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemPL/obj/Debug/net10.0/NovaBusinessSystemPL.sourcelink.json
 /home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemPL/bin/Debug/net10.0/NovaBusinessSystemDTOs.dll
 /home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemPL/bin/Debug/net10.0/NovaBusinessSystemDTOs.pdb
+/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.PL/obj/Debug/net10.0/NovaBusinessSystemPL.dll
+/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.PL/obj/Debug/net10.0/refint/NovaBusinessSystemPL.dll
+/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.PL/obj/Debug/net10.0/NovaBusinessSystemPL.pdb

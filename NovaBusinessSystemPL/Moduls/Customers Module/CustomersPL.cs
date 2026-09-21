@@ -1,11 +1,9 @@
 using System.Data;
-using System.Linq.Expressions;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Primitives;
-using nCustomersBL;
-using nEnumeration;
+using NovaBusinessSystem.DTOs;
+using NovaBusinessSystem.BL;
+using NovaBusinessSystem.Enumeration;
 using nHelpersPL;
-using NovaBusinessSystemDTOs;
 
 namespace CustomersPL
 {

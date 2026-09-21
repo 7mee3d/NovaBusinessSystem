@@ -1,6 +1,6 @@
 using System.Data;
-using NovaBusinessSystemBL;
-using nEnumeration;
+using NovaBusinessSystem.BL;
+using NovaBusinessSystem.Enumeration;
 using Microsoft.Data.SqlClient;
 
 namespace EmployeesPL
@@ -122,7 +122,7 @@ namespace EmployeesPL
 
     }
 
-    private static EmployeesBL _GetEmployeeBy(int EmployeeID)
+    private static EmployeesBL? _GetEmployeeBy(int EmployeeID)
     {
 
       EmployeesBL EmployeeInfo = EmployeesBL.FindEmployeeBy(EmployeeID);
@@ -148,7 +148,7 @@ namespace EmployeesPL
       Console.Write($"\n\n\t\t{"First Name",-16}: ");
 
       string? FirstName = Console.ReadLine()!;
-      string Test = Console.ReadLine();
+      string Test = Console.ReadLine()!;
       
       while (true)
       {
@@ -381,7 +381,7 @@ namespace EmployeesPL
       while (!int.TryParse(Console.ReadLine(), out EmployeeID))
         Console.Write($"\t\t{"Invalid! Employee ID",-16}: ");
 
-      EmployeesBL InfoEmployee = _GetEmployeeBy(EmployeeID);
+      EmployeesBL InfoEmployee = _GetEmployeeBy(EmployeeID)!;
 
       if (InfoEmployee is not null)
       {

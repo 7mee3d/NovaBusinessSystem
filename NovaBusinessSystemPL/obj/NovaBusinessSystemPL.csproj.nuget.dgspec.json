@@ -4,14 +4,14 @@
     "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemPL/NovaBusinessSystemPL.csproj": {}
   },
   "projects": {
-    "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemBL/NovaBusinessSystemBL.csproj": {
+    "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.BL/NovaBusinessSystemBL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemBL/NovaBusinessSystemBL.csproj",
+        "projectUniqueName": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.BL/NovaBusinessSystemBL.csproj",
         "projectName": "NovaBusinessSystemBL",
-        "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemBL/NovaBusinessSystemBL.csproj",
+        "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.BL/NovaBusinessSystemBL.csproj",
         "packagesPath": "/home/ahmedjehad/.nuget/packages/",
-        "outputPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemBL/obj/",
+        "outputPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.BL/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/ahmedjehad/.nuget/NuGet/NuGet.Config"
@@ -27,11 +27,11 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/DataAccessLayer.csproj": {
-                "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/DataAccessLayer.csproj"
+              "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.DAL/DataAccessLayer.csproj": {
+                "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.DAL/DataAccessLayer.csproj"
               },
-              "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj": {
-                "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj"
+              "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.DTOs/NovaBusinessSystemDTOs.csproj": {
+                "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.DTOs/NovaBusinessSystemDTOs.csproj"
               }
             }
           }
@@ -345,14 +345,14 @@
         }
       }
     },
-    "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/DataAccessLayer.csproj": {
+    "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.DAL/DataAccessLayer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/DataAccessLayer.csproj",
+        "projectUniqueName": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.DAL/DataAccessLayer.csproj",
         "projectName": "DataAccessLayer",
-        "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/DataAccessLayer.csproj",
+        "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.DAL/DataAccessLayer.csproj",
         "packagesPath": "/home/ahmedjehad/.nuget/packages/",
-        "outputPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDAL/obj/",
+        "outputPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.DAL/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/ahmedjehad/.nuget/NuGet/NuGet.Config"
@@ -368,8 +368,8 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj": {
-                "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj"
+              "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.DTOs/NovaBusinessSystemDTOs.csproj": {
+                "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.DTOs/NovaBusinessSystemDTOs.csproj"
               }
             }
           }
@@ -697,14 +697,14 @@
         }
       }
     },
-    "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj": {
+    "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.DTOs/NovaBusinessSystemDTOs.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj",
+        "projectUniqueName": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.DTOs/NovaBusinessSystemDTOs.csproj",
         "projectName": "NovaBusinessSystemDTOs",
-        "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj",
+        "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.DTOs/NovaBusinessSystemDTOs.csproj",
         "packagesPath": "/home/ahmedjehad/.nuget/packages/",
-        "outputPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDTOs/obj/",
+        "outputPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.DTOs/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/ahmedjehad/.nuget/NuGet/NuGet.Config"
@@ -1054,11 +1054,11 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemBL/NovaBusinessSystemBL.csproj": {
-                "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemBL/NovaBusinessSystemBL.csproj"
+              "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.BL/NovaBusinessSystemBL.csproj": {
+                "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.BL/NovaBusinessSystemBL.csproj"
               },
-              "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj": {
-                "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystemDTOs/NovaBusinessSystemDTOs.csproj"
+              "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.DTOs/NovaBusinessSystemDTOs.csproj": {
+                "projectPath": "/home/ahmedjehad/Projects Dot Net/DotNet-Development/Training-TSQL-Practice/NovaBusinessSystem/CSharp/NovaBusinessSystem/NovaBusinessSystem.DTOs/NovaBusinessSystemDTOs.csproj"
               }
             }
           }
