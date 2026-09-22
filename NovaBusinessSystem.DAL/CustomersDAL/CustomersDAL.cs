@@ -8,9 +8,9 @@ namespace nCustomersDAL
     public class CustomersDAL
     {
 
-        public static DataTable GetAllCustomersList()
+        public static IEnumerable<CustomerDTO> GetAllCustomersList()
         {
-            DataTable DT_AllCustomers = new DataTable();
+            List<CustomerDTO> L_AllCustomers = new List<CustomerDTO>();
 
 
             using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
@@ -23,15 +23,33 @@ namespace nCustomersDAL
                     connection.Open();
 
                     using (SqlDataReader reader = command.ExecuteReader())
-                        if (reader.HasRows)
-                            DT_AllCustomers.Load(reader);
+                        while (reader.Read())
+                        {
+                            L_AllCustomers.Add(
+                                new CustomerDTO(
+                                    reader.GetInt32(reader.GetOrdinal("CustomerID")),
+                                    reader.GetString(reader.GetOrdinal("FirstName")),
+                                    reader.GetString(reader.GetOrdinal("LastName")),
+                                    reader.GetString(reader.GetOrdinal("Email")),
+                                    reader.GetString(reader.GetOrdinal("Phone")),
+                                    reader.GetString(reader.GetOrdinal("City")),
+                                    reader.GetDateTime(reader.GetOrdinal("RegistrationDate")),
+                                    reader.GetInt32(reader.GetOrdinal("LoyaltyPoints")),
+                                    reader.GetString(reader.GetOrdinal("Status"))
+
+                                )
+
+                            );
+                        }
+
 
                 }
+
                 catch { throw; }
                 ;
             }
 
-            return DT_AllCustomers;
+            return L_AllCustomers;
 
         }
         public static CustomerDTO? FindCustomerBy(int CustomerID)
@@ -83,7 +101,7 @@ namespace nCustomersDAL
         }
 
 
-        public static int AddNewCustomer(CustomerDTO customerDTO)
+        public static int AddNewCustomer(CustomerAddDTO customerDTO)
         {
             using (SqlConnection connection =
                    new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
@@ -132,6 +150,51 @@ namespace nCustomersDAL
                 }
             }
         }
+
+
+        public static int UpdateCustomer(int customerID , CustomerAddDTO customerDTO)
+        {
+
+            using (SqlConnection connection =
+                   new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+            using (SqlCommand command =
+                   new SqlCommand("[dbo].usp_UpdateCustomer", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.Add("@FirstName", SqlDbType.NVarChar, 50)
+                    .Value = customerDTO.FirstName;
+
+                command.Parameters.Add("@LastName", SqlDbType.NVarChar, 50)
+                    .Value = customerDTO.LastName;
+
+                command.Parameters.Add("@Email", SqlDbType.NVarChar, 150)
+                    .Value = customerDTO.Email;
+
+                command.Parameters.Add("@Phone", SqlDbType.NChar, 11)
+                    .Value = customerDTO.Phone;
+
+                command.Parameters.Add("@City", SqlDbType.NVarChar, 100)
+                    .Value = customerDTO.City;
+
+                command.Parameters.Add("@Status", SqlDbType.NVarChar, 20)
+                    .Value = customerDTO.Status;
+
+                command.Parameters.Add("@CustomerID" , SqlDbType.Int ).Value = customerID ;
+
+
+                try
+                {
+                    connection.Open(); 
+                    return Convert.ToInt32(command.ExecuteScalar());
+                }
+                catch (SqlException)
+                {
+                    throw;
+                }
+            }
+        }
+
 
     }
 

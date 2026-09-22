@@ -16,8 +16,39 @@ namespace NovaBusinessSystem.BL
         public string Phone { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public DateTime RegistrationDate { get; set; }
-        public short LoyaltyPoints { get; set; }
+        public int LoyaltyPoints { get; set; }
         public string Status { get; set; }
+        public CustomerDTO CDTO
+        {
+            get
+            {
+                return new CustomerDTO(
+                this.CustomerID,
+                this.FirstName,
+                this.LastName,
+                this.Email,
+                this.Phone,
+                this.City,
+                this.RegistrationDate,
+                this.LoyaltyPoints,
+                this.Status
+                );
+            }
+        }
+        public CustomerAddDTO CAddDTO
+        {
+            get
+            {
+                return new CustomerAddDTO(
+                this.FirstName,
+                this.LastName,
+                this.Email,
+                this.Phone,
+                this.City,
+                this.Status
+                );
+            }
+        }
 
         public Enumerations.EnMode enMode { get; set; }
             = Enumerations.EnMode._kADD;
@@ -33,7 +64,7 @@ namespace NovaBusinessSystem.BL
             this.RegistrationDate = DateTime.Now;
             this.LoyaltyPoints = 0;
             this.Status = "";
-            this.enMode = Enumerations.EnMode._kADD ; 
+            this.enMode = Enumerations.EnMode._kADD;
 
         }
 
@@ -70,19 +101,42 @@ namespace NovaBusinessSystem.BL
 
             );
         }
+        private CustomerAddDTO ConvertCustomerAddToDTO()
+        {
+            return new CustomerAddDTO(
 
-        public  CustomersBL? ConvertDTOtoObject(CustomerDTO customer)
+                this.FirstName,
+                this.LastName,
+                this.Email,
+                this.Phone,
+                this.City,
+                this.Status
+
+            );
+        }
+
+        public void ConvertDTOtoObject(CustomerDTO customer)
         {
             if (customer is not null)
             {
-                this.CustomerID = customer.CustomerID;
                 this.FirstName = customer.FirstName;
                 this.LastName = customer.LastName;
                 this.Email = customer.Email;
                 this.Phone = customer.Phone;
                 this.City = customer.City;
-                this.RegistrationDate = customer.RegistrationDate;
-                this.LoyaltyPoints = customer.LoyaltyPoints;
+                this.Status = customer.Status;
+            }
+        }
+
+        public CustomersBL? ConvertAddDTOtoObject(CustomerAddDTO customer)
+        {
+            if (customer is not null)
+            {
+                this.FirstName = customer.FirstName;
+                this.LastName = customer.LastName;
+                this.Email = customer.Email;
+                this.Phone = customer.Phone;
+                this.City = customer.City;
                 this.Status = customer.Status;
             }
 
@@ -93,7 +147,6 @@ namespace NovaBusinessSystem.BL
         {
 
             CustomerDTO? infoCustomer = CustomersDAL.FindCustomerBy(id);
-
             if (infoCustomer is not null)
                 return new CustomersBL(infoCustomer);
 
@@ -102,11 +155,16 @@ namespace NovaBusinessSystem.BL
 
         private bool _AddNewCustomer()
         {
-            this.CustomerID = CustomersDAL.AddNewCustomer(ConvertToDTO());
+            this.CustomerID = CustomersDAL.AddNewCustomer(ConvertCustomerAddToDTO());
             return this.CustomerID > 0;
         }
 
-        public static DataTable GetCustomersList() => CustomersDAL.GetAllCustomersList();
+        private bool _UpdateCustomer()
+        {
+            return CustomersDAL.UpdateCustomer(this.CustomerID, this.CAddDTO) > 0;
+        }
+
+        public static IEnumerable<CustomerDTO> GetCustomersList() => CustomersDAL.GetAllCustomersList();
 
         public bool SaveModeCustomer()
         {
@@ -122,11 +180,32 @@ namespace NovaBusinessSystem.BL
                         else return false;
                     }
                 case Enumerations.EnMode._kUPDATE:
-                    return false;
+                    return _UpdateCustomer();
 
                 default: return false;
 
             }
+        }
+
+        public static bool CheckStringIsValid(string text)
+        {
+            bool isFound = true;
+
+            if (text == "")
+                return false;
+
+            if (!string.IsNullOrWhiteSpace(text))
+                foreach (char character in text)
+                {
+                    if (char.IsDigit(character) || char.IsPunctuation(character) || Char.IsNumber(character) || char.IsSymbol(character) || char.IsWhiteSpace(character))
+                    {
+                        isFound = false;
+                        break;
+                    }
+
+                }
+
+            return isFound;
         }
     }
 

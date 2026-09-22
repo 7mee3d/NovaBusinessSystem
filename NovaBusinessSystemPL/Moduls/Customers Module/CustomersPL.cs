@@ -4,6 +4,7 @@ using NovaBusinessSystem.DTOs;
 using NovaBusinessSystem.BL;
 using NovaBusinessSystem.Enumeration;
 using nHelpersPL;
+using System.Security.Principal;
 
 namespace CustomersPL
 {
@@ -96,16 +97,17 @@ namespace CustomersPL
             System.Console.WriteLine("\n\n");
 
             PrintHeader("📋 CUSTOMER LIST", 7);
+            System.Console.WriteLine("\n\n\n");
             System.Console.WriteLine($"\t\t{"ID",-15} {"Name",-30} {"Email",-40} {"City",-15} {"Points",-10} {"Status",-15}");
 
             System.Console.WriteLine($"\t\t{new string('-', 123)}");
-            DataTable DT_ALlCustomers = CustomersBL.GetCustomersList();
+            List<CustomerDTO> L_ALlCustomers = CustomersBL.GetCustomersList().ToList();
 
-            foreach (DataRow DR_Customer in DT_ALlCustomers.Rows)
-                System.Console.WriteLine($"\t\t{Convert.ToInt32(DR_Customer["CustomerID"]),-15} {DR_Customer["Name"].ToString(),-30} {DR_Customer["Email"].ToString(),-40} {DR_Customer["City"].ToString(),-15} {Convert.ToInt32(DR_Customer["LoyaltyPoints"]),-10} {DR_Customer["Status"],-15}");
+            foreach (var Item_Customer in L_ALlCustomers)
+                System.Console.WriteLine($"\t\t{Convert.ToInt32(Item_Customer.CustomerID),-15} {string.Join(" ", Item_Customer.FirstName, Item_Customer.LastName),-30} {Item_Customer.Email,-40} {Item_Customer.City,-15} {Convert.ToInt32(Item_Customer.LoyaltyPoints),-10} {Item_Customer.Status,-15}");
             System.Console.WriteLine($"\t\t{new string('-', 123)}\n\n");
 
-            System.Console.WriteLine($"\t\tTotal Customers: {DT_ALlCustomers.Rows.Count}\n\n");
+            System.Console.WriteLine($"\t\tTotal Customers: {L_ALlCustomers.Count}\n\n");
 
 
         }
@@ -145,7 +147,7 @@ namespace CustomersPL
 
         }
 
-        private static void GetCustomerByID()
+        private static CustomersBL? GetCustomerByID()
         {
             Console.Clear();
 
@@ -170,6 +172,8 @@ namespace CustomersPL
             {
                 ShowNotFoundMessage(SEX.Message, "❌ NOT FOUND", "Customer could not be found.");
             }
+
+            return customerInfo;
         }
 
         private static void AddNewCustomer()
@@ -198,6 +202,41 @@ namespace CustomersPL
             }
 
         }
+
+
+        private static void _UpdateCustomer()
+        {
+
+            Console.Clear();
+
+
+
+            try
+            {
+                CustomersBL infoCustomer = GetCustomerByID()!;
+                System.Console.WriteLine("\n\n\n");
+                PrintHeader("UPDATE CUSTOMER", 7);
+                if (infoCustomer is not null)
+                {
+                    System.Console.WriteLine("\n\n");
+
+                    CustomerDTO? customer = ReadInformationCustoemr();
+                    infoCustomer.ConvertDTOtoObject(customer!);
+
+                    if (infoCustomer!.SaveModeCustomer())
+                    {
+                        _ShowSccessMessageAndShowInformationCustomer(infoCustomer, "✅ CUSTOMER UPDATED");
+                    }
+                }
+
+            }
+            catch (SqlException SEX)
+            {
+                ShowNotFoundMessage(SEX.Message, "❌ CUSTOMER NOT UPDATED", "Customer could not be UPDATED.");
+            }
+
+        }
+
 
         public static void StartUpCustomersModule()
         {
@@ -230,6 +269,12 @@ namespace CustomersPL
                     case Enumerations.EnChoicesCustomersModule._kADD_NEW_CUSTOMER:
                         {
                             AddNewCustomer();
+                            break;
+                        }
+
+                    case Enumerations.EnChoicesCustomersModule._kUPDATE_INFORMATION_CUSTOMER:
+                        {
+                            _UpdateCustomer();
                             break;
                         }
                 }

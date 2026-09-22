@@ -9,7 +9,7 @@ public class CustomerDTO
     public string Phone { get; private set; } = string.Empty;
     public string City { get; private set; } = string.Empty;
     public DateTime RegistrationDate { get; private set; }
-    public short LoyaltyPoints { get; private set; }
+    public int LoyaltyPoints { get; private set; }
     public string Status { get; private set; }
     
     public CustomerDTO(
@@ -20,7 +20,7 @@ public class CustomerDTO
         string phone,
         string city,
         DateTime registrationDate,
-        short loyaltyPoints,
+        int loyaltyPoints,
         string status)
     {
         this.CustomerID = customerID;
