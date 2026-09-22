@@ -156,12 +156,13 @@ namespace nHelpersPL
 
         }
 
-        protected static void ShowNotFoundMessage(string MessageReason, string MessageHeader, string MessageBody)
+        protected static void ShowNotFoundMessage(string MessageHeader , string MessageBody , string? MessageReason = null )
         {
             System.Console.WriteLine("\n\n");
             PrintHeaderErrors(MessageHeader, 5);
             Console.WriteLine($"{GenarateTabs(5)}║ {MessageBody.Trim(),-50}                     ║");
-            Console.WriteLine($"{GenarateTabs(5)}║ Reason: {MessageReason.Trim(),-50}             ║");
+            if (MessageReason is not null)
+                Console.WriteLine($"{GenarateTabs(5)}║ Reason: {MessageReason.Trim(),-50}             ║");
             Console.WriteLine($"{GenarateTabs(5)}╚════════════════════════════════════════════════════════════════════════╝");
         }
     }

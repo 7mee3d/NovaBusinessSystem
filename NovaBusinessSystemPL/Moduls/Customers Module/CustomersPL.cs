@@ -237,6 +237,48 @@ namespace CustomersPL
 
         }
 
+        private static void _DeleteCustomer()
+        {
+
+            Console.Clear();
+
+            try
+            {
+                CustomersBL infoCustomer = GetCustomerByID()!;
+                System.Console.WriteLine("\n\n\n");
+                PrintHeader("🗑️  DELETE CUSTOMER", 7);
+                
+                if (infoCustomer is not null)
+                {
+                    System.Console.WriteLine("\n\n");
+
+                    Console.Write($"{GenarateTabs(7)}Are you sure you want to delete this customer?\n");
+                    Console.Write($"{GenarateTabs(7)}Y = Yes N = No  Choice: ");
+                    char choice = 'n';
+
+                    while (!char.TryParse(Console.ReadLine(), out choice) ||  char.ToLower(choice) is not ('y' or 'n'))
+
+                        Console.Write($"{GenarateTabs(7)}Invalid Choive , pLease Enter valid choive -> Y = Yes N = No  Choice: ");
+
+                    if (char.ToLower(choice) == 'y')
+                    {
+                        if (infoCustomer.DeleteCustomer())
+                            _ShowSccessMessageAndShowInformationCustomer(infoCustomer, "✅ CUSTOMER DELETED");
+                        else
+                            ShowNotFoundMessage("❌ DELETE FAILED", "This customer cannot be deleted because\nthey have existing sales records.");
+                    }
+                    else
+                        ShowNotFoundMessage("ℹ️  DELETE CANCELLED ", "No changes were made." );
+                }
+
+            }
+            catch (SqlException SEX)
+            {
+                ShowNotFoundMessage(SEX.Message, "❌ CUSTOMER NOT UPDATED", "Customer could not be UPDATED.");
+            }
+
+        }
+
 
         public static void StartUpCustomersModule()
         {
@@ -275,6 +317,12 @@ namespace CustomersPL
                     case Enumerations.EnChoicesCustomersModule._kUPDATE_INFORMATION_CUSTOMER:
                         {
                             _UpdateCustomer();
+                            break;
+                        }
+
+                    case Enumerations.EnChoicesCustomersModule._kDELETE_CUSTOMER:
+                        {
+                            _DeleteCustomer();
                             break;
                         }
                 }

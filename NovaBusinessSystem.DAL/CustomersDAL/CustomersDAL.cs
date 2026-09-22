@@ -151,9 +151,9 @@ namespace nCustomersDAL
             }
         }
 
-        public static bool IsTheEmailExists (string Email )
+        public static bool IsTheEmailExists(string Email)
         {
-            
+
             using (SqlConnection connection =
                    new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
             using (SqlCommand command =
@@ -167,8 +167,8 @@ namespace nCustomersDAL
 
                 try
                 {
-                    connection.Open(); 
-                    return Convert.ToBoolean(command.ExecuteScalar());
+                    connection.Open();
+                    return Convert.ToInt32(command.ExecuteScalar()) > 0 ;
                 }
                 catch (SqlException)
                 {
@@ -177,7 +177,7 @@ namespace nCustomersDAL
             }
         }
 
-        public static int UpdateCustomer(int customerID , CustomerAddDTO customerDTO)
+        public static int UpdateCustomer(int customerID, CustomerAddDTO customerDTO)
         {
 
             using (SqlConnection connection =
@@ -205,12 +205,12 @@ namespace nCustomersDAL
                 command.Parameters.Add("@Status", SqlDbType.NVarChar, 20)
                     .Value = customerDTO.Status;
 
-                command.Parameters.Add("@CustomerID" , SqlDbType.Int ).Value = customerID ;
+                command.Parameters.Add("@CustomerID", SqlDbType.Int).Value = customerID;
 
 
                 try
                 {
-                    connection.Open(); 
+                    connection.Open();
                     return Convert.ToInt32(command.ExecuteScalar());
                 }
                 catch (SqlException)
@@ -220,7 +220,33 @@ namespace nCustomersDAL
             }
         }
 
+        public static bool DeleteCustomer(int customerID)
+        {
 
+            using (SqlConnection connection =
+                  new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+            using (SqlCommand command =
+                   new SqlCommand("[dbo].usp_DeleteCustomer", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.Add("@CustomerID", SqlDbType.Int).Value = customerID;
+
+
+                try
+                {
+                    connection.Open();
+                    return Convert.ToInt32(command.ExecuteScalar()) > 0 ;
+                }
+                catch (SqlException)
+                {
+                    throw;
+                }
+
+            }
+
+
+        }
     }
 
 }

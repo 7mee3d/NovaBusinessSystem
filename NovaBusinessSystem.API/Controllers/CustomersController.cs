@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using NovaBusinessSystem.BL;
 using NovaBusinessSystem.DTOs;
 
@@ -8,7 +9,7 @@ namespace NovaBusinessSystem.API
     [Route("api/Customers")]
     public class Customers : ControllerBase
     {
-        [HttpGet("All", Name = "GetAllCustomers")]
+        [HttpGet("", Name = "GetAllCustomers")]
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -23,13 +24,13 @@ namespace NovaBusinessSystem.API
             return Ok(allCustomers);
         }
 
-        [HttpGet("Id", Name = "GetCustomerByID")]
+        [HttpGet("{id:int}", Name = "GetCustomerByID")]
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<CustomerDTO> GetCustomerByID(int id)
+        public ActionResult<CustomerDTO> GetCustomerByID([FromRoute(Name = "id")] int id)
         {
 
             if (id <= 0)
@@ -44,13 +45,13 @@ namespace NovaBusinessSystem.API
         }
 
 
-        [HttpPost("Add")]
+        [HttpPost("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public ActionResult AddNewCustomer(CustomerAddDTO customer)
+        public ActionResult AddNewCustomer([FromBody] CustomerAddDTO customer)
         {
 
             if (customer is null)
@@ -80,13 +81,14 @@ namespace NovaBusinessSystem.API
             return CreatedAtAction(nameof(GetCustomerByID), new { Id = customersBL.CustomerID }, customersBL.CDTO);
         }
 
-        [HttpPut("Update")]
+        [HttpPut("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
 
-        public ActionResult UpdateCustomer(int id, CustomerAddDTO customer)
+        public ActionResult UpdateCustomer([FromRoute(Name = "id")] int id, [FromBody] CustomerAddDTO customer)
         {
 
             if (customer is null)
@@ -123,6 +125,43 @@ namespace NovaBusinessSystem.API
 
 
             return NoContent();
+        }
+
+        [HttpDelete("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public ActionResult DeleteCustomer([FromRoute(Name = "id")] int id)
+        {
+            if (id <= 0)
+                return BadRequest("Invalid Customer ID.");
+
+            CustomersBL? customersBL = CustomersBL.Find(id);
+
+            if (customersBL is null)
+                return NotFound("The Customer was not found.");
+            try
+            {
+                if (!customersBL.DeleteCustomer())
+                    return NotFound($"Customer with ID {id} was not found.");
+
+                return NoContent();
+            }
+            catch (SqlException ex) when (ex.Number == 547)
+            {
+                return Conflict(
+                    "This customer cannot be deleted because they have related sales."
+                );
+            }
+            catch (SqlException)
+            {
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    "A database error occurred."
+                );
+            }
         }
     }
 }

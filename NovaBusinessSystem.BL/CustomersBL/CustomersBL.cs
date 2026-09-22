@@ -101,6 +101,7 @@ namespace NovaBusinessSystem.BL
 
             );
         }
+
         private CustomerAddDTO ConvertCustomerAddToDTO()
         {
             return new CustomerAddDTO(
@@ -217,6 +218,8 @@ namespace NovaBusinessSystem.BL
 
             return false ;
         }
+
+        public bool DeleteCustomer () => CustomersDAL.DeleteCustomer(this.CustomerID);
     }
 
 }
