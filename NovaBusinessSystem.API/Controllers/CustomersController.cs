@@ -62,10 +62,10 @@ namespace NovaBusinessSystem.API
                 CustomersBL.CheckStringIsValid(customer.Email) ||
                 CustomersBL.CheckStringIsValid(customer.Phone) ||
                 CustomersBL.CheckStringIsValid(customer.City) ||
-                CustomersBL.CheckStringIsValid(customer.Status) || 
-                customer.Status != "Active" || customer.Status != "Inactive" || customer.Status != "Blocked" 
+                CustomersBL.CheckStringIsValid(customer.Status) ||
+                customer.Status != "Active" || customer.Status != "Inactive" || customer.Status != "Blocked"
                 )
-                
+
                 return BadRequest("Invalid Data");
 
             CustomersBL customersBL = new CustomersBL();
@@ -78,6 +78,51 @@ namespace NovaBusinessSystem.API
 
 
             return CreatedAtAction(nameof(GetCustomerByID), new { Id = customersBL.CustomerID }, customersBL.CDTO);
+        }
+
+        [HttpPut("Update")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+
+        public ActionResult UpdateCustomer(int id, CustomerAddDTO customer)
+        {
+
+            if (customer is null)
+                return BadRequest("The Customer is null ");
+            if (id < 0)
+                return BadRequest("Invalid Data 1");
+
+            if (CustomersBL.IsEmailExists(customer.Email))
+                return BadRequest("Invalid Data Email");
+
+            if (
+                !CustomersBL.CheckStringIsValid(customer.FirstName) ||
+                !CustomersBL.CheckStringIsValid(customer.LastName) ||
+                !CustomersBL.CheckStringIsValid(customer.Email) ||
+                !CustomersBL.CheckStringIsValid(customer.City) ||
+                !CustomersBL.CheckStringIsValid(customer.Status)
+                )
+
+                return BadRequest("Invalid Data 2 ");
+
+            if (!CustomersBL.IsStatusValid(customer.Status))
+                return BadRequest("Invalid Data Status ");
+
+            CustomersBL customersBL = CustomersBL.Find(id)!;
+
+            if (customersBL is null)
+                return NotFound("The Customer not found");
+
+            customersBL.ConvertAddDTOtoObject(customer);
+
+
+            if (!customersBL.SaveModeCustomer())
+                return BadRequest("Connot Be Updated This Customer");
+
+
+            return NoContent();
         }
     }
 }

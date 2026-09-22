@@ -119,8 +119,8 @@ namespace nCustomersDAL
                 command.Parameters.Add("@Email", SqlDbType.NVarChar, 150)
                     .Value = customerDTO.Email;
 
-                command.Parameters.Add("@Phone", SqlDbType.NChar, 11)
-                    .Value = customerDTO.Phone;
+                command.Parameters.Add("@Phone", SqlDbType.NVarChar, 11)
+                    .Value = customerDTO.Phone.Trim();
 
                 command.Parameters.Add("@City", SqlDbType.NVarChar, 100)
                     .Value = customerDTO.City;
@@ -151,6 +151,31 @@ namespace nCustomersDAL
             }
         }
 
+        public static bool IsTheEmailExists (string Email )
+        {
+            
+            using (SqlConnection connection =
+                   new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+            using (SqlCommand command =
+                   new SqlCommand("[dbo].usp_IsEmailExists", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+
+
+                command.Parameters.Add("@Email", SqlDbType.NVarChar, 150)
+                    .Value = Email;
+
+                try
+                {
+                    connection.Open(); 
+                    return Convert.ToBoolean(command.ExecuteScalar());
+                }
+                catch (SqlException)
+                {
+                    throw;
+                }
+            }
+        }
 
         public static int UpdateCustomer(int customerID , CustomerAddDTO customerDTO)
         {
@@ -171,7 +196,7 @@ namespace nCustomersDAL
                 command.Parameters.Add("@Email", SqlDbType.NVarChar, 150)
                     .Value = customerDTO.Email;
 
-                command.Parameters.Add("@Phone", SqlDbType.NChar, 11)
+                command.Parameters.Add("@Phone", SqlDbType.NVarChar, 11)
                     .Value = customerDTO.Phone;
 
                 command.Parameters.Add("@City", SqlDbType.NVarChar, 100)

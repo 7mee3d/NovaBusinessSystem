@@ -207,6 +207,16 @@ namespace NovaBusinessSystem.BL
 
             return isFound;
         }
+
+        public static bool IsEmailExists(string Email) => CustomersDAL.IsTheEmailExists(Email);
+
+        public static bool IsStatusValid (string Status)
+        {
+            if(Status == "Active" || Status == "Inactive" || Status == "Blocked") 
+            return true ; 
+
+            return false ;
+        }
     }
 
 }
