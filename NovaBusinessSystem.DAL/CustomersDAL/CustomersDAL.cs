@@ -319,6 +319,34 @@ namespace nCustomersDAL
                 }
             }
         }
+
+        public static async Task<bool>? RedeemPointsToCustomer(int id, int pointsToRedeem)
+        {
+
+            using (SqlConnection connection =
+                 new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+            using (SqlCommand command =
+                   new SqlCommand("[dbo].usp_RedeemPoints", connection))
+            {
+
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.Add("@CustomerID", SqlDbType.Int).Value = id;
+                command.Parameters.Add("@PointToRedeem", SqlDbType.Int).Value = pointsToRedeem;
+
+                try
+                {
+                    connection.Open();
+
+                    return Convert.ToInt32(await command.ExecuteScalarAsync()) > 0;
+
+                }
+                catch (SqlException)
+                {
+                    return false;
+                }
+            }
+        }
     }
 
 }

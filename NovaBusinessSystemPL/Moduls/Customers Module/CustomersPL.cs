@@ -48,7 +48,7 @@ namespace CustomersPL
             PrintDetail("Status", informationCustomer.Status, 7);
             Console.WriteLine($"{GenarateTabs(7)}╚═════════════════════════════════════════════════╝");
         }
-     
+
         private static void _MainMenuCustomersModule()
         {
             Console.WriteLine($"\n\n\n{GenarateTabs(7)}╔══════════════════════════════════════════╗");
@@ -150,6 +150,7 @@ namespace CustomersPL
         private static int ReadTheID()
         {
             Console.Clear();
+            System.Console.WriteLine("\n\n\n");
 
             PrintHeader("🔎 GET CUSTOMER BY ID", 7);
             System.Console.WriteLine("\n\n");
@@ -365,6 +366,9 @@ namespace CustomersPL
 
                     int pointsToAdd = 0;
 
+                    System.Console.WriteLine("\n\n");
+                    PrintHeader("⭐ ADD POINTS", 7);
+                    System.Console.WriteLine("\n\n");
                     System.Console.Write($"{GenarateTabs(7)}Points To Add  : ");
 
                     while (!int.TryParse(Console.ReadLine(), out pointsToAdd) || pointsToAdd <= 0)
@@ -394,6 +398,61 @@ namespace CustomersPL
                     }
 
                     ShowNotFoundMessage("❌ POINTS DEDUCTED", $"{await respone.Content.ReadAsStringAsync()}");
+                }
+                else
+                    ShowNotFoundMessage("❌ NOT FOUND", "Customer could not be found.");
+            }
+            catch (Exception ex)
+            {
+                ShowNotFoundMessage("❌ NOT FOUND", ex.Message, "Customer could not be found.");
+            }
+        }
+
+
+        private static async Task _RedeemPoints()
+        {
+
+            try
+            {
+                int ID = ReadTheID()!;
+
+                if (ID > 0)
+                {
+
+                    int pointsToAdd = 0;
+                    System.Console.WriteLine("\n\n");
+                    PrintHeader("🎁 REDEEM POINTS", 7);
+                    System.Console.WriteLine("\n\n");
+                    System.Console.Write($"{GenarateTabs(7)}Points To Redeem  : ");
+
+                    while (!int.TryParse(Console.ReadLine(), out pointsToAdd) || pointsToAdd <= 0)
+                        System.Console.WriteLine($"{GenarateTabs(7)}Invalid Data Try Add valid points : ");
+
+                    HttpClient httpClient = new HttpClient();
+
+                    httpClient.BaseAddress = new Uri("http://localhost:5276/api/Customers/");
+
+                    var respone = await httpClient.PatchAsync($"LoyaltyPoints/{ID}/{pointsToAdd}", null);
+
+                    if (respone.IsSuccessStatusCode)
+                    {
+                        var content = await respone.Content.ReadFromJsonAsync<PointsTransactionResultDTO>();
+
+                        System.Console.WriteLine("\n\n");
+                        Console.Write($"{GenarateTabs(7)}╔══════════════════════════════════════════╗\n");
+                        Console.Write($"{GenarateTabs(7)}║            ✅ POINTS REDEEMED            ║\n");
+                        Console.Write($"{GenarateTabs(7)}╠══════════════════════════════════════════╣\n");
+                        Console.Write($"{GenarateTabs(7)}║ Customer      : {content.CustomerName,-25}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ Previous      : {content.PreviousPoints,-25}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ Added         : {content.Points,-25}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ New Balance   : {content.NewBalance,-25}║\n");
+                        Console.Write($"{GenarateTabs(7)}╚══════════════════════════════════════════╝\n");
+
+                        return;
+
+                    }
+
+                    ShowNotFoundMessage("❌ INSUFFICIENT POINTS", $"{await respone.Content.ReadAsStringAsync()}");
                 }
                 else
                     ShowNotFoundMessage("❌ NOT FOUND", "Customer could not be found.");
@@ -434,6 +493,12 @@ namespace CustomersPL
                     case Enumerations.EnChoicesLoyaltyPoints._kADD_POINTS:
                         {
                             await _AddPoints();
+                            break;
+                        }
+
+                    case Enumerations.EnChoicesLoyaltyPoints._kREDEEM_POINTS:
+                        {
+                            await _RedeemPoints();
                             break;
                         }
                 }

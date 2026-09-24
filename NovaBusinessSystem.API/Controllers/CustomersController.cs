@@ -218,5 +218,41 @@ namespace NovaBusinessSystem.API
             return Ok(pointsTransactionResultDTO);
         }
 
+        [HttpPatch("LoyaltyPoints/{id:int}/{points:int}")]
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<ActionResult<PointsTransactionResultDTO>> RedeemPointsCustomer(
+                 [FromRoute(Name = "id")] int id, [FromRoute(Name = "points")] int points
+                 )
+        {
+            if (id < 0 || points < 0)
+                return BadRequest($"Invalid Data");
+
+            CustomersBL? customer = CustomersBL.Find(id)!;
+
+            if (customer is null)
+                return NotFound("The Customer does not exists");
+
+            int previousPoints = customer.LoyaltyPoints;
+
+            if (points > previousPoints)
+                return Conflict("Insufficient loyalty points.");
+
+            if (!await customer.RedeemPointsToCustomer(points))
+                return Conflict("Insufficient points.");
+
+            PointsTransactionResultDTO pointsTransactionResultDTO = new PointsTransactionResultDTO(
+                            string.Join(" ", customer.FirstName, customer.LastName),
+                            customer.LoyaltyPoints,
+                            points,
+                            customer.LoyaltyPoints - points
+                );
+
+            return Ok(pointsTransactionResultDTO);
+        }
     }
 }
