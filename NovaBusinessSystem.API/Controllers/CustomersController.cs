@@ -163,5 +163,27 @@ namespace NovaBusinessSystem.API
                 );
             }
         }
+
+        [HttpGet("LoyaltyPoints/{id:int}")]
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        
+        public async Task<ActionResult<CustomerPointsDTO>> ViewCustomerPoints ([FromRoute(Name = "id")]int id)
+        {
+            
+            if(id < 0 ) 
+            return BadRequest(new {Message = $"Invalid Data {id}"}) ; 
+
+            CustomerPointsDTO ? customerPointsDTO = await CustomersBL.ViewCustomerPoints(id)! ;
+
+            if(customerPointsDTO is null ) 
+            return NotFound(new {Message = "The Customer does not exists"}) ;
+
+            return Ok (customerPointsDTO);
+        }
+
     }
 }

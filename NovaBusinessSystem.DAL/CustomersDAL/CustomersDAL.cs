@@ -168,7 +168,7 @@ namespace nCustomersDAL
                 try
                 {
                     connection.Open();
-                    return Convert.ToInt32(command.ExecuteScalar()) > 0 ;
+                    return Convert.ToInt32(command.ExecuteScalar()) > 0;
                 }
                 catch (SqlException)
                 {
@@ -236,7 +236,7 @@ namespace nCustomersDAL
                 try
                 {
                     connection.Open();
-                    return Convert.ToInt32(command.ExecuteScalar()) > 0 ;
+                    return Convert.ToInt32(command.ExecuteScalar()) > 0;
                 }
                 catch (SqlException)
                 {
@@ -245,8 +245,53 @@ namespace nCustomersDAL
 
             }
 
-
         }
+
+        public static async Task<CustomerPointsDTO>? ViewCustomerPoints(int id)
+        {
+            CustomerPointsDTO? customerPointsDTO = null;
+
+            using (SqlConnection connection =
+                 new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+            using (SqlCommand command =
+                   new SqlCommand("[dbo].usp_ViewCustomerPoints", connection))
+            {
+
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.Add("@CustomerID", SqlDbType.Int).Value = id;
+
+                try
+                {
+                    connection.Open();
+
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        if (reader.Read())
+                        {
+                            customerPointsDTO = new CustomerPointsDTO(
+
+                                 reader.GetInt32(reader.GetOrdinal("CustomerID")),
+                                 reader.GetString(reader.GetOrdinal("FullName")),
+                                 reader.GetInt32(reader.GetOrdinal("Current Points")),
+                                 reader.GetString(reader.GetOrdinal("Loyalty Level"))
+
+                             );
+
+
+                        }
+                    }
+
+                }
+                catch (SqlException)
+                {
+                    return null ;
+                }
+            }
+
+            return customerPointsDTO;
+        }
+
     }
 
 }

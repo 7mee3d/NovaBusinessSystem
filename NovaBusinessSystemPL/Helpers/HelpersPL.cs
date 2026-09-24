@@ -165,5 +165,6 @@ namespace nHelpersPL
                 Console.WriteLine($"{GenarateTabs(5)}║ Reason: {MessageReason.Trim(),-50}             ║");
             Console.WriteLine($"{GenarateTabs(5)}╚════════════════════════════════════════════════════════════════════════╝");
         }
+        
     }
 }

@@ -1,16 +1,18 @@
 ﻿
-namespace NovaBusinessSystem 
+namespace NovaBusinessSystem
 
 {
 
     public class Program
     {
 
-        private static void Main (string[] args)
+        private static async Task Main(string[] args)
         {
-        //    EmployeesPL.EmployeesPL.StartupEmployeesModule();
-            CustomersPL.CustomersPL.StartUpCustomersModule();
+                
+
+               //EmployeesPL.EmployeesPL.StartupEmployeesModule();
+            await CustomersPL.CustomersPL.StartUpCustomersModule();
         }
-        
+
     }
 }

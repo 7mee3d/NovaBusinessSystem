@@ -5,6 +5,7 @@ using NovaBusinessSystem.BL;
 using NovaBusinessSystem.Enumeration;
 using nHelpersPL;
 using System.Security.Principal;
+using System.Net.Http.Json;
 
 namespace CustomersPL
 {
@@ -147,7 +148,7 @@ namespace CustomersPL
 
         }
 
-        private static CustomersBL? GetCustomerByID()
+        private static int ReadTheID()
         {
             Console.Clear();
 
@@ -159,13 +160,22 @@ namespace CustomersPL
                 System.Console.Write($"{GenarateTabs(7)}Invalid Data ID : ");
 
             System.Console.WriteLine("\n\n");
-            CustomersBL customerInfo = CustomersBL.Find(ID)!;
+
+
+            return ID;
+        }
+
+        private static CustomersBL? GetCustomerByID()
+        {
+
+            System.Console.WriteLine("\n\n");
+            CustomersBL customerInfo = CustomersBL.Find(ReadTheID())!;
 
             try
             {
                 if (customerInfo is not null)
                     _PrintCustomerDetails(customerInfo, "👤 CUSTOMER DETAILS");
-                else ShowNotFoundMessage($"Employee with ID {ID} was not found.", "❌ NOT FOUND", "Customer could not be found.");
+                else ShowNotFoundMessage($"Employee with ID {customerInfo?.CustomerID} was not found.", "❌ NOT FOUND", "Customer could not be found.");
 
             }
             catch (SqlException SEX)
@@ -209,8 +219,6 @@ namespace CustomersPL
 
             Console.Clear();
 
-
-
             try
             {
                 CustomersBL infoCustomer = GetCustomerByID()!;
@@ -247,7 +255,7 @@ namespace CustomersPL
                 CustomersBL infoCustomer = GetCustomerByID()!;
                 System.Console.WriteLine("\n\n\n");
                 PrintHeader("🗑️  DELETE CUSTOMER", 7);
-                
+
                 if (infoCustomer is not null)
                 {
                     System.Console.WriteLine("\n\n");
@@ -256,7 +264,7 @@ namespace CustomersPL
                     Console.Write($"{GenarateTabs(7)}Y = Yes N = No  Choice: ");
                     char choice = 'n';
 
-                    while (!char.TryParse(Console.ReadLine(), out choice) ||  char.ToLower(choice) is not ('y' or 'n'))
+                    while (!char.TryParse(Console.ReadLine(), out choice) || char.ToLower(choice) is not ('y' or 'n'))
 
                         Console.Write($"{GenarateTabs(7)}Invalid Choive , pLease Enter valid choive -> Y = Yes N = No  Choice: ");
 
@@ -268,7 +276,7 @@ namespace CustomersPL
                             ShowNotFoundMessage("❌ DELETE FAILED", "This customer cannot be deleted because\nthey have existing sales records.");
                     }
                     else
-                        ShowNotFoundMessage("ℹ️  DELETE CANCELLED ", "No changes were made." );
+                        ShowNotFoundMessage("ℹ️  DELETE CANCELLED ", "No changes were made.");
                 }
 
             }
@@ -279,8 +287,109 @@ namespace CustomersPL
 
         }
 
+        private static void _PrintMenuLoyaltyPoints()
+        {
+            System.Console.WriteLine("\n\n\n");
+            Console.Write($"{GenarateTabs(7)}╔══════════════════════════════════════════╗\n");
+            Console.Write($"{GenarateTabs(7)}║            ⭐ LOYALTY POINTS             ║\n");
+            Console.Write($"{GenarateTabs(7)}╠══════════════════════════════════════════╣\n");
+            Console.Write($"{GenarateTabs(7)}║                                          ║\n");
+            Console.Write($"{GenarateTabs(7)}║  1. View Customer Points                 ║\n");
+            Console.Write($"{GenarateTabs(7)}║  2. Add Points                           ║\n");
+            Console.Write($"{GenarateTabs(7)}║  3. Redeem Points                        ║\n");
+            Console.Write($"{GenarateTabs(7)}║  4. Top Loyalty Customers                ║\n");
+            Console.Write($"{GenarateTabs(7)}║  5. Loyalty Statistics                   ║\n");
+            Console.Write($"{GenarateTabs(7)}║                                          ║\n");
+            Console.Write($"{GenarateTabs(7)}║  0. 🔙 Back                              ║\n");
+            Console.Write($"{GenarateTabs(7)}╚══════════════════════════════════════════╝\n\n\n");
 
-        public static void StartUpCustomersModule()
+
+        }
+
+        private static async Task ViewCustomerPoints()
+        {
+            try
+            {
+                int id = ReadTheID();
+                System.Console.WriteLine("\n\n\n");
+
+                HttpClient httpClient = new HttpClient();
+
+                httpClient.BaseAddress =
+                    new Uri("http://localhost:5276/api/Customers/");
+
+                var response = await httpClient.GetAsync($"LoyaltyPoints/{id}");
+
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonCustomer =
+                        await response.Content.ReadFromJsonAsync<CustomerPointsDTO>();
+
+                    if (jsonCustomer is not null)
+                    {
+                        Console.Write($"{GenarateTabs(7)}╔══════════════════════════════════════════╗\n");
+                        Console.Write($"{GenarateTabs(7)}║             ⭐ CUSTOMER POINTS           ║\n");
+                        Console.Write($"{GenarateTabs(7)}╠══════════════════════════════════════════╣\n");
+                        Console.Write($"{GenarateTabs(7)}║ Customer ID    : {jsonCustomer.CustomerID,-24}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ Customer Name  : {jsonCustomer.CustomerName,-24}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ Current Points : {jsonCustomer.CurrentPoints,-24}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ Loyalty Level  : {jsonCustomer.LoyaltyLevel,-24}║\n");
+                        Console.Write($"{GenarateTabs(7)}╚══════════════════════════════════════════╝\n");
+                    }
+                }
+                else
+                {
+
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    {
+                        System.Console.Write($"{GenarateTabs(7)}");
+                        Console.Write(await response.Content.ReadAsStringAsync());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowNotFoundMessage("❌ NOT FOUND", ex.Message, "Customer could not be found.");
+            }
+        }
+
+        private static async Task _StartUpLoyaltyPointsSection()
+        {
+            while (true)
+            {
+
+                Console.Clear();
+                _PrintMenuLoyaltyPoints();
+
+                Console.Write($"{GenarateTabs(7)}Select: ");
+                byte choice = 0;
+                while (!byte.TryParse(Console.ReadLine(), out choice) || choice > 5)
+                    Console.Write($"{GenarateTabs(7)}Invalid Choive Select another choice : ");
+
+                switch ((Enumerations.EnChoicesLoyaltyPoints)choice)
+                {
+                    case Enumerations.EnChoicesLoyaltyPoints._kVIEW_CUSTOMER_POINTS:
+                        {
+                            await ViewCustomerPoints();
+                            break;
+                        }
+
+                    case Enumerations.EnChoicesLoyaltyPoints._kBACK :
+                        {
+                           await StartUpCustomersModule();
+                            break;
+                        }
+                }
+
+
+                Console.WriteLine($"\n{GenarateTabs(7)}Press any key to continue...");
+                Console.ReadKey();
+            }
+        }
+
+        public static async Task StartUpCustomersModule()
         {
 
             while (true)
@@ -323,6 +432,12 @@ namespace CustomersPL
                     case Enumerations.EnChoicesCustomersModule._kDELETE_CUSTOMER:
                         {
                             _DeleteCustomer();
+                            break;
+                        }
+
+                    case Enumerations.EnChoicesCustomersModule._kLOYALTY_POINTS:
+                        {
+                            await _StartUpLoyaltyPointsSection();
                             break;
                         }
                 }

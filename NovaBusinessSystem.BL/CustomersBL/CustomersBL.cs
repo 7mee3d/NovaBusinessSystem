@@ -211,15 +211,20 @@ namespace NovaBusinessSystem.BL
 
         public static bool IsEmailExists(string Email) => CustomersDAL.IsTheEmailExists(Email);
 
-        public static bool IsStatusValid (string Status)
+        public static bool IsStatusValid(string Status)
         {
-            if(Status == "Active" || Status == "Inactive" || Status == "Blocked") 
-            return true ; 
+            if (Status == "Active" || Status == "Inactive" || Status == "Blocked")
+                return true;
 
-            return false ;
+            return false;
         }
 
-        public bool DeleteCustomer () => CustomersDAL.DeleteCustomer(this.CustomerID);
+        public bool DeleteCustomer() => CustomersDAL.DeleteCustomer(this.CustomerID);
+
+        // 
+
+        public static async Task<CustomerPointsDTO> ? ViewCustomerPoints(int id)
+         => await CustomersDAL.ViewCustomerPoints(id)!;
     }
 
 }

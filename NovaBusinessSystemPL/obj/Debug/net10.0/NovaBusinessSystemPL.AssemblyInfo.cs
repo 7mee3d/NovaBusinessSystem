@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NovaBusinessSystemPL")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+687d5ec5ae70b81c070c3c80310bea194bdc4ac3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dd413f2a258a3b3c4cd5200c440e17350a7b6645")]
 [assembly: System.Reflection.AssemblyProductAttribute("NovaBusinessSystemPL")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NovaBusinessSystemPL")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
