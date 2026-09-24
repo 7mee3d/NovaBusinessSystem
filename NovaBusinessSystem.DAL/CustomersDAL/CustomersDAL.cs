@@ -285,13 +285,40 @@ namespace nCustomersDAL
                 }
                 catch (SqlException)
                 {
-                    return null ;
+                    return null;
                 }
             }
 
             return customerPointsDTO;
         }
 
+        public static async Task<bool>? AddPointsToCustomer(int id, int pointsToAdd)
+        {
+
+            using (SqlConnection connection =
+                 new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+            using (SqlCommand command =
+                   new SqlCommand("[dbo].usp_AddPoints", connection))
+            {
+
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.Add("@CustomerID", SqlDbType.Int).Value = id;
+                command.Parameters.Add("@PointsToAdd", SqlDbType.Int).Value = pointsToAdd;
+
+                try
+                {
+                    connection.Open();
+
+                    return Convert.ToInt32(await command.ExecuteScalarAsync()) > 0;
+
+                }
+                catch (SqlException)
+                {
+                    return false;
+                }
+            }
+        }
     }
 
 }

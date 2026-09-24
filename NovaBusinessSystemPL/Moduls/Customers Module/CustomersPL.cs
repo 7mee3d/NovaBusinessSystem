@@ -1,10 +1,8 @@
-using System.Data;
 using Microsoft.Data.SqlClient;
 using NovaBusinessSystem.DTOs;
 using NovaBusinessSystem.BL;
 using NovaBusinessSystem.Enumeration;
 using nHelpersPL;
-using System.Security.Principal;
 using System.Net.Http.Json;
 
 namespace CustomersPL
@@ -50,6 +48,7 @@ namespace CustomersPL
             PrintDetail("Status", informationCustomer.Status, 7);
             Console.WriteLine($"{GenarateTabs(7)}╚═════════════════════════════════════════════════╝");
         }
+     
         private static void _MainMenuCustomersModule()
         {
             Console.WriteLine($"\n\n\n{GenarateTabs(7)}╔══════════════════════════════════════════╗");
@@ -213,7 +212,6 @@ namespace CustomersPL
 
         }
 
-
         private static void _UpdateCustomer()
         {
 
@@ -355,6 +353,57 @@ namespace CustomersPL
             }
         }
 
+        private static async Task _AddPoints()
+        {
+
+            try
+            {
+                int ID = ReadTheID()!;
+
+                if (ID > 0)
+                {
+
+                    int pointsToAdd = 0;
+
+                    System.Console.Write($"{GenarateTabs(7)}Points To Add  : ");
+
+                    while (!int.TryParse(Console.ReadLine(), out pointsToAdd) || pointsToAdd <= 0)
+                        System.Console.WriteLine($"{GenarateTabs(7)}Invalid Data Try Add valid points : ");
+
+                    HttpClient httpClient = new HttpClient();
+
+                    httpClient.BaseAddress = new Uri("http://localhost:5276/api/Customers/");
+
+                    var respone = await httpClient.PostAsync($"LoyaltyPoints/{ID}/{pointsToAdd}", null);
+
+                    if (respone.IsSuccessStatusCode)
+                    {
+                        var content = await respone.Content.ReadFromJsonAsync<PointsTransactionResultDTO>();
+                        System.Console.WriteLine("\n\n");
+                        Console.Write($"{GenarateTabs(7)}╔══════════════════════════════════════════╗\n");
+                        Console.Write($"{GenarateTabs(7)}║          ✅ POINTS ADDED                 ║\n");
+                        Console.Write($"{GenarateTabs(7)}╠══════════════════════════════════════════╣\n");
+                        Console.Write($"{GenarateTabs(7)}║ Customer      : {content.CustomerName,-25}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ Previous      : {content.PreviousPoints,-25}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ Added         : {content.Points,-25}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ New Balance   : {content.NewBalance,-25}║\n");
+                        Console.Write($"{GenarateTabs(7)}╚══════════════════════════════════════════╝\n");
+
+                        return;
+
+                    }
+
+                    ShowNotFoundMessage("❌ POINTS DEDUCTED", $"{await respone.Content.ReadAsStringAsync()}");
+                }
+                else
+                    ShowNotFoundMessage("❌ NOT FOUND", "Customer could not be found.");
+            }
+            catch (Exception ex)
+            {
+                ShowNotFoundMessage("❌ NOT FOUND", ex.Message, "Customer could not be found.");
+            }
+        }
+
         private static async Task _StartUpLoyaltyPointsSection()
         {
             while (true)
@@ -376,15 +425,21 @@ namespace CustomersPL
                             break;
                         }
 
-                    case Enumerations.EnChoicesLoyaltyPoints._kBACK :
+                    case Enumerations.EnChoicesLoyaltyPoints._kBACK:
                         {
-                           await StartUpCustomersModule();
+                            await StartUpCustomersModule();
+                            break;
+                        }
+
+                    case Enumerations.EnChoicesLoyaltyPoints._kADD_POINTS:
+                        {
+                            await _AddPoints();
                             break;
                         }
                 }
 
 
-                Console.WriteLine($"\n{GenarateTabs(7)}Press any key to continue...");
+                Console.WriteLine($"\n\n{GenarateTabs(7)}Press any key to continue...");
                 Console.ReadKey();
             }
         }

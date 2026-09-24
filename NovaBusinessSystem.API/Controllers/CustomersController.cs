@@ -1,3 +1,4 @@
+using System.Drawing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using NovaBusinessSystem.BL;
@@ -170,19 +171,51 @@ namespace NovaBusinessSystem.API
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        
-        public async Task<ActionResult<CustomerPointsDTO>> ViewCustomerPoints ([FromRoute(Name = "id")]int id)
+
+        public async Task<ActionResult<CustomerPointsDTO>> ViewCustomerPoints([FromRoute(Name = "id")] int id)
         {
-            
-            if(id < 0 ) 
-            return BadRequest(new {Message = $"Invalid Data {id}"}) ; 
 
-            CustomerPointsDTO ? customerPointsDTO = await CustomersBL.ViewCustomerPoints(id)! ;
+            if (id < 0)
+                return BadRequest(new { Message = $"Invalid Data {id}" });
 
-            if(customerPointsDTO is null ) 
-            return NotFound(new {Message = "The Customer does not exists"}) ;
+            CustomerPointsDTO? customerPointsDTO = await CustomersBL.ViewCustomerPoints(id)!;
 
-            return Ok (customerPointsDTO);
+            if (customerPointsDTO is null)
+                return NotFound(new { Message = "The Customer does not exists" });
+
+            return Ok(customerPointsDTO);
+        }
+
+        [HttpPost("LoyaltyPoints/{id:int}/{points:int}")]
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<ActionResult<PointsTransactionResultDTO>> ViewCustomerPoints(
+            [FromRoute(Name = "id")] int id, [FromRoute(Name = "points")] int points
+            )
+        {
+            if (id < 0 || points < 0)
+                return BadRequest(new { Message = $"Invalid Data" });
+
+            CustomersBL? customer = CustomersBL.Find(id)!;
+
+            if (customer is null)
+                return NotFound(new { Message = "The Customer does not exists" });
+
+            if (!await customer.AddPointsToCustomer(points))
+                return Conflict(new { Message = "Once happens" });
+
+            PointsTransactionResultDTO pointsTransactionResultDTO = new PointsTransactionResultDTO(
+                            string.Join(" ", customer.FirstName, customer.LastName),
+                            customer.LoyaltyPoints,
+                            points,
+                            customer.LoyaltyPoints + points
+                );
+
+            return Ok(pointsTransactionResultDTO);
         }
 
     }
