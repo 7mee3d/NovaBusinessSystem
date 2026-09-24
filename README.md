@@ -1,4 +1,4 @@
-# 💼 NovaBusinessSystem
+# 💼 Nova Business System
 
 > A C#/.NET business system focused on practical backend development and real-world software engineering.
 
