@@ -305,7 +305,7 @@ namespace CustomersPL
 
         }
 
-        private static async Task ViewCustomerPoints()
+        private static async Task ViewCustomerPointsAsync()
         {
             try
             {
@@ -354,7 +354,7 @@ namespace CustomersPL
             }
         }
 
-        private static async Task _AddPoints()
+        private static async Task _AddPointsAsync()
         {
 
             try
@@ -408,8 +408,7 @@ namespace CustomersPL
             }
         }
 
-
-        private static async Task _RedeemPoints()
+        private static async Task _RedeemPointsAsync()
         {
 
             try
@@ -444,7 +443,7 @@ namespace CustomersPL
                         Console.Write($"{GenarateTabs(7)}╠══════════════════════════════════════════╣\n");
                         Console.Write($"{GenarateTabs(7)}║ Customer      : {content.CustomerName,-25}║\n");
                         Console.Write($"{GenarateTabs(7)}║ Previous      : {content.PreviousPoints,-25}║\n");
-                        Console.Write($"{GenarateTabs(7)}║ Added         : {content.Points,-25}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ Redeemed      : {content.Points,-25}║\n");
                         Console.Write($"{GenarateTabs(7)}║ New Balance   : {content.NewBalance,-25}║\n");
                         Console.Write($"{GenarateTabs(7)}╚══════════════════════════════════════════╝\n");
 
@@ -463,6 +462,49 @@ namespace CustomersPL
             }
         }
 
+        private static async Task _GetTopLoyaltyCustomersAsync()
+        {
+
+            try
+            {
+
+                HttpClient httpClient = new HttpClient();
+
+                httpClient.BaseAddress = new Uri("http://localhost:5276/api/Customers/LoyaltyPoints/");
+
+                var respone = await httpClient.GetAsync("TopCustomers/");
+                Console.Clear();
+
+                PrintHeader("🏆 TOP LOYALTY CUSTOMERS", 7);
+                if (respone.IsSuccessStatusCode)
+                {
+                    var topLoyaltyCustomerPoints = await respone.Content.ReadFromJsonAsync<List<TopLoyaltyCustomerDTO>>();
+                    if (topLoyaltyCustomerPoints is not null)
+                    {
+                        System.Console.WriteLine($"\n\n{GenarateTabs(6)}{"Rank",-15} {"Customer Name",-25} {"Points",-15} {"Level",-15}");
+                        System.Console.WriteLine($"{GenarateTabs(6)}{new string('-', 70)}");
+
+
+                        foreach (var item in topLoyaltyCustomerPoints)
+                            System.Console.WriteLine($"{GenarateTabs(6)}{item.Rank,-15} {item.CustomerName,-25} {item.Points,-15} {item.Level,-15}");
+
+                        System.Console.WriteLine($"{GenarateTabs(6)}{new string('-', 70)}");
+
+                    }
+
+                    return;
+                }
+                ShowNotFoundMessage("⚠️ NO DATA FOUND", $"{await respone.Content.ReadAsStringAsync()}");
+
+            }
+            catch (Exception ex)
+            {
+                ShowNotFoundMessage("❌ SYSTEM ERROR", ex.Message, "your request. Please try again.");
+            }
+
+        }
+
+
         private static async Task _StartUpLoyaltyPointsSection()
         {
             while (true)
@@ -480,7 +522,7 @@ namespace CustomersPL
                 {
                     case Enumerations.EnChoicesLoyaltyPoints._kVIEW_CUSTOMER_POINTS:
                         {
-                            await ViewCustomerPoints();
+                            await ViewCustomerPointsAsync();
                             break;
                         }
 
@@ -492,14 +534,21 @@ namespace CustomersPL
 
                     case Enumerations.EnChoicesLoyaltyPoints._kADD_POINTS:
                         {
-                            await _AddPoints();
+                            await _AddPointsAsync();
                             break;
                         }
 
                     case Enumerations.EnChoicesLoyaltyPoints._kREDEEM_POINTS:
                         {
-                            await _RedeemPoints();
+                            await _RedeemPointsAsync();
                             break;
+                        }
+
+                    case Enumerations.EnChoicesLoyaltyPoints._kTOP_LOYALTY_CUSTOMERS:
+                        {
+                            await _GetTopLoyaltyCustomersAsync();
+                            break;
+
                         }
                 }
 

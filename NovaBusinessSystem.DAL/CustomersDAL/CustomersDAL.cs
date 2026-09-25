@@ -347,6 +347,53 @@ namespace nCustomersDAL
                 }
             }
         }
-    }
 
+        public static async Task<IEnumerable<TopLoyaltyCustomerDTO>> ? GetTopLoyaltyCustomers()
+        {
+
+            List<TopLoyaltyCustomerDTO>? L_TopLoyaltyCustomerDTO = new();
+
+            using (SqlConnection connection =
+                 new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+
+            using (SqlCommand command =
+                   new SqlCommand("[dbo].usp_GetTopLoyaltyCustomers", connection))
+            {
+
+                command.CommandType = CommandType.StoredProcedure;
+
+                try
+                {
+                    connection.Open();
+
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        while (reader.Read())
+                        {
+                            L_TopLoyaltyCustomerDTO.Add(
+
+                                new TopLoyaltyCustomerDTO(
+
+                                 reader.GetInt64(reader.GetOrdinal("Rank")),
+                                 reader.GetString(reader.GetOrdinal("FullName")),
+                                 reader.GetInt32(reader.GetOrdinal("Points")),
+                                 reader.GetString(reader.GetOrdinal("Level"))
+
+                                )
+                            );
+
+                        }
+                    }
+
+                }
+                catch (SqlException)
+                {
+                    return null!;
+                }
+            }
+
+            return L_TopLoyaltyCustomerDTO;
+        }
+
+    }
 }

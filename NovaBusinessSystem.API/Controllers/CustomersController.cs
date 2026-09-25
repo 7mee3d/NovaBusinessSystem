@@ -178,7 +178,7 @@ namespace NovaBusinessSystem.API
             if (id < 0)
                 return BadRequest(new { Message = $"Invalid Data {id}" });
 
-            CustomerPointsDTO? customerPointsDTO = await CustomersBL.ViewCustomerPoints(id)!;
+            CustomerPointsDTO? customerPointsDTO = await CustomersBL.ViewCustomerPointsAsync(id)!;
 
             if (customerPointsDTO is null)
                 return NotFound(new { Message = "The Customer does not exists" });
@@ -205,7 +205,7 @@ namespace NovaBusinessSystem.API
             if (customer is null)
                 return NotFound(new { Message = "The Customer does not exists" });
 
-            if (!await customer.AddPointsToCustomer(points))
+            if (!await customer.AddPointsToCustomerAsync(points))
                 return Conflict(new { Message = "Once happens" });
 
             PointsTransactionResultDTO pointsTransactionResultDTO = new PointsTransactionResultDTO(
@@ -242,7 +242,7 @@ namespace NovaBusinessSystem.API
             if (points > previousPoints)
                 return Conflict("Insufficient loyalty points.");
 
-            if (!await customer.RedeemPointsToCustomer(points))
+            if (!await customer.RedeemPointsToCustomerAsync(points))
                 return Conflict("Insufficient points.");
 
             PointsTransactionResultDTO pointsTransactionResultDTO = new PointsTransactionResultDTO(
@@ -253,6 +253,27 @@ namespace NovaBusinessSystem.API
                 );
 
             return Ok(pointsTransactionResultDTO);
+        }
+
+
+        [HttpGet("LoyaltyPoints/TopCustomers")]
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<ActionResult<IEnumerable<TopLoyaltyCustomerDTO>>> GetTopLoyaltyCustomers()
+        {
+
+            List<TopLoyaltyCustomerDTO> topLoyaltyCustomers =
+                (await CustomersBL.GetTopLoyaltyCustomersAsync()!).ToList();
+
+            if (!topLoyaltyCustomers.Any() || topLoyaltyCustomers.Count <= 0)
+                return NotFound("No loyalty customers found.");
+
+
+            return Ok(topLoyaltyCustomers);
+
         }
     }
 }

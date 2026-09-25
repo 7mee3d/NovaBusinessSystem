@@ -223,14 +223,17 @@ namespace NovaBusinessSystem.BL
 
         // 
 
-        public static async Task<CustomerPointsDTO>? ViewCustomerPoints(int id)
+        public static async Task<CustomerPointsDTO>? ViewCustomerPointsAsync(int id)
          => await CustomersDAL.ViewCustomerPoints(id)!;
 
-        public async Task<bool> AddPointsToCustomer(int pointsToAdd)
+        public async Task<bool> AddPointsToCustomerAsync(int pointsToAdd)
         => await CustomersDAL.AddPointsToCustomer(this.CustomerID, pointsToAdd)!;
 
-        public async Task<bool> RedeemPointsToCustomer(int pointsToAdd)
+        public async Task<bool> RedeemPointsToCustomerAsync(int pointsToAdd)
         => await CustomersDAL.RedeemPointsToCustomer(this.CustomerID, pointsToAdd)!;
+
+        public static async Task<IEnumerable<TopLoyaltyCustomerDTO>>? GetTopLoyaltyCustomersAsync()
+        => await CustomersDAL.GetTopLoyaltyCustomers()!;
     }
 
 }
