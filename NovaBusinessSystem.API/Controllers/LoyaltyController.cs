@@ -25,7 +25,7 @@ namespace NovaBusinessSystem.API
                 if (id < 0)
                     return BadRequest(new { Message = $"Invalid Data {id}" });
 
-                CustomerPointsDTO? customerPointsDTO = await CustomersBL.ViewCustomerPointsAsync(id)!;
+                CustomerPointsDTO? customerPointsDTO = await LoyaltyBL.ViewCustomerPointsAsync(id)!;
 
                 if (customerPointsDTO is null)
                     return NotFound(new { Message = "The Customer does not exists" });
@@ -61,7 +61,7 @@ namespace NovaBusinessSystem.API
                 if (customer is null)
                     return NotFound(new { Message = "The Customer does not exists" });
 
-                if (!await customer.AddPointsToCustomerAsync(points))
+                if (!await LoyaltyBL.AddPointsToCustomerAsync(id , points))
                     return Conflict(new { Message = "Once happens" });
 
                 PointsTransactionResultDTO pointsTransactionResultDTO = new PointsTransactionResultDTO(
@@ -105,7 +105,7 @@ namespace NovaBusinessSystem.API
 
                 int previousPoints = customer.LoyaltyPoints;
 
-                if (!await customer.RedeemPointsToCustomerAsync(points))
+                if (!await LoyaltyBL.RedeemPointsToCustomerAsync(id , customer.LoyaltyPoints , points))
                     return Conflict("Insufficient points.");
 
                 PointsTransactionResultDTO pointsTransactionResultDTO = new PointsTransactionResultDTO(
@@ -136,7 +136,7 @@ namespace NovaBusinessSystem.API
             {
 
                 List<TopLoyaltyCustomerDTO> topLoyaltyCustomers =
-                    (await CustomersBL.GetTopLoyaltyCustomersAsync()!).ToList();
+                    (await LoyaltyBL.GetTopLoyaltyCustomersAsync()!).ToList();
 
                 if (!topLoyaltyCustomers.Any() || topLoyaltyCustomers.Count <= 0)
                     return NotFound("No loyalty customers found.");
@@ -164,7 +164,7 @@ namespace NovaBusinessSystem.API
             {
 
                 LoyaltyStatisticsDTO loyaltyStatisticsDTO =
-                    await CustomersBL.GetLoyaltyStatisticsAsync()!;
+                    await LoyaltyBL.GetLoyaltyStatisticsAsync()!;
 
                 if (loyaltyStatisticsDTO is null)
                     return NotFound("No loyalty Statistics found.");

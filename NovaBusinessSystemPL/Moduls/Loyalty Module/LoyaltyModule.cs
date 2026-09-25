@@ -39,9 +39,9 @@ namespace NovaBusinessSystem.PL
                 HttpClient httpClient = new HttpClient();
 
                 httpClient.BaseAddress =
-                    new Uri("http://localhost:5276/api/Customers/");
+                    new Uri("http://localhost:5276/api/Loyalty/");
 
-                var response = await httpClient.GetAsync($"LoyaltyPoints/{id}");
+                var response = await httpClient.GetAsync($"{id}");
 
 
                 if (response.IsSuccessStatusCode)
@@ -100,9 +100,9 @@ namespace NovaBusinessSystem.PL
 
                     HttpClient httpClient = new HttpClient();
 
-                    httpClient.BaseAddress = new Uri("http://localhost:5276/api/Customers/");
+                    httpClient.BaseAddress = new Uri("http://localhost:5276/api/Loyalty/");
 
-                    var respone = await httpClient.PostAsync($"LoyaltyPoints/{ID}/{pointsToAdd}", null);
+                    var respone = await httpClient.PostAsync($"{ID}/{pointsToAdd}", null);
 
                     if (respone.IsSuccessStatusCode)
                     {
@@ -155,9 +155,9 @@ namespace NovaBusinessSystem.PL
 
                     HttpClient httpClient = new HttpClient();
 
-                    httpClient.BaseAddress = new Uri("http://localhost:5276/api/Customers/");
+                    httpClient.BaseAddress = new Uri("http://localhost:5276/api/Loyalty/");
 
-                    var respone = await httpClient.PatchAsync($"LoyaltyPoints/{ID}/{pointsToAdd}", null);
+                    var respone = await httpClient.PatchAsync($"{ID}/{pointsToAdd}", null);
 
                     if (respone.IsSuccessStatusCode)
                     {
@@ -196,7 +196,7 @@ namespace NovaBusinessSystem.PL
 
                 HttpClient httpClient = new HttpClient();
 
-                httpClient.BaseAddress = new Uri("http://localhost:5276/api/Customers/LoyaltyPoints/");
+                httpClient.BaseAddress = new Uri("http://localhost:5276/api/Loyalty/");
 
                 var respone = await httpClient.GetAsync("TopCustomers/");
                 Console.Clear();
@@ -239,7 +239,7 @@ namespace NovaBusinessSystem.PL
 
                 HttpClient httpClient = new HttpClient();
 
-                httpClient.BaseAddress = new Uri("http://localhost:5276/api/Customers/LoyaltyPoints/");
+                httpClient.BaseAddress = new Uri("http://localhost:5276/api/Loyalty/");
 
                 var respone = await httpClient.GetAsync("LoyaltyStatistics/");
                 Console.Clear();

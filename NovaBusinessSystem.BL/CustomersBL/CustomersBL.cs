@@ -1,5 +1,4 @@
-using System.Data;
-using nCustomersDAL;
+using NovaBusinessSystem.DAL;
 using NovaBusinessSystem.Enumeration;
 using NovaBusinessSystem.DTOs;
 
@@ -221,27 +220,7 @@ namespace NovaBusinessSystem.BL
 
         public bool DeleteCustomer() => CustomersDAL.DeleteCustomer(this.CustomerID);
 
-        // 
-
-        public static async Task<CustomerPointsDTO>? ViewCustomerPointsAsync(int id)
-         => await CustomersDAL.ViewCustomerPoints(id)!;
-
-        public async Task<bool> AddPointsToCustomerAsync(int pointsToAdd)
-        => await CustomersDAL.AddPointsToCustomer(this.CustomerID, pointsToAdd)!;
-
-        public async Task<bool> RedeemPointsToCustomerAsync(int pointsToRedeem)
-        {
-            if (pointsToRedeem > this.LoyaltyPoints)
-                throw new Exception("INSUFFICIENT POINTS");
-
-          return  await CustomersDAL.RedeemPointsToCustomer(this.CustomerID, pointsToRedeem)!;
-        }
-
-        public static async Task<IEnumerable<TopLoyaltyCustomerDTO>>? GetTopLoyaltyCustomersAsync()
-        => await CustomersDAL.GetTopLoyaltyCustomers()!;
-
-        public async static Task<LoyaltyStatisticsDTO>? GetLoyaltyStatisticsAsync()
-        => await CustomersDAL.GetLoyaltyStatistics()!;
+        
     }
 
 }

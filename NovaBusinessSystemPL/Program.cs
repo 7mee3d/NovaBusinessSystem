@@ -1,4 +1,6 @@
 ﻿
+using NovaBusinessSystem.PL;
+
 namespace NovaBusinessSystem
 
 {
@@ -11,7 +13,7 @@ namespace NovaBusinessSystem
                 
 
                //EmployeesPL.EmployeesPL.StartupEmployeesModule();
-            await CustomersPL.CustomersPL.StartUpCustomersModule();
+            await CustomersPL.StartUpCustomersModule();
         }
 
     }

@@ -74,5 +74,14 @@ namespace NovaBusinessSystem.Enumeration
             _kLOYALTY_STATISTICS = 5
         }
 
+        public enum EnChoicesCustomerPurchases : byte
+        {
+            _kBACK = 0,
+            _kPURCHASE_HISTORY = 1,
+            _kCUSTOMER_SPENDING_SUMMARY = 2,
+            _kCUSTOMER_FAVORITE_PRODUCTS = 3,
+            _kCUSTOMER_MONTHLY_PURCHASES = 4,
+            _kCUSTOMER_RANKING = 5
+        }
     }
 }
