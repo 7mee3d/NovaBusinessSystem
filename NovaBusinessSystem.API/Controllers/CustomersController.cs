@@ -1,4 +1,3 @@
-using System.Drawing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using NovaBusinessSystem.BL;
@@ -8,7 +7,7 @@ namespace NovaBusinessSystem.API
 {
     [ApiController]
     [Route("api/Customers")]
-    public class Customers : ControllerBase
+    public class CustomersController : ControllerBase
     {
         [HttpGet("", Name = "GetAllCustomers")]
 
@@ -34,15 +33,24 @@ namespace NovaBusinessSystem.API
         public ActionResult<CustomerDTO> GetCustomerByID([FromRoute(Name = "id")] int id)
         {
 
-            if (id <= 0)
-                return BadRequest("Invalid Data");
+            try
+            {
+                if (id <= 0)
+                    return BadRequest("Invalid Data");
 
-            CustomersBL? customer = CustomersBL.Find(id);
+                CustomersBL? customer = CustomersBL.Find(id);
 
-            if (customer is null)
-                return NotFound("The Customer not found");
+                if (customer is null)
+                    return NotFound("The Customer not found");
 
-            return Ok(customer.CDTO);
+                return Ok(customer.CDTO);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
+
+
         }
 
 
@@ -55,31 +63,41 @@ namespace NovaBusinessSystem.API
         public ActionResult AddNewCustomer([FromBody] CustomerAddDTO customer)
         {
 
-            if (customer is null)
-                return BadRequest("The Customer is null ");
+            try
+            {
 
-            if (
-                CustomersBL.CheckStringIsValid(customer.FirstName) ||
-                CustomersBL.CheckStringIsValid(customer.FirstName) ||
-                CustomersBL.CheckStringIsValid(customer.Email) ||
-                CustomersBL.CheckStringIsValid(customer.Phone) ||
-                CustomersBL.CheckStringIsValid(customer.City) ||
-                CustomersBL.CheckStringIsValid(customer.Status) ||
-                customer.Status != "Active" || customer.Status != "Inactive" || customer.Status != "Blocked"
-                )
+                if (customer is null)
+                    return BadRequest("The Customer is null ");
 
-                return BadRequest("Invalid Data");
+                if (
+                    CustomersBL.CheckStringIsValid(customer.FirstName) ||
+                    CustomersBL.CheckStringIsValid(customer.LastName) ||
+                    CustomersBL.CheckStringIsValid(customer.Email) ||
+                    CustomersBL.CheckStringIsValid(customer.Phone) ||
+                    CustomersBL.CheckStringIsValid(customer.City) ||
+                    CustomersBL.CheckStringIsValid(customer.Status)
+                   )
+                    return BadRequest("Invalid Data");
 
-            CustomersBL customersBL = new CustomersBL();
-
-            customersBL.ConvertAddDTOtoObject(customer);
-
-
-            if (!customersBL.SaveModeCustomer())
-                return BadRequest("Connot Be Added This Customer");
+                if (!CustomersBL.IsStatusValid(customer.Status))
+                    return BadRequest("Invalid Data Status");
 
 
-            return CreatedAtAction(nameof(GetCustomerByID), new { Id = customersBL.CustomerID }, customersBL.CDTO);
+                CustomersBL customersBL = new CustomersBL();
+
+                customersBL.ConvertAddDTOtoObject(customer);
+
+
+                if (!customersBL.SaveModeCustomer())
+                    return BadRequest("Connot Be Added This Customer");
+
+
+                return CreatedAtAction(nameof(GetCustomerByID), new { Id = customersBL.CustomerID }, customersBL.CDTO);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
         }
 
         [HttpPut("{id:int}")]
@@ -91,6 +109,8 @@ namespace NovaBusinessSystem.API
 
         public ActionResult UpdateCustomer([FromRoute(Name = "id")] int id, [FromBody] CustomerAddDTO customer)
         {
+
+            try {
 
             if (customer is null)
                 return BadRequest("The Customer is null ");
@@ -124,8 +144,13 @@ namespace NovaBusinessSystem.API
             if (!customersBL.SaveModeCustomer())
                 return BadRequest("Connot Be Updated This Customer");
 
-
             return NoContent();
+
+            }catch(Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+
+            }
         }
 
         [HttpDelete("{id:int}")]
@@ -136,6 +161,7 @@ namespace NovaBusinessSystem.API
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public ActionResult DeleteCustomer([FromRoute(Name = "id")] int id)
         {
+
             if (id <= 0)
                 return BadRequest("Invalid Customer ID.");
 
@@ -163,6 +189,7 @@ namespace NovaBusinessSystem.API
                     "A database error occurred."
                 );
             }
+
         }
 
     }

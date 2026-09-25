@@ -3,10 +3,10 @@ using System.Reflection.Metadata;
 namespace nHelpersPL
 {
 
-    public class HelperPL
+    public static class HelperPL
     {
 
-        protected static string GenarateTabs(int numberTab)
+        public static string GenarateTabs(int numberTab)
         {
             string Tab = "";
 
@@ -37,7 +37,7 @@ namespace nHelpersPL
             return width;
         }
 
-        protected static void PrintHeader(string? TitleHeader, int? numberTab)
+        public static void PrintHeader(string? TitleHeader, int? numberTab)
         {
             if (TitleHeader is null) return;
             if (numberTab is null) return;
@@ -58,7 +58,8 @@ namespace nHelpersPL
             );
             Console.WriteLine($"{Tabs}╚══════════════════════════════════════════╝");
         }
-        protected static void PrintHeaderErrors(string? TitleHeader, int? numberTab)
+
+        public static void PrintHeaderErrors(string? TitleHeader, int? numberTab)
         {
             if (TitleHeader is null) return;
             if (numberTab is null) return;
@@ -80,12 +81,12 @@ namespace nHelpersPL
             Console.WriteLine($"{Tabs}╠════════════════════════════════════════════════════════════════════════╣");
         }
 
-        protected static void ReadInformation(string label, int alignmentNumber, int numberTabs)
+        public static void ReadInformation(string label, int alignmentNumber, int numberTabs)
         {
             Console.Write($"{GenarateTabs(numberTabs)}{label.PadRight(alignmentNumber) + " : "}");
         }
 
-        protected static string? ReadTheStringWithoutNumbers(string label, int alignemntNumber, int numberTabs)
+        public static string? ReadTheStringWithoutNumbers(string label, int alignemntNumber, int numberTabs)
         {
 
             if (alignemntNumber < 0 || numberTabs < 0 || string.IsNullOrWhiteSpace(label))
@@ -120,7 +121,7 @@ namespace nHelpersPL
         }
 
 
-        protected static T? ReadTheStringWithNumbers<T>(string label, int alignemntNumber, int numberTabs)
+        public static T? ReadTheStringWithNumbers<T>(string label, int alignemntNumber, int numberTabs)
         {
 
             if (alignemntNumber < 0 || numberTabs < 0 || string.IsNullOrWhiteSpace(label))
@@ -156,7 +157,7 @@ namespace nHelpersPL
 
         }
 
-        protected static void ShowNotFoundMessage(string MessageHeader , string MessageBody , string? MessageReason = null )
+        public static void ShowNotFoundMessage(string MessageHeader , string MessageBody , string? MessageReason = null )
         {
             System.Console.WriteLine("\n\n");
             PrintHeaderErrors(MessageHeader, 5);

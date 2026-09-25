@@ -6,7 +6,7 @@ namespace NovaBusinessSystem.API
 {
     [ApiController]
     [Route("api/Loyalty")]
-    public class Loyalty : ControllerBase
+    public class LoyaltyController : ControllerBase
     {
 
         [HttpGet("{id:int}")]
@@ -19,15 +19,23 @@ namespace NovaBusinessSystem.API
         public async Task<ActionResult<CustomerPointsDTO>> ViewCustomerPoints([FromRoute(Name = "id")] int id)
         {
 
-            if (id < 0)
-                return BadRequest(new { Message = $"Invalid Data {id}" });
+            try
+            {
 
-            CustomerPointsDTO? customerPointsDTO = await CustomersBL.ViewCustomerPointsAsync(id)!;
+                if (id < 0)
+                    return BadRequest(new { Message = $"Invalid Data {id}" });
 
-            if (customerPointsDTO is null)
-                return NotFound(new { Message = "The Customer does not exists" });
+                CustomerPointsDTO? customerPointsDTO = await CustomersBL.ViewCustomerPointsAsync(id)!;
 
-            return Ok(customerPointsDTO);
+                if (customerPointsDTO is null)
+                    return NotFound(new { Message = "The Customer does not exists" });
+
+                return Ok(customerPointsDTO);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
         }
 
         [HttpPatch("{id:int}/{points:int}/AddPoints")]
@@ -39,27 +47,37 @@ namespace NovaBusinessSystem.API
 
         public async Task<ActionResult<PointsTransactionResultDTO>> ViewCustomerPoints(
             [FromRoute(Name = "id")] int id, [FromRoute(Name = "points")] int points
-            )
+         )
         {
-            if (id < 0 || points < 0)
-                return BadRequest(new { Message = $"Invalid Data" });
 
-            CustomersBL? customer = CustomersBL.Find(id)!;
+            try
+            {
 
-            if (customer is null)
-                return NotFound(new { Message = "The Customer does not exists" });
+                if (id < 0 || points < 0)
+                    return BadRequest(new { Message = $"Invalid Data" });
 
-            if (!await customer.AddPointsToCustomerAsync(points))
-                return Conflict(new { Message = "Once happens" });
+                CustomersBL? customer = CustomersBL.Find(id)!;
 
-            PointsTransactionResultDTO pointsTransactionResultDTO = new PointsTransactionResultDTO(
-                            string.Join(" ", customer.FirstName, customer.LastName),
-                            customer.LoyaltyPoints,
-                            points,
-                            customer.LoyaltyPoints + points
-                );
+                if (customer is null)
+                    return NotFound(new { Message = "The Customer does not exists" });
 
-            return Ok(pointsTransactionResultDTO);
+                if (!await customer.AddPointsToCustomerAsync(points))
+                    return Conflict(new { Message = "Once happens" });
+
+                PointsTransactionResultDTO pointsTransactionResultDTO = new PointsTransactionResultDTO(
+                                string.Join(" ", customer.FirstName, customer.LastName),
+                                customer.LoyaltyPoints,
+                                points,
+                                customer.LoyaltyPoints + points
+                    );
+
+                return Ok(pointsTransactionResultDTO);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
         }
 
         [HttpPatch("{id:int}/{points:int}/RedeemPoints")]
@@ -73,30 +91,36 @@ namespace NovaBusinessSystem.API
                  [FromRoute(Name = "id")] int id, [FromRoute(Name = "points")] int points
                  )
         {
-            if (id < 0 || points < 0)
-                return BadRequest($"Invalid Data");
 
-            CustomersBL? customer = CustomersBL.Find(id)!;
+            try
+            {
 
-            if (customer is null)
-                return NotFound("The Customer does not exists");
+                if (id < 0 || points < 0)
+                    return BadRequest($"Invalid Data");
 
-            int previousPoints = customer.LoyaltyPoints;
+                CustomersBL? customer = CustomersBL.Find(id)!;
 
-            if (points > previousPoints)
-                return Conflict("Insufficient loyalty points.");
+                if (customer is null)
+                    return NotFound("The Customer does not exists");
 
-            if (!await customer.RedeemPointsToCustomerAsync(points))
-                return Conflict("Insufficient points.");
+                int previousPoints = customer.LoyaltyPoints;
 
-            PointsTransactionResultDTO pointsTransactionResultDTO = new PointsTransactionResultDTO(
-                            string.Join(" ", customer.FirstName, customer.LastName),
-                            customer.LoyaltyPoints,
-                            points,
-                            customer.LoyaltyPoints - points
-                );
+                if (!await customer.RedeemPointsToCustomerAsync(points))
+                    return Conflict("Insufficient points.");
 
-            return Ok(pointsTransactionResultDTO);
+                PointsTransactionResultDTO pointsTransactionResultDTO = new PointsTransactionResultDTO(
+                                string.Join(" ", customer.FirstName, customer.LastName),
+                                customer.LoyaltyPoints,
+                                points,
+                                customer.LoyaltyPoints - points
+                    );
+
+                return Ok(pointsTransactionResultDTO);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
         }
 
 
@@ -108,15 +132,22 @@ namespace NovaBusinessSystem.API
 
         public async Task<ActionResult<IEnumerable<TopLoyaltyCustomerDTO>>> GetTopLoyaltyCustomers()
         {
+            try
+            {
 
-            List<TopLoyaltyCustomerDTO> topLoyaltyCustomers =
-                (await CustomersBL.GetTopLoyaltyCustomersAsync()!).ToList();
+                List<TopLoyaltyCustomerDTO> topLoyaltyCustomers =
+                    (await CustomersBL.GetTopLoyaltyCustomersAsync()!).ToList();
 
-            if (!topLoyaltyCustomers.Any() || topLoyaltyCustomers.Count <= 0)
-                return NotFound("No loyalty customers found.");
+                if (!topLoyaltyCustomers.Any() || topLoyaltyCustomers.Count <= 0)
+                    return NotFound("No loyalty customers found.");
 
 
-            return Ok(topLoyaltyCustomers);
+                return Ok(topLoyaltyCustomers);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
 
         }
 
@@ -129,14 +160,23 @@ namespace NovaBusinessSystem.API
         public async Task<ActionResult<LoyaltyStatisticsDTO>> GetLoyaltyStatistics()
         {
 
-            LoyaltyStatisticsDTO loyaltyStatisticsDTO =
-                await CustomersBL.GetLoyaltyStatisticsAsync()!;
+            try
+            {
 
-            if (loyaltyStatisticsDTO is null)
-                return NotFound("No loyalty Statistics found.");
+                LoyaltyStatisticsDTO loyaltyStatisticsDTO =
+                    await CustomersBL.GetLoyaltyStatisticsAsync()!;
+
+                if (loyaltyStatisticsDTO is null)
+                    return NotFound("No loyalty Statistics found.");
 
 
-            return Ok(loyaltyStatisticsDTO);
+                return Ok(loyaltyStatisticsDTO);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
 
         }
     }

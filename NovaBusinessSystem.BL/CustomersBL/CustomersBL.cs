@@ -229,13 +229,18 @@ namespace NovaBusinessSystem.BL
         public async Task<bool> AddPointsToCustomerAsync(int pointsToAdd)
         => await CustomersDAL.AddPointsToCustomer(this.CustomerID, pointsToAdd)!;
 
-        public async Task<bool> RedeemPointsToCustomerAsync(int pointsToAdd)
-        => await CustomersDAL.RedeemPointsToCustomer(this.CustomerID, pointsToAdd)!;
+        public async Task<bool> RedeemPointsToCustomerAsync(int pointsToRedeem)
+        {
+            if (pointsToRedeem > this.LoyaltyPoints)
+                throw new Exception("INSUFFICIENT POINTS");
+
+          return  await CustomersDAL.RedeemPointsToCustomer(this.CustomerID, pointsToRedeem)!;
+        }
 
         public static async Task<IEnumerable<TopLoyaltyCustomerDTO>>? GetTopLoyaltyCustomersAsync()
         => await CustomersDAL.GetTopLoyaltyCustomers()!;
 
-        public async static Task<LoyaltyStatisticsDTO> ? GetLoyaltyStatisticsAsync()
+        public async static Task<LoyaltyStatisticsDTO>? GetLoyaltyStatisticsAsync()
         => await CustomersDAL.GetLoyaltyStatistics()!;
     }
 
