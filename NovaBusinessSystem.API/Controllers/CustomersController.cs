@@ -275,5 +275,25 @@ namespace NovaBusinessSystem.API
             return Ok(topLoyaltyCustomers);
 
         }
+
+        [HttpGet("LoyaltyPoints/LoyaltyStatistics")]
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<ActionResult<LoyaltyStatisticsDTO>> GetLoyaltyStatistics()
+        {
+
+            LoyaltyStatisticsDTO loyaltyStatisticsDTO =
+                await CustomersBL.GetLoyaltyStatisticsAsync()!;
+
+            if (loyaltyStatisticsDTO is null)
+                return NotFound("No loyalty Statistics found.");
+
+
+            return Ok(loyaltyStatisticsDTO);
+
+        }
     }
 }

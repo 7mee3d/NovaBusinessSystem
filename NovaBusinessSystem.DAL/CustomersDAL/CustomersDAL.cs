@@ -348,7 +348,7 @@ namespace nCustomersDAL
             }
         }
 
-        public static async Task<IEnumerable<TopLoyaltyCustomerDTO>> ? GetTopLoyaltyCustomers()
+        public static async Task<IEnumerable<TopLoyaltyCustomerDTO>>? GetTopLoyaltyCustomers()
         {
 
             List<TopLoyaltyCustomerDTO>? L_TopLoyaltyCustomerDTO = new();
@@ -395,5 +395,54 @@ namespace nCustomersDAL
             return L_TopLoyaltyCustomerDTO;
         }
 
+        public static async Task<LoyaltyStatisticsDTO>? GetLoyaltyStatistics()
+        {
+
+            LoyaltyStatisticsDTO LoyaltyStatisticsDTO = null;
+
+            using (SqlConnection connection =
+                 new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+
+            using (SqlCommand command =
+                   new SqlCommand("[dbo].[usp_GetLoyaltyStatistics]", connection))
+            {
+
+                command.CommandType = CommandType.StoredProcedure;
+
+                try
+                {
+                    connection.Open();
+
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        if (reader.Read())
+                        {
+
+                            LoyaltyStatisticsDTO = new LoyaltyStatisticsDTO(
+
+                              reader.GetInt32(reader.GetOrdinal("Total Loyalty Points")),
+                              reader.GetInt32(reader.GetOrdinal("Minimum Points")),
+                              reader.GetInt32(reader.GetOrdinal("Maximum Points")),
+                              reader.GetDecimal(reader.GetOrdinal("Average Points")),
+                              reader.GetInt32(reader.GetOrdinal("Diamond Customers")),
+                              reader.GetInt32(reader.GetOrdinal("Platinum Customers")),
+                              reader.GetInt32(reader.GetOrdinal("Gold Customers")),
+                              reader.GetInt32(reader.GetOrdinal("Silver Customers")),
+                              reader.GetInt32(reader.GetOrdinal("Bronze Customers"))
+
+
+                             );
+                        }
+                    }
+
+                }
+                catch (SqlException)
+                {
+                    return null!;
+                }
+            }
+
+            return LoyaltyStatisticsDTO!;
+        }
     }
 }

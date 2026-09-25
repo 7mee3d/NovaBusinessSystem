@@ -504,6 +504,51 @@ namespace CustomersPL
 
         }
 
+        private static async Task _GetLoyaltyStatisticsAsync()
+        {
+
+            try
+            {
+
+                HttpClient httpClient = new HttpClient();
+
+                httpClient.BaseAddress = new Uri("http://localhost:5276/api/Customers/LoyaltyPoints/");
+
+                var respone = await httpClient.GetAsync("LoyaltyStatistics/");
+                Console.Clear();
+                System.Console.WriteLine("\n\n\n");
+                PrintHeader("⭐ LOYALTY STATISTICS", 7);
+
+                if (respone.IsSuccessStatusCode)
+                {
+                    var loyaltyStatistics = await respone.Content.ReadFromJsonAsync<LoyaltyStatisticsDTO>();
+
+                    if (loyaltyStatistics is not null)
+                    {
+                        Console.Write($"{GenarateTabs(7)}║ Total Loyalty Points : {loyaltyStatistics.TotalLoyaltyPoints,-18}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ Minimum Points       : {loyaltyStatistics.MinimumPoints,-18}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ Maximum Points       : {loyaltyStatistics.MaximumPoints,-18}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ Average Points       : {loyaltyStatistics.AveragePoints,-18:F2}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ Diamond Customers    : {loyaltyStatistics.DiamondCustomers,-18}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ Platinum Customers   : {loyaltyStatistics.PlatinumCustomers,-18}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ Gold Customers       : {loyaltyStatistics.GoldCustomers,-18}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ Silver Customers     : {loyaltyStatistics.SilverCustomers,-18}║\n");
+                        Console.Write($"{GenarateTabs(7)}║ Bronze Customers     : {loyaltyStatistics.BronzeCustomers,-18}║\n");
+                        Console.Write($"{GenarateTabs(7)}╚══════════════════════════════════════════╝\n");
+                    }
+
+                    return;
+                }
+
+                ShowNotFoundMessage("⚠️ NO DATA FOUND", $"{await respone.Content.ReadAsStringAsync()}");
+
+            }
+            catch (Exception ex)
+            {
+                ShowNotFoundMessage("❌ SYSTEM ERROR", ex.Message, "your request. Please try again.");
+            }
+
+        }
 
         private static async Task _StartUpLoyaltyPointsSection()
         {
@@ -549,6 +594,12 @@ namespace CustomersPL
                             await _GetTopLoyaltyCustomersAsync();
                             break;
 
+                        }
+
+                    case Enumerations.EnChoicesLoyaltyPoints._kLOYALTY_STATISTICS :
+                        {
+                            await _GetLoyaltyStatisticsAsync();
+                            break;
                         }
                 }
 

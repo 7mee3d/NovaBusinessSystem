@@ -234,6 +234,9 @@ namespace NovaBusinessSystem.BL
 
         public static async Task<IEnumerable<TopLoyaltyCustomerDTO>>? GetTopLoyaltyCustomersAsync()
         => await CustomersDAL.GetTopLoyaltyCustomers()!;
+
+        public async static Task<LoyaltyStatisticsDTO> ? GetLoyaltyStatisticsAsync()
+        => await CustomersDAL.GetLoyaltyStatistics()!;
     }
 
 }
