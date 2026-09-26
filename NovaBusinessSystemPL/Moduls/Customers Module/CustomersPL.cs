@@ -336,6 +336,11 @@ namespace NovaBusinessSystem.PL
                             await Loyalty.StartUpLoyaltyPointsSection();
                             break;
                         }
+                    case Enumerations.EnChoicesCustomersModule._kCUSTOMER_PURCHASES :
+                        {
+                            await CustomerPurchasesPL.StartupPurchasesCustomers();
+                            break;
+                        }
                 }
 
 
