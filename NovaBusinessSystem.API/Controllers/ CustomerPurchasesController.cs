@@ -78,6 +78,43 @@ namespace NovaBusinessSystem.API
 
 
         }
+
+
+        [HttpGet("{id:int}/FavoriteProducts", Name = "GetCustomerFavoriteProducts")]
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<CustomerSpendingSummaryDTO>> GetCustomerFavoriteProducts([FromRoute(Name = "id")] int id)
+        {
+
+            try
+            {
+                if (id <= 0)
+                    return BadRequest("Invalid Data");
+
+                CustomersBL? customer = CustomersBL.Find(id);
+
+                if (customer is null)
+                    return NotFound("The Customer not found");
+
+                List<FavoriteProductDTO> L_FavoriteProducts =
+                (await CustomerPurchasesBL.GetCustomerFavoriteProducts(id)!).ToList();
+
+                if (!L_FavoriteProducts.Any() || L_FavoriteProducts.Count == 0)
+                    return NotFound("Not found any Customer Favorite Products");
+
+
+                return Ok(L_FavoriteProducts);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
+
+
+        }
     }
 
 }

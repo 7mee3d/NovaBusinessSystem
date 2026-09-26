@@ -22,5 +22,13 @@ namespace NovaBusinessSystem.BL
             return await CustomerPurchasesDAL.GetCustomerSpending(customerID)!;
         }
 
+        public static async Task<IEnumerable<FavoriteProductDTO>> GetCustomerFavoriteProducts(int customerID)
+        {
+            if (customerID <= 0)
+                throw new Exception("Invalid Data");
+
+            return await CustomerPurchasesDAL.GetCustomerFavoriteProducts(customerID)!;
+        }
+
     }
 }

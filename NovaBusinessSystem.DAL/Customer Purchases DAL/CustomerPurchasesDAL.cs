@@ -99,5 +99,53 @@ namespace NovaBusinessSystem.DAL
 
             return customerSpendingSummary!;
         }
+
+        public static async Task<IEnumerable<FavoriteProductDTO>>? GetCustomerFavoriteProducts(int customerId)
+        {
+
+            List<FavoriteProductDTO> L_FavoriteProducts = new();
+
+            using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+            using (SqlCommand command = new SqlCommand("[dbo].usp_GetCustomerFavoriteProducts", connection))
+            {
+
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                command.Parameters.Add("@CustomerID", System.Data.SqlDbType.Int).Value = customerId;
+
+                try
+                {
+                    await connection.OpenAsync();
+
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            L_FavoriteProducts.Add(
+
+                             new FavoriteProductDTO(
+
+
+                            reader.GetInt64(reader.GetOrdinal("Rank")),
+                            reader.GetString(reader.GetOrdinal("ProductName")),
+                            reader.GetInt32(reader.GetOrdinal("Quantity"))
+
+
+                          )
+                        );
+
+                        }
+
+                    }
+
+                }
+                catch (SqlException ex)
+                {
+                    throw;
+                }
+            }
+
+            return L_FavoriteProducts!;
+        }
     }
 }
