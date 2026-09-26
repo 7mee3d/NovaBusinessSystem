@@ -14,5 +14,13 @@ namespace NovaBusinessSystem.BL
             return await CustomerPurchasesDAL.GetPurchaseHistory(customerID);
         }
 
+        public static async Task<CustomerSpendingSummaryDTO>? GetCustomerSpending(int customerID)
+        {
+            if (customerID <= 0)
+                throw new Exception("Invalid Data");
+
+            return await CustomerPurchasesDAL.GetCustomerSpending(customerID)!;
+        }
+
     }
 }

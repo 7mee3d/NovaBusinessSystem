@@ -44,6 +44,40 @@ namespace NovaBusinessSystem.API
 
         }
 
+        [HttpGet("{id:int}SpendingSummary", Name = "GetCustomerSpending")]
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<CustomerSpendingSummaryDTO>> GetCustomerSpending([FromRoute(Name = "id")] int id)
+        {
+
+            try
+            {
+                if (id <= 0)
+                    return BadRequest("Invalid Data");
+
+                CustomersBL? customer = CustomersBL.Find(id);
+
+                if (customer is null)
+                    return NotFound("The Customer not found");
+
+                CustomerSpendingSummaryDTO customerSpendingSummary = await CustomerPurchasesBL.GetCustomerSpending(id)!;
+
+                if (customerSpendingSummary is null)
+                    return NotFound("Not found any Customer Spending");
+
+
+                return Ok(customerSpendingSummary);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
+
+
+        }
     }
 
 }
