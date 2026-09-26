@@ -241,7 +241,7 @@ namespace NovaBusinessSystem.PL
 
                 httpClient.BaseAddress = new Uri("http://localhost:5276/api/Loyalty/");
 
-                var respone = await httpClient.GetAsync("LoyaltyStatistics/");
+                var respone = await httpClient.GetAsync("Statistics/");
                 Console.Clear();
                 System.Console.WriteLine("\n\n\n");
                 HelperPL.PrintHeader("⭐ LOYALTY STATISTICS", 7);

@@ -44,7 +44,7 @@ namespace NovaBusinessSystem.API
 
         }
 
-        [HttpGet("{id:int}SpendingSummary", Name = "GetCustomerSpending")]
+        [HttpGet("{id:int}/SpendingSummary", Name = "GetCustomerSpending")]
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

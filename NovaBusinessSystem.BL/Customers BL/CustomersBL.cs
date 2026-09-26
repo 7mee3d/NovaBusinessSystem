@@ -17,6 +17,8 @@ namespace NovaBusinessSystem.BL
         public DateTime RegistrationDate { get; set; }
         public int LoyaltyPoints { get; set; }
         public string Status { get; set; }
+        public string FullName  =>  this.FirstName + " " + this.LastName;
+
         public CustomerDTO CDTO
         {
             get
