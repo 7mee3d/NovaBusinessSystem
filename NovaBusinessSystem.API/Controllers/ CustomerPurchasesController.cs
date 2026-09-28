@@ -15,7 +15,7 @@ namespace NovaBusinessSystem.API
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<CustomerPurchaseDTO>>> GetCustomerPurchaseHistory([FromRoute(Name = "id")] int id)
+        public async Task<ActionResult<IEnumerable<CustomerPurchaseDTO>>> GetCustomerPurchaseHistoryAsync([FromRoute(Name = "id")] int id)
         {
 
             try
@@ -28,7 +28,7 @@ namespace NovaBusinessSystem.API
                 if (customer is null)
                     return NotFound("The Customer not found");
 
-                List<CustomerPurchaseDTO> L_customerPurchases = (await CustomerPurchasesBL.GetPurchaseHistory(id)).ToList();
+                List<CustomerPurchaseDTO> L_customerPurchases = (await CustomerPurchasesBL.GetPurchaseHistoryAsync(id)).ToList();
 
                 if (!L_customerPurchases.Any() || L_customerPurchases.Count == 0)
                     return NotFound("Not found any Purchase History");
@@ -50,7 +50,7 @@ namespace NovaBusinessSystem.API
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CustomerSpendingSummaryDTO>> GetCustomerSpending([FromRoute(Name = "id")] int id)
+        public async Task<ActionResult<CustomerSpendingSummaryDTO>> GetCustomerSpendingAsync([FromRoute(Name = "id")] int id)
         {
 
             try
@@ -63,7 +63,7 @@ namespace NovaBusinessSystem.API
                 if (customer is null)
                     return NotFound("The Customer not found");
 
-                CustomerSpendingSummaryDTO customerSpendingSummary = await CustomerPurchasesBL.GetCustomerSpending(id)!;
+                CustomerSpendingSummaryDTO customerSpendingSummary = await CustomerPurchasesBL.GetCustomerSpendingAsync(id)!;
 
                 if (customerSpendingSummary is null)
                     return NotFound("Not found any Customer Spending");
@@ -86,7 +86,7 @@ namespace NovaBusinessSystem.API
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CustomerSpendingSummaryDTO>> GetCustomerFavoriteProducts([FromRoute(Name = "id")] int id)
+        public async Task<ActionResult<CustomerSpendingSummaryDTO>> GetCustomerFavoriteProductsAsync([FromRoute(Name = "id")] int id)
         {
 
             try
@@ -100,7 +100,7 @@ namespace NovaBusinessSystem.API
                     return NotFound("The Customer not found");
 
                 List<FavoriteProductDTO> L_FavoriteProducts =
-                (await CustomerPurchasesBL.GetCustomerFavoriteProducts(id)!).ToList();
+                (await CustomerPurchasesBL.GetCustomerFavoriteProductsAsync(id)!).ToList();
 
                 if (!L_FavoriteProducts.Any() || L_FavoriteProducts.Count == 0)
                     return NotFound("Not found any Customer Favorite Products");
@@ -122,17 +122,43 @@ namespace NovaBusinessSystem.API
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<MonthlyPurchaseDTO>>> GetCustomerMonthlyPurchases()
+        public async Task<ActionResult<IEnumerable<MonthlyPurchaseDTO>>> GetCustomerMonthlyPurchasesAsync()
         {
 
             try
             {
-                List<MonthlyPurchaseDTO> monthlyPurchases = (await CustomerPurchasesBL.GetCustomerMonthlyPurchases()!).ToList();
+                List<MonthlyPurchaseDTO> monthlyPurchases = (await CustomerPurchasesBL.GetCustomerMonthlyPurchasesAsync()!).ToList();
 
                 if (!monthlyPurchases.Any() || monthlyPurchases.Count == 0)
                     return NotFound("Not found any Customer Monthly Purchases");
 
                 return Ok(monthlyPurchases);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
+
+
+        }
+
+        [HttpGet("CustomersRanking", Name = "GetCustomersRankingAsync")]
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<MonthlyPurchaseDTO>>> GetCustomersRankingAsync()
+        {
+
+            try
+            {
+                List<CustomerRankingDTO> customerRankings = (await CustomerPurchasesBL.GetCustomersRankingAsync()!).ToList();
+
+                if (!customerRankings.Any() || customerRankings.Count == 0)
+                    return NotFound("Not found any Customer Ranking");
+
+                return Ok(customerRankings);
             }
             catch (Exception ex)
             {

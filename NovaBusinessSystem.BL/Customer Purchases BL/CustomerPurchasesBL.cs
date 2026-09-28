@@ -6,34 +6,37 @@ namespace NovaBusinessSystem.BL
 
     public class CustomerPurchasesBL
     {
-        public static async Task<IEnumerable<CustomerPurchaseDTO>> GetPurchaseHistory(int customerID)
+        public static async Task<IEnumerable<CustomerPurchaseDTO>> GetPurchaseHistoryAsync(int customerID)
         {
             if (customerID <= 0)
                 throw new Exception("Invalid Data");
 
-            return await CustomerPurchasesDAL.GetPurchaseHistory(customerID);
+            return await CustomerPurchasesDAL.GetPurchaseHistoryAsync(customerID);
         }
 
-        public static async Task<CustomerSpendingSummaryDTO>? GetCustomerSpending(int customerID)
+        public static async Task<CustomerSpendingSummaryDTO>? GetCustomerSpendingAsync(int customerID)
         {
             if (customerID <= 0)
                 throw new Exception("Invalid Data");
 
-            return await CustomerPurchasesDAL.GetCustomerSpending(customerID)!;
+            return await CustomerPurchasesDAL.GetCustomerSpendingAsync(customerID)!;
         }
 
-        public static async Task<IEnumerable<FavoriteProductDTO>> GetCustomerFavoriteProducts(int customerID)
+        public static async Task<IEnumerable<FavoriteProductDTO>> GetCustomerFavoriteProductsAsync(int customerID)
         {
             if (customerID <= 0)
                 throw new Exception("Invalid Data");
 
-            return await CustomerPurchasesDAL.GetCustomerFavoriteProducts(customerID)!;
+            return await CustomerPurchasesDAL.GetCustomerFavoriteProductsAsync(customerID)!;
         }
 
-        public static async Task<IEnumerable<MonthlyPurchaseDTO>> GetCustomerMonthlyPurchases()
+        public static async Task<IEnumerable<MonthlyPurchaseDTO>> GetCustomerMonthlyPurchasesAsync()
         {
-            return await CustomerPurchasesDAL.GetCustomerMonthlyPurchases()!;
+            return await CustomerPurchasesDAL.GetCustomerMonthlyPurchasesAsync()!;
         }
-
+        public static async Task<IEnumerable<CustomerRankingDTO>> GetCustomersRankingAsync()
+        {
+            return await CustomerPurchasesDAL.GetGetCustomersRankingAsync()!;
+        }
     }
 }

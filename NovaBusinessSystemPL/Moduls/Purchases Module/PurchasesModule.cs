@@ -210,6 +210,62 @@ namespace NovaBusinessSystem.PL
             }
         }
 
+        private static async Task _GetCustomersRankingAsync()
+        {
+            try
+            {
+
+                Console.Clear();
+                System.Console.WriteLine("\n\n\n");
+                HelperPL.PrintHeader("🏆 CUSTOMER RANKING", 7);
+                System.Console.WriteLine("\n\n");
+
+                HttpClient httpClient = new HttpClient();
+
+                httpClient.BaseAddress = new Uri("http://localhost:5276/api/CustomerPurchases/");
+
+                var respone = await httpClient.GetAsync($"CustomersRanking");
+                if (respone.IsSuccessStatusCode)
+                {
+
+                    var customersRanking = await respone.Content.ReadFromJsonAsync<List<CustomerRankingDTO>>();
+                    if (customersRanking == null || !customersRanking.Any())
+                    {
+                        HelperPL.ShowNotFoundMessage(
+                            "⚠️ NO PURCHASE DATA",
+                            "No monthly purchase data found.");
+
+                        return;
+                    }
+                    System.Console.WriteLine("\n\n");
+                    Console.WriteLine(
+                        $"{HelperPL.GenarateTabs(6)}{"Rank",-15} {"Customer",-30} {"Orders",-10} {"Spending",-25}");
+
+                    Console.Write($"{HelperPL.GenarateTabs(6)}{new string('-', 70)}{Environment.NewLine}");
+
+                    foreach (var item in customersRanking)
+                    {
+                        Console.WriteLine(
+                            $"{HelperPL.GenarateTabs(6)}{item.Rank,-15} {item.FullName,-30} {item.Orders,-10} {item.Spending.ToString("C"),-25}");
+                    }
+
+                    Console.Write($"{HelperPL.GenarateTabs(6)}{new string('-', 70)}{Environment.NewLine}");
+
+                    return;
+                }
+
+                HelperPL.ShowNotFoundMessage("⚠️ NO DATA FOUND", $"{await respone.Content.ReadAsStringAsync()}");
+
+
+            }
+
+            catch (Exception ex)
+            {
+                HelperPL.ShowNotFoundMessage("❌ SYSTEM ERROR", ex.Message, "your request. Please try again.");
+
+            }
+        }
+
 
         public static async Task StartupPurchasesCustomers()
         {
@@ -242,10 +298,16 @@ namespace NovaBusinessSystem.PL
                             break;
                         }
 
-                    case Enumerations.EnChoicesCustomerPurchases._kCUSTOMER_MONTHLY_PURCHASES :
+                    case Enumerations.EnChoicesCustomerPurchases._kCUSTOMER_MONTHLY_PURCHASES:
                         {
-                            await _GetCustomerMonthlyPurchases (); 
-                            break; 
+                            await _GetCustomerMonthlyPurchases();
+                            break;
+                        }
+
+                    case Enumerations.EnChoicesCustomerPurchases._kCUSTOMER_RANKING :
+                        {
+                            await  _GetCustomersRankingAsync();
+                            break;
                         }
 
                 }

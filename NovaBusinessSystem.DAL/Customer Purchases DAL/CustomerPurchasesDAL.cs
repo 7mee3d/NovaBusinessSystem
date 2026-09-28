@@ -6,7 +6,7 @@ namespace NovaBusinessSystem.DAL
     public class CustomerPurchasesDAL
     {
 
-        public static async Task<IEnumerable<CustomerPurchaseDTO>> GetPurchaseHistory(int customerId)
+        public static async Task<IEnumerable<CustomerPurchaseDTO>> GetPurchaseHistoryAsync(int customerId)
         {
 
             List<CustomerPurchaseDTO> purchaseHistory = new();
@@ -52,7 +52,7 @@ namespace NovaBusinessSystem.DAL
             return purchaseHistory;
         }
 
-        public static async Task<CustomerSpendingSummaryDTO>? GetCustomerSpending(int customerId)
+        public static async Task<CustomerSpendingSummaryDTO>? GetCustomerSpendingAsync(int customerId)
         {
 
             CustomerSpendingSummaryDTO customerSpendingSummary = null!;
@@ -100,7 +100,7 @@ namespace NovaBusinessSystem.DAL
             return customerSpendingSummary!;
         }
 
-        public static async Task<IEnumerable<FavoriteProductDTO>>? GetCustomerFavoriteProducts(int customerId)
+        public static async Task<IEnumerable<FavoriteProductDTO>>? GetCustomerFavoriteProductsAsync(int customerId)
         {
 
             List<FavoriteProductDTO> L_FavoriteProducts = new();
@@ -148,7 +148,7 @@ namespace NovaBusinessSystem.DAL
             return L_FavoriteProducts!;
         }
 
-        public static async Task<IEnumerable<MonthlyPurchaseDTO>>? GetCustomerMonthlyPurchases()
+        public static async Task<IEnumerable<MonthlyPurchaseDTO>>? GetCustomerMonthlyPurchasesAsync()
         {
 
             List<MonthlyPurchaseDTO> monthlyPurchases = new();
@@ -179,9 +179,9 @@ namespace NovaBusinessSystem.DAL
                           )
                         );
 
-                    }
+                        }
 
-                }
+                    }
 
                 }
                 catch (SqlException)
@@ -191,6 +191,51 @@ namespace NovaBusinessSystem.DAL
             }
 
             return monthlyPurchases!;
+        }
+
+        public static async Task<IEnumerable<CustomerRankingDTO>>? GetGetCustomersRankingAsync()
+        {
+
+            List<CustomerRankingDTO> customerRankings = new();
+
+            using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+            using (SqlCommand command = new SqlCommand("[dbo].usp_GetCustomersRanking", connection))
+            {
+
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                try
+                {
+                    await connection.OpenAsync();
+
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            customerRankings.Add(
+
+                             new CustomerRankingDTO(
+
+                                    reader.GetInt64(reader.GetOrdinal("Rank")),
+                                    reader.GetString(reader.GetOrdinal("FullName")),
+                                    reader.GetInt32(reader.GetOrdinal("Orders")),
+                                    reader.GetDecimal(reader.GetOrdinal("Spending"))
+
+                          )
+                        );
+
+                        }
+
+                    }
+
+                }
+                catch (SqlException)
+                {
+                    throw;
+                }
+            }
+
+            return customerRankings!;
         }
 
     }
