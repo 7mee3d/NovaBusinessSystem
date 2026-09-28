@@ -125,9 +125,9 @@ namespace NovaBusinessSystem.PL
                             Console.Write($"{HelperPL.GenarateTabs(7)}║ Pending        : {customerSpendingSummary.Pending,-24}║\n");
                             Console.Write($"{HelperPL.GenarateTabs(7)}║ Cancelled      : {customerSpendingSummary.Cancelled,-24}║\n");
                             Console.Write($"{HelperPL.GenarateTabs(7)}╠══════════════════════════════════════════╣\n");
-                            Console.Write($"{HelperPL.GenarateTabs(7)}║ Total Spent    : {"$" +customerSpendingSummary.TotalSpent,-24}║\n");
-                            Console.Write($"{HelperPL.GenarateTabs(7)}║ Average Order  : {"$" +customerSpendingSummary.AverageOrder,-24}║\n");
-                            Console.Write($"{HelperPL.GenarateTabs(7)}║ Largest Order  : {"$" +customerSpendingSummary.LargestOrder,-24}║\n");
+                            Console.Write($"{HelperPL.GenarateTabs(7)}║ Total Spent    : {"$" + customerSpendingSummary.TotalSpent,-24}║\n");
+                            Console.Write($"{HelperPL.GenarateTabs(7)}║ Average Order  : {"$" + customerSpendingSummary.AverageOrder,-24}║\n");
+                            Console.Write($"{HelperPL.GenarateTabs(7)}║ Largest Order  : {"$" + customerSpendingSummary.LargestOrder,-24}║\n");
                             Console.Write($"{HelperPL.GenarateTabs(7)}╠══════════════════════════════════════════╣\n");
                             Console.Write($"{HelperPL.GenarateTabs(7)}║ First Purchase : {customerSpendingSummary.FirstPurchase,-24}║\n");
                             Console.Write($"{HelperPL.GenarateTabs(7)}║ Last Purchase  : {customerSpendingSummary.LastPurchase,-24}║\n");
@@ -153,6 +153,63 @@ namespace NovaBusinessSystem.PL
 
             }
         }
+
+        private static async Task _GetCustomerMonthlyPurchases()
+        {
+            try
+            {
+
+                Console.Clear();
+                System.Console.WriteLine("\n\n\n");
+                HelperPL.PrintHeader("📅 MONTHLY PURCHASE SUMMARY", 7);
+                System.Console.WriteLine("\n\n");
+
+                HttpClient httpClient = new HttpClient();
+
+                httpClient.BaseAddress = new Uri("http://localhost:5276/api/CustomerPurchases/");
+
+                var respone = await httpClient.GetAsync($"MonthlyPurchases");
+                if (respone.IsSuccessStatusCode)
+                {
+
+                    var monthlyPurchases = await respone.Content.ReadFromJsonAsync<List<MonthlyPurchaseDTO>>();
+                    if (monthlyPurchases == null || !monthlyPurchases.Any())
+                    {
+                        HelperPL.ShowNotFoundMessage(
+                            "⚠️ NO PURCHASE DATA",
+                            "No monthly purchase data found.");
+
+                        return;
+                    }
+                    System.Console.WriteLine("\n\n");
+                    Console.WriteLine(
+                        $"{HelperPL.GenarateTabs(7)}{"Month",-20} {"Orders",-15} {"Total Spent",-25}");
+
+                    Console.Write($"{HelperPL.GenarateTabs(7)}{new string('-', 55)}{Environment.NewLine}");
+
+                    foreach (var item in monthlyPurchases)
+                    {
+                        Console.WriteLine(
+                            $"{HelperPL.GenarateTabs(7)}{item.Month,-20} {item.Orders,-15} {item.TotalSpent.ToString("C"),-25}");
+                    }
+
+                    Console.Write($"{HelperPL.GenarateTabs(7)}{new string('-', 55)}{Environment.NewLine}");
+
+                    return;
+                }
+
+                HelperPL.ShowNotFoundMessage("⚠️ NO DATA FOUND", $"{await respone.Content.ReadAsStringAsync()}");
+
+
+            }
+
+            catch (Exception ex)
+            {
+                HelperPL.ShowNotFoundMessage("❌ SYSTEM ERROR", ex.Message, "your request. Please try again.");
+
+            }
+        }
+
 
         public static async Task StartupPurchasesCustomers()
         {
@@ -183,6 +240,12 @@ namespace NovaBusinessSystem.PL
                         {
                             await _GetCustomerSpendingSummary();
                             break;
+                        }
+
+                    case Enumerations.EnChoicesCustomerPurchases._kCUSTOMER_MONTHLY_PURCHASES :
+                        {
+                            await _GetCustomerMonthlyPurchases (); 
+                            break; 
                         }
 
                 }
