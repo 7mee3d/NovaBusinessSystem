@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using NovaBusinessSystem.BL.Customers;
-using NovaBusinessSystem.BL.Customers.Loyalty
+using NovaBusinessSystem.BL.Customers.Loyalty;
 using NovaBusinessSystem.DTOs;
 
 namespace NovaBusinessSystem.API
 {
     [ApiController]
-    [Route("api/Loyalty")]
+    [Route("api/CustomersLoyalty")]
     public class LoyaltyController : ControllerBase
     {
 

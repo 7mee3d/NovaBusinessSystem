@@ -83,5 +83,19 @@ namespace NovaBusinessSystem.Enumeration
             _kCUSTOMER_MONTHLY_PURCHASES = 4,
             _kCUSTOMER_RANKING = 5
         }
+
+        public enum EnChoicesCustomerReport : byte
+        {
+
+            _kBACK = 0,
+            _kCUSTOMER_STATUS_SUMMARY = 1,
+            _kCUSTOMERS_BY_CITY = 2,
+            _kLOYALTY_SUMMARY = 3,
+            _kREGISTRATION_SUMMARY = 4,
+            _kCUSTOMER_GROWTH = 5,
+            _kCUSTOMER_ACTIVITY_REPORT = 6
+
+
+        }
     }
 }

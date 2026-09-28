@@ -5,6 +5,7 @@ using NovaBusinessSystem.Enumeration;
 using NovaBusinessSystem.Helpers;
 using NovaBusinessSystem.Modules.Customers.Loyalty;
 using NovaBusinessSystem.Modules.Customers.Purchases;
+using NovaBusinessSystem.Modules.Customers.Reports;
 
 namespace NovaBusinessSystemPL.Modules.Customers
 {
@@ -341,6 +342,12 @@ namespace NovaBusinessSystemPL.Modules.Customers
                     case Enumerations.EnChoicesCustomersModule._kCUSTOMER_PURCHASES:
                         {
                             await PurchasesMenu.StartupPurchasesCustomers();
+                            break;
+                        }
+
+                    case Enumerations.EnChoicesCustomersModule._kCUSTOMER_REPORT :
+                        {
+                            await ReportMenu.StartupReportSection();
                             break;
                         }
                 }

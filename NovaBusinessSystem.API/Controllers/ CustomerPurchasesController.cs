@@ -6,7 +6,7 @@ using NovaBusinessSystem.DTOs;
 namespace NovaBusinessSystem.API
 {
     [ApiController]
-    [Route("api/CustomerPurchases")]
+    [Route("api/CustomersPurchases")]
     public class CustomerPurchasesController : ControllerBase
     {
 
