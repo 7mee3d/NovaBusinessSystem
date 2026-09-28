@@ -147,5 +147,51 @@ namespace NovaBusinessSystem.DAL
 
             return L_FavoriteProducts!;
         }
+
+        public static async Task<IEnumerable<MonthlyPurchaseDTO>>? GetCustomerMonthlyPurchases()
+        {
+
+            List<MonthlyPurchaseDTO> monthlyPurchases = new();
+
+            using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+            using (SqlCommand command = new SqlCommand("[dbo].usp_GetCustomerMonthlyPurchases", connection))
+            {
+
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                try
+                {
+                    await connection.OpenAsync();
+
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            monthlyPurchases.Add(
+
+                             new MonthlyPurchaseDTO(
+
+                                    reader.GetString(reader.GetOrdinal("Month")),
+                                    reader.GetInt32(reader.GetOrdinal("Orders")),
+                                    reader.GetDecimal(reader.GetOrdinal("TotalSpent"))
+
+
+                          )
+                        );
+
+                    }
+
+                }
+
+                }
+                catch (SqlException)
+                {
+                    throw;
+                }
+            }
+
+            return monthlyPurchases!;
+        }
+
     }
 }

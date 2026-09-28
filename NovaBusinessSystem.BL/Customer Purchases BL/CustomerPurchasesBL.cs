@@ -30,5 +30,10 @@ namespace NovaBusinessSystem.BL
             return await CustomerPurchasesDAL.GetCustomerFavoriteProducts(customerID)!;
         }
 
+        public static async Task<IEnumerable<MonthlyPurchaseDTO>> GetCustomerMonthlyPurchases()
+        {
+            return await CustomerPurchasesDAL.GetCustomerMonthlyPurchases()!;
+        }
+
     }
 }

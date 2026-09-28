@@ -115,6 +115,32 @@ namespace NovaBusinessSystem.API
 
 
         }
+
+        [HttpGet("MonthlyPurchases", Name = "GetCustomerMonthlyPurchases")]
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<MonthlyPurchaseDTO>>> GetCustomerMonthlyPurchases()
+        {
+
+            try
+            {
+                List<MonthlyPurchaseDTO> monthlyPurchases = (await CustomerPurchasesBL.GetCustomerMonthlyPurchases()!).ToList();
+
+                if (!monthlyPurchases.Any() || monthlyPurchases.Count == 0)
+                    return NotFound("Not found any Customer Monthly Purchases");
+
+                return Ok(monthlyPurchases);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
+
+
+        }
     }
 
 }
