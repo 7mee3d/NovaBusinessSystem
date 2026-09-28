@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using NovaBusinessSystem.BL;
+using NovaBusinessSystem.BL.Customers;
+using NovaBusinessSystem.BL.Customers.Loyalty
 using NovaBusinessSystem.DTOs;
 
 namespace NovaBusinessSystem.API

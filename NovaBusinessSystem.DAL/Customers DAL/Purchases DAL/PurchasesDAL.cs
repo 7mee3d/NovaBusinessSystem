@@ -1,9 +1,9 @@
 using Microsoft.Data.SqlClient;
 using NovaBusinessSystem.DTOs;
 
-namespace NovaBusinessSystem.DAL
+namespace NovaBusinessSystem.DAL.Customers.Purchases
 {
-    public class CustomerPurchasesDAL
+    public class PurchasesDAL
     {
 
         public static async Task<IEnumerable<CustomerPurchaseDTO>> GetPurchaseHistoryAsync(int customerId)

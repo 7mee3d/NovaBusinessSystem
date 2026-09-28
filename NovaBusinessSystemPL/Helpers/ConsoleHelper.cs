@@ -1,9 +1,9 @@
 using System.Reflection.Metadata;
 
-namespace nHelpersPL
+namespace NovaBusinessSystem.Helpers
 {
 
-    public static class HelperPL
+    public static class ConsoleHelper
     {
 
         public static string GenarateTabs(int numberTab)

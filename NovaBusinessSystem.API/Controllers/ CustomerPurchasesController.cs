@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using NovaBusinessSystem.BL;
+using NovaBusinessSystem.BL.Customers.Purchases;
+using NovaBusinessSystem.BL.Customers;
 using NovaBusinessSystem.DTOs;
 
 namespace NovaBusinessSystem.API
@@ -28,7 +29,7 @@ namespace NovaBusinessSystem.API
                 if (customer is null)
                     return NotFound("The Customer not found");
 
-                List<CustomerPurchaseDTO> L_customerPurchases = (await CustomerPurchasesBL.GetPurchaseHistoryAsync(id)).ToList();
+                List<CustomerPurchaseDTO> L_customerPurchases = (await PurchasesBL.GetPurchaseHistoryAsync(id)).ToList();
 
                 if (!L_customerPurchases.Any() || L_customerPurchases.Count == 0)
                     return NotFound("Not found any Purchase History");
@@ -63,7 +64,7 @@ namespace NovaBusinessSystem.API
                 if (customer is null)
                     return NotFound("The Customer not found");
 
-                CustomerSpendingSummaryDTO customerSpendingSummary = await CustomerPurchasesBL.GetCustomerSpendingAsync(id)!;
+                CustomerSpendingSummaryDTO customerSpendingSummary = await PurchasesBL.GetCustomerSpendingAsync(id)!;
 
                 if (customerSpendingSummary is null)
                     return NotFound("Not found any Customer Spending");
@@ -100,7 +101,7 @@ namespace NovaBusinessSystem.API
                     return NotFound("The Customer not found");
 
                 List<FavoriteProductDTO> L_FavoriteProducts =
-                (await CustomerPurchasesBL.GetCustomerFavoriteProductsAsync(id)!).ToList();
+                (await PurchasesBL.GetCustomerFavoriteProductsAsync(id)!).ToList();
 
                 if (!L_FavoriteProducts.Any() || L_FavoriteProducts.Count == 0)
                     return NotFound("Not found any Customer Favorite Products");
@@ -127,7 +128,7 @@ namespace NovaBusinessSystem.API
 
             try
             {
-                List<MonthlyPurchaseDTO> monthlyPurchases = (await CustomerPurchasesBL.GetCustomerMonthlyPurchasesAsync()!).ToList();
+                List<MonthlyPurchaseDTO> monthlyPurchases = (await PurchasesBL.GetCustomerMonthlyPurchasesAsync()!).ToList();
 
                 if (!monthlyPurchases.Any() || monthlyPurchases.Count == 0)
                     return NotFound("Not found any Customer Monthly Purchases");
@@ -153,7 +154,7 @@ namespace NovaBusinessSystem.API
 
             try
             {
-                List<CustomerRankingDTO> customerRankings = (await CustomerPurchasesBL.GetCustomersRankingAsync()!).ToList();
+                List<CustomerRankingDTO> customerRankings = (await PurchasesBL.GetCustomersRankingAsync()!).ToList();
 
                 if (!customerRankings.Any() || customerRankings.Count == 0)
                     return NotFound("Not found any Customer Ranking");

@@ -1,14 +1,16 @@
 using Microsoft.Data.SqlClient;
 using NovaBusinessSystem.DTOs;
-using NovaBusinessSystem.BL;
+using NovaBusinessSystem.BL.Customers;
 using NovaBusinessSystem.Enumeration;
-using nHelpersPL;
+using NovaBusinessSystem.Helpers;
+using NovaBusinessSystem.Modules.Customers.Loyalty;
+using NovaBusinessSystem.Modules.Customers.Purchases;
 
-namespace NovaBusinessSystem.PL
+namespace NovaBusinessSystemPL.Modules.Customers
 {
 
 
-    public class CustomersPL 
+    public class CustomersPL
     {
         private static void PrintDetail(string label, object? value, int numberTabs)
         {
@@ -20,7 +22,7 @@ namespace NovaBusinessSystem.PL
                 Text = Text[..ContentWidth];
 
 
-            Console.WriteLine($"{HelperPL.GenarateTabs(numberTabs)}║ {Text,-48}║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(numberTabs)}║ {Text,-48}║");
         }
 
         private static void _ShowSccessMessageAndShowInformationCustomer(CustomersBL informationCustomer, string message)
@@ -33,9 +35,9 @@ namespace NovaBusinessSystem.PL
             int paddingRight = contentWidth - message.Length - paddingLeft - 1;
 
             System.Console.WriteLine("\n\n\n");
-            Console.WriteLine($"\n\n{HelperPL.GenarateTabs(7)}╔═════════════════════════════════════════════════╗");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║{new string(' ', paddingLeft)}{message}{new string(' ', paddingRight)} ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}╚═════════════════════════════════════════════════╝");
+            Console.WriteLine($"\n\n{ConsoleHelper.GenarateTabs(7)}╔═════════════════════════════════════════════════╗");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║{new string(' ', paddingLeft)}{message}{new string(' ', paddingRight)} ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}╚═════════════════════════════════════════════════╝");
 
             PrintDetail("Customer ID", informationCustomer.CustomerID, 7);
             PrintDetail("First Name", informationCustomer.FirstName, 7);
@@ -45,28 +47,28 @@ namespace NovaBusinessSystem.PL
             PrintDetail("City", informationCustomer.City.Trim(), 7);
             PrintDetail("Registration Date", $"{informationCustomer.RegistrationDate.ToString("dd/MM/yyyy")}", 7);
             PrintDetail("Status", informationCustomer.Status, 7);
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}╚═════════════════════════════════════════════════╝");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}╚═════════════════════════════════════════════════╝");
         }
 
         private static void _MainMenuCustomersModule()
         {
-            Console.WriteLine($"\n\n\n{HelperPL.GenarateTabs(7)}╔══════════════════════════════════════════╗");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║              👥 CUSTOMERS                ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}╠══════════════════════════════════════════╣");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║                                          ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║  1. 📋 List Customers                    ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║  2. 🔎 Get Customer By ID                ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║  3. ➕ Add Customer                      ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║  4. ✏️  Update Customer                   ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║  5. 🗑️  Delete Customer                   ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║  6. 🔍 Search Customers                  ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║  7. ⭐ Loyalty Points                    ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║  8. 🛒 Customer Purchases                ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║  9. 📊 Customer Report                   ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║                                          ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║  0. 🔙 Back                              ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║                                          ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}╚══════════════════════════════════════════╝");
+            Console.WriteLine($"\n\n\n{ConsoleHelper.GenarateTabs(7)}╔══════════════════════════════════════════╗");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║              👥 CUSTOMERS                ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}╠══════════════════════════════════════════╣");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║                                          ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║  1. 📋 List Customers                    ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║  2. 🔎 Get Customer By ID                ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║  3. ➕ Add Customer                      ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║  4. ✏️  Update Customer                   ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║  5. 🗑️  Delete Customer                   ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║  6. 🔍 Search Customers                  ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║  7. ⭐ Loyalty Points                    ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║  8. 🛒 Customer Purchases                ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║  9. 📊 Customer Report                   ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║                                          ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║  0. 🔙 Back                              ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║                                          ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}╚══════════════════════════════════════════╝");
 
         }
 
@@ -75,18 +77,18 @@ namespace NovaBusinessSystem.PL
             if ((informationCustomer is null) || string.IsNullOrWhiteSpace(title))
                 return;
 
-            HelperPL.PrintHeader(title, 7);
+            ConsoleHelper.PrintHeader(title, 7);
 
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║ {"ID",-16} : {informationCustomer.CustomerID,-20}  ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║ {"Name",-16} : {string.Join(" ", informationCustomer.FirstName, informationCustomer.LastName),-20}  ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║ {"Email",-16} : {informationCustomer.Email,-20}  ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║ {"Phone",-16} : {informationCustomer.Phone,-20}  ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║ {"City",-16} : {informationCustomer.City,-20}  ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║ {"Registration",-16} : {informationCustomer.RegistrationDate,-20:dd/MM/yyyy}  ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║ {"Loyalty Points",-16} : {informationCustomer.LoyaltyPoints,-20}  ║");
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}║ {"Status",-16} : {informationCustomer.Status,-20}  ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║ {"ID",-16} : {informationCustomer.CustomerID,-20}  ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║ {"Name",-16} : {string.Join(" ", informationCustomer.FirstName, informationCustomer.LastName),-20}  ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║ {"Email",-16} : {informationCustomer.Email,-20}  ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║ {"Phone",-16} : {informationCustomer.Phone,-20}  ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║ {"City",-16} : {informationCustomer.City,-20}  ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║ {"Registration",-16} : {informationCustomer.RegistrationDate,-20:dd/MM/yyyy}  ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║ {"Loyalty Points",-16} : {informationCustomer.LoyaltyPoints,-20}  ║");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}║ {"Status",-16} : {informationCustomer.Status,-20}  ║");
 
-            Console.WriteLine($"{HelperPL.GenarateTabs(7)}╚══════════════════════════════════════════╝");
+            Console.WriteLine($"{ConsoleHelper.GenarateTabs(7)}╚══════════════════════════════════════════╝");
         }
 
         private static void _CustomersList()
@@ -95,7 +97,7 @@ namespace NovaBusinessSystem.PL
 
             System.Console.WriteLine("\n\n");
 
-            HelperPL.PrintHeader("📋 CUSTOMER LIST", 7);
+            ConsoleHelper.PrintHeader("📋 CUSTOMER LIST", 7);
             System.Console.WriteLine("\n\n\n");
             System.Console.WriteLine($"\t\t{"ID",-15} {"Name",-30} {"Email",-40} {"City",-15} {"Points",-10} {"Status",-15}");
 
@@ -128,17 +130,17 @@ namespace NovaBusinessSystem.PL
 
         private static CustomerDTO? ReadInformationCustoemr()
         {
-            string? firstName = HelperPL.ReadTheStringWithoutNumbers("First Name", 15, 7);
-            string? lastName = HelperPL.ReadTheStringWithoutNumbers("Last Name", 15, 7);
-            string? Email = HelperPL.ReadTheStringWithoutNumbers("Email", 15, 7);
-            string? Phone = HelperPL.ReadTheStringWithNumbers<string>("Phone", 15, 7);
-            string? City = HelperPL.ReadTheStringWithoutNumbers("City", 15, 7);
+            string? firstName = ConsoleHelper.ReadTheStringWithoutNumbers("First Name", 15, 7);
+            string? lastName = ConsoleHelper.ReadTheStringWithoutNumbers("Last Name", 15, 7);
+            string? Email = ConsoleHelper.ReadTheStringWithoutNumbers("Email", 15, 7);
+            string? Phone = ConsoleHelper.ReadTheStringWithNumbers<string>("Phone", 15, 7);
+            string? City = ConsoleHelper.ReadTheStringWithoutNumbers("City", 15, 7);
 
             byte status = 0;
 
-            System.Console.Write($"{HelperPL.GenarateTabs(7)}Status (Active:1 , Inactive:0 , Blocked:2) : ");
+            System.Console.Write($"{ConsoleHelper.GenarateTabs(7)}Status (Active:1 , Inactive:0 , Blocked:2) : ");
             while (!byte.TryParse(Console.ReadLine(), out status))
-                System.Console.Write($"{HelperPL.GenarateTabs(7)}Try Agian , Status (Active:1 , Inactive:0 , Blocked:2) : ");
+                System.Console.Write($"{ConsoleHelper.GenarateTabs(7)}Try Agian , Status (Active:1 , Inactive:0 , Blocked:2) : ");
 
             string StatusString = GetStatus(status);
 
@@ -151,12 +153,12 @@ namespace NovaBusinessSystem.PL
             Console.Clear();
             System.Console.WriteLine("\n\n\n");
 
-            HelperPL.PrintHeader("🔎 GET CUSTOMER BY ID", 7);
+            ConsoleHelper.PrintHeader("🔎 GET CUSTOMER BY ID", 7);
             System.Console.WriteLine("\n\n");
-            System.Console.Write($"{HelperPL.GenarateTabs(7)}Enter Customer ID: ");
+            System.Console.Write($"{ConsoleHelper.GenarateTabs(7)}Enter Customer ID: ");
             int ID = -1;
             while (!int.TryParse(Console.ReadLine(), out ID))
-                System.Console.Write($"{HelperPL.GenarateTabs(7)}Invalid Data ID : ");
+                System.Console.Write($"{ConsoleHelper.GenarateTabs(7)}Invalid Data ID : ");
 
             System.Console.WriteLine("\n\n");
 
@@ -174,12 +176,12 @@ namespace NovaBusinessSystem.PL
             {
                 if (customerInfo is not null)
                     _PrintCustomerDetails(customerInfo, "👤 CUSTOMER DETAILS");
-                else HelperPL.ShowNotFoundMessage($"Employee with ID {customerInfo?.CustomerID} was not found.", "❌ NOT FOUND", "Customer could not be found.");
+                else ConsoleHelper.ShowNotFoundMessage($"Employee with ID {customerInfo?.CustomerID} was not found.", "❌ NOT FOUND", "Customer could not be found.");
 
             }
             catch (SqlException SEX)
             {
-                HelperPL.ShowNotFoundMessage(SEX.Message, "❌ NOT FOUND", "Customer could not be found.");
+                ConsoleHelper.ShowNotFoundMessage(SEX.Message, "❌ NOT FOUND", "Customer could not be found.");
             }
 
             return customerInfo;
@@ -190,7 +192,7 @@ namespace NovaBusinessSystem.PL
 
             Console.Clear();
             System.Console.WriteLine("\n\n\n");
-            HelperPL.PrintHeader("➕ ADD CUSTOMER", 7);
+            ConsoleHelper.PrintHeader("➕ ADD CUSTOMER", 7);
 
             try
             {
@@ -207,7 +209,7 @@ namespace NovaBusinessSystem.PL
             }
             catch (SqlException SEX)
             {
-                HelperPL.ShowNotFoundMessage(SEX.Message, "❌ CUSTOMER NOT ADDED", "Customer could not be added.");
+                ConsoleHelper.ShowNotFoundMessage(SEX.Message, "❌ CUSTOMER NOT ADDED", "Customer could not be added.");
             }
 
         }
@@ -221,7 +223,7 @@ namespace NovaBusinessSystem.PL
             {
                 CustomersBL infoCustomer = GetCustomerByID()!;
                 System.Console.WriteLine("\n\n\n");
-                HelperPL.PrintHeader("UPDATE CUSTOMER", 7);
+                ConsoleHelper.PrintHeader("UPDATE CUSTOMER", 7);
                 if (infoCustomer is not null)
                 {
                     System.Console.WriteLine("\n\n");
@@ -238,7 +240,7 @@ namespace NovaBusinessSystem.PL
             }
             catch (SqlException SEX)
             {
-                HelperPL.ShowNotFoundMessage(SEX.Message, "❌ CUSTOMER NOT UPDATED", "Customer could not be UPDATED.");
+                ConsoleHelper.ShowNotFoundMessage(SEX.Message, "❌ CUSTOMER NOT UPDATED", "Customer could not be UPDATED.");
             }
 
         }
@@ -252,35 +254,35 @@ namespace NovaBusinessSystem.PL
             {
                 CustomersBL infoCustomer = GetCustomerByID()!;
                 System.Console.WriteLine("\n\n\n");
-                HelperPL.PrintHeader("🗑️  DELETE CUSTOMER", 7);
+                ConsoleHelper.PrintHeader("🗑️  DELETE CUSTOMER", 7);
 
                 if (infoCustomer is not null)
                 {
                     System.Console.WriteLine("\n\n");
 
-                    Console.Write($"{HelperPL.GenarateTabs(7)}Are you sure you want to delete this customer?\n");
-                    Console.Write($"{HelperPL.GenarateTabs(7)}Y = Yes N = No  Choice: ");
+                    Console.Write($"{ConsoleHelper.GenarateTabs(7)}Are you sure you want to delete this customer?\n");
+                    Console.Write($"{ConsoleHelper.GenarateTabs(7)}Y = Yes N = No  Choice: ");
                     char choice = 'n';
 
                     while (!char.TryParse(Console.ReadLine(), out choice) || char.ToLower(choice) is not ('y' or 'n'))
 
-                        Console.Write($"{HelperPL.GenarateTabs(7)}Invalid Choive , pLease Enter valid choive -> Y = Yes N = No  Choice: ");
+                        Console.Write($"{ConsoleHelper.GenarateTabs(7)}Invalid Choive , pLease Enter valid choive -> Y = Yes N = No  Choice: ");
 
                     if (char.ToLower(choice) == 'y')
                     {
                         if (infoCustomer.DeleteCustomer())
                             _ShowSccessMessageAndShowInformationCustomer(infoCustomer, "✅ CUSTOMER DELETED");
                         else
-                            HelperPL.ShowNotFoundMessage("❌ DELETE FAILED", "This customer cannot be deleted because\nthey have existing sales records.");
+                            ConsoleHelper.ShowNotFoundMessage("❌ DELETE FAILED", "This customer cannot be deleted because\nthey have existing sales records.");
                     }
                     else
-                        HelperPL.ShowNotFoundMessage("ℹ️  DELETE CANCELLED ", "No changes were made.");
+                        ConsoleHelper.ShowNotFoundMessage("ℹ️  DELETE CANCELLED ", "No changes were made.");
                 }
 
             }
             catch (SqlException SEX)
             {
-                HelperPL.ShowNotFoundMessage(SEX.Message, "❌ CUSTOMER NOT UPDATED", "Customer could not be UPDATED.");
+                ConsoleHelper.ShowNotFoundMessage(SEX.Message, "❌ CUSTOMER NOT UPDATED", "Customer could not be UPDATED.");
             }
 
         }
@@ -294,7 +296,7 @@ namespace NovaBusinessSystem.PL
 
                 _MainMenuCustomersModule();
 
-                Console.Write($"\n\n\n{HelperPL.GenarateTabs(7)}Select: ");
+                Console.Write($"\n\n\n{ConsoleHelper.GenarateTabs(7)}Select: ");
                 byte ChoiceCustomer = 0;
                 while (!byte.TryParse(Console.ReadLine(), out ChoiceCustomer) || ChoiceCustomer > 9)
                     System.Console.WriteLine("\t\tInvalid Choice Customer Menu ");
@@ -333,18 +335,18 @@ namespace NovaBusinessSystem.PL
 
                     case Enumerations.EnChoicesCustomersModule._kLOYALTY_POINTS:
                         {
-                            await Loyalty.StartUpLoyaltyPointsSection();
+                            await LoyaltyMenu.StartUpLoyaltyPointsSection();
                             break;
                         }
-                    case Enumerations.EnChoicesCustomersModule._kCUSTOMER_PURCHASES :
+                    case Enumerations.EnChoicesCustomersModule._kCUSTOMER_PURCHASES:
                         {
-                            await CustomerPurchasesPL.StartupPurchasesCustomers();
+                            await PurchasesMenu.StartupPurchasesCustomers();
                             break;
                         }
                 }
 
 
-                Console.WriteLine($"\n{HelperPL.GenarateTabs(7)}Press any key to continue...");
+                Console.WriteLine($"\n{ConsoleHelper.GenarateTabs(7)}Press any key to continue...");
                 Console.ReadKey();
             }
         }

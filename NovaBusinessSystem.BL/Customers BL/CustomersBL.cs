@@ -1,8 +1,8 @@
-using NovaBusinessSystem.DAL;
+using NovaBusinessSystem.DAL.Customers;
 using NovaBusinessSystem.Enumeration;
 using NovaBusinessSystem.DTOs;
 
-namespace NovaBusinessSystem.BL
+namespace NovaBusinessSystem.BL.Customers
 {
     public class CustomersBL
     {

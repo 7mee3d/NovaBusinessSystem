@@ -1,7 +1,8 @@
 using NovaBusinessSystem.DAL;
+using NovaBusinessSystem.DAL.Customers.Loyalty;
 using NovaBusinessSystem.DTOs;
 
-namespace NovaBusinessSystem.BL
+namespace NovaBusinessSystem.BL.Customers.Loyalty
 {
 
     public class LoyaltyBL

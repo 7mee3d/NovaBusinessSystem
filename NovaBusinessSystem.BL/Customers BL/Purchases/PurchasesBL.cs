@@ -1,17 +1,17 @@
 using NovaBusinessSystem.DTOs;
-using NovaBusinessSystem.DAL;
+using NovaBusinessSystem.DAL.Customers.Purchases;
 
-namespace NovaBusinessSystem.BL
+namespace NovaBusinessSystem.BL.Customers.Purchases
 {
 
-    public class CustomerPurchasesBL
+    public class PurchasesBL
     {
         public static async Task<IEnumerable<CustomerPurchaseDTO>> GetPurchaseHistoryAsync(int customerID)
         {
             if (customerID <= 0)
                 throw new Exception("Invalid Data");
 
-            return await CustomerPurchasesDAL.GetPurchaseHistoryAsync(customerID);
+            return await PurchasesDAL.GetPurchaseHistoryAsync(customerID);
         }
 
         public static async Task<CustomerSpendingSummaryDTO>? GetCustomerSpendingAsync(int customerID)
@@ -19,7 +19,7 @@ namespace NovaBusinessSystem.BL
             if (customerID <= 0)
                 throw new Exception("Invalid Data");
 
-            return await CustomerPurchasesDAL.GetCustomerSpendingAsync(customerID)!;
+            return await PurchasesDAL.GetCustomerSpendingAsync(customerID)!;
         }
 
         public static async Task<IEnumerable<FavoriteProductDTO>> GetCustomerFavoriteProductsAsync(int customerID)
@@ -27,16 +27,16 @@ namespace NovaBusinessSystem.BL
             if (customerID <= 0)
                 throw new Exception("Invalid Data");
 
-            return await CustomerPurchasesDAL.GetCustomerFavoriteProductsAsync(customerID)!;
+            return await PurchasesDAL.GetCustomerFavoriteProductsAsync(customerID)!;
         }
 
         public static async Task<IEnumerable<MonthlyPurchaseDTO>> GetCustomerMonthlyPurchasesAsync()
         {
-            return await CustomerPurchasesDAL.GetCustomerMonthlyPurchasesAsync()!;
+            return await PurchasesDAL.GetCustomerMonthlyPurchasesAsync()!;
         }
         public static async Task<IEnumerable<CustomerRankingDTO>> GetCustomersRankingAsync()
         {
-            return await CustomerPurchasesDAL.GetGetCustomersRankingAsync()!;
+            return await PurchasesDAL.GetGetCustomersRankingAsync()!;
         }
     }
 }

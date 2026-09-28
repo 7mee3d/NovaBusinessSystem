@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using NovaBusinessSystem.BL;
+using NovaBusinessSystem.BL.Customers;
+
 using NovaBusinessSystem.DTOs;
 
 namespace NovaBusinessSystem.API

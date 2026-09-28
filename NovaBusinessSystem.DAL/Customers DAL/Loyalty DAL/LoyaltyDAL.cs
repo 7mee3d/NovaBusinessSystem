@@ -2,7 +2,7 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using NovaBusinessSystem.DTOs;
 
-namespace NovaBusinessSystem.DAL
+namespace NovaBusinessSystem.DAL.Customers.Loyalty
 {
     public class LoyaltyDAL
     {

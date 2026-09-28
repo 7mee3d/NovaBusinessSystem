@@ -1,5 +1,4 @@
-﻿
-using NovaBusinessSystem.PL;
+﻿using NovaBusinessSystemPL.Modules.Customers;
 
 namespace NovaBusinessSystem
 

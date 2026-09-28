@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using DataAccessLayer;
+using NovaBusinessSystem.BL.Departments;
 using NovaBusinessSystem.Enumeration;
 
 namespace NovaBusinessSystem.BL;

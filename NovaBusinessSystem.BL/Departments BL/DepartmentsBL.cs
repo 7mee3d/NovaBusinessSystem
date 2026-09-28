@@ -1,5 +1,5 @@
 using DataAccessLayer;
-namespace NovaBusinessSystem.BL;
+namespace NovaBusinessSystem.BL.Departments;
 
 public class DepartmentsBL
 {
