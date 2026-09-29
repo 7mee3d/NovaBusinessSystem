@@ -90,6 +90,31 @@ namespace NovaBusinessSystem.API
             }
 
         }
-        
+
+        [HttpGet("Registration", Name = "GetRegistrationSummary")]
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<CustomersByCityDTO>>> GetRegistrationSummaryAsync()
+        {
+
+            try
+            {
+                List<RegistrationSummaryDTO> L_RegistrationSummaries = (await ReportBL.GetRegistrationSummaryAsync()!).ToList();
+
+                if (!L_RegistrationSummaries.Any() || L_RegistrationSummaries.Count == 0)
+                    return NotFound("Not found any Registration Summary");
+
+
+                return Ok(L_RegistrationSummaries);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
+
+        }
     }
 }

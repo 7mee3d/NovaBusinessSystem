@@ -178,6 +178,61 @@ namespace NovaBusinessSystem.Modules.Customers.Reports
             }
         }
 
+        public static async Task GetRegistrationSummaryAsync()
+        {
+            try
+            {
+                System.Console.WriteLine("\n\n");
+                ConsoleHelper.PrintHeader("📅 REGISTRATION SUMMARY", 7);
+                System.Console.WriteLine("\n\n");
+
+                HttpClient httpClient = new HttpClient();
+
+                httpClient.BaseAddress = new Uri("http://localhost:5276/api/CustomersReport/");
+
+                var respone = await httpClient.GetAsync($"Registration");
+
+                if (respone.IsSuccessStatusCode)
+                {
+                    var L_RegistrationSummary =
+                        await respone.Content.ReadFromJsonAsync<List<RegistrationSummaryDTO>>();
+
+                    if (L_RegistrationSummary == null || !L_RegistrationSummary.Any())
+                    {
+                        ConsoleHelper.ShowNotFoundMessage(
+                            "⚠️ NO REGISTRATION SUMMARY DATA",
+                            "No registration summary data was found.");
+
+                        return;
+                    }
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}{"Year",-15} {"New Customers",-20}");
+
+                    Console.Write(
+                        $"{ConsoleHelper.GenarateTabs(7)}{new string('-', 35)}{Environment.NewLine}");
+
+                    foreach (var item in L_RegistrationSummary)
+                    {
+                        Console.WriteLine(
+                            $"{ConsoleHelper.GenarateTabs(7)}{item.Year,-15} {item.NewCustomers,-20}");
+                    }
+
+                    Console.Write(
+                        $"{ConsoleHelper.GenarateTabs(7)}{new string('-', 35)}{Environment.NewLine}");
+
+                    return;
+                }
+                ConsoleHelper.ShowNotFoundMessage("⚠️ NO DATA FOUND", $"{await respone.Content.ReadAsStringAsync()}");
+
+            }
+
+            catch (Exception ex)
+            {
+                ConsoleHelper.ShowNotFoundMessage("❌ SYSTEM ERROR", ex.Message, "your request. Please try again.");
+
+            }
+        }
 
     }
 

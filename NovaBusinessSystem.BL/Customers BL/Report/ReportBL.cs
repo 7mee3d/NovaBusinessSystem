@@ -10,5 +10,7 @@ namespace NovaBusinessSystem.BL.Customers.Reports
         public static async Task<IEnumerable<CustomerStatusDTO>>? GetCustomerStatusSummaryAsync() => await ReportDAL.GetCustomerStatusSummaryAsync()!;
         public static async Task<IEnumerable<CustomersByCityDTO>>? GetCustomersByCityAsync() => await ReportDAL.GetCustomersByCityAsync()!;
         public static async Task<IEnumerable<LoyaltySummaryDTO>>? GetLoyaltySummaryReportAsync() => await ReportDAL.GetLoyaltySummaryReportAsync()!;
+        public static async Task<IEnumerable<RegistrationSummaryDTO>>? GetRegistrationSummaryAsync() => await ReportDAL.GetRegistrationSummaryAsync()!;
+
     }
 }

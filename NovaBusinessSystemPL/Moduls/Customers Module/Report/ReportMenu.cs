@@ -63,6 +63,12 @@ namespace NovaBusinessSystem.Modules.Customers.Reports
                             await ReportOperations.GetLoyaltySummaryReportAsync();
                             break;
                         }
+
+                    case Enumerations.EnChoicesCustomerReport._kREGISTRATION_SUMMARY :
+                        {
+                            await ReportOperations.GetRegistrationSummaryAsync() ;
+                            break;
+                        }
                 }
 
 

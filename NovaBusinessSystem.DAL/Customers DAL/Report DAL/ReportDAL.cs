@@ -144,5 +144,50 @@ namespace NovaBusinessSystem.DAL.Customers.Reports
             return L_LoyaltySummaries!;
         }
 
+        public static async Task<IEnumerable<RegistrationSummaryDTO>>? GetRegistrationSummaryAsync()
+        {
+
+            List<RegistrationSummaryDTO> L_RegistrationSummaries = new();
+
+
+            using (SqlConnection connection =
+                 new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+
+            using (SqlCommand command =
+                   new SqlCommand("[dbo].usp_GetRegistrationSummary", connection))
+            {
+
+                command.CommandType = CommandType.StoredProcedure;
+
+                try
+                {
+                    connection.Open();
+
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        while (reader.Read())
+                        {
+                            L_RegistrationSummaries.Add(
+
+                             new RegistrationSummaryDTO(
+
+                                    reader.GetInt32(reader.GetOrdinal("Year")),
+                                    reader.GetInt32(reader.GetOrdinal("New Customers"))
+
+
+                             )
+                            );
+                        }
+                    }
+
+                }
+                catch (SqlException)
+                {
+                    return null!;
+                }
+            }
+
+            return L_RegistrationSummaries!;
+        }
     }
 }
