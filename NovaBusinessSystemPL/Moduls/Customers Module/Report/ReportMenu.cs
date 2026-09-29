@@ -52,9 +52,15 @@ namespace NovaBusinessSystem.Modules.Customers.Reports
                             break;
                         }
 
-                    case Enumerations.EnChoicesCustomerReport._kCUSTOMERS_BY_CITY :
+                    case Enumerations.EnChoicesCustomerReport._kCUSTOMERS_BY_CITY:
                         {
                             await ReportOperations.GetCustomersByCityAsync();
+                            break;
+                        }
+
+                    case Enumerations.EnChoicesCustomerReport._kLOYALTY_SUMMARY:
+                        {
+                            await ReportOperations.GetLoyaltySummaryReportAsync();
                             break;
                         }
                 }

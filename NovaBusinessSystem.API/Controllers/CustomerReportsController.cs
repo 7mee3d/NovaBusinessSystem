@@ -64,5 +64,32 @@ namespace NovaBusinessSystem.API
 
 
         }
+
+        [HttpGet("Loyalty", Name = "GetLoyaltySummaryReport")]
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<CustomersByCityDTO>>> GetLoyaltySummaryReportAsync()
+        {
+
+            try
+            {
+                List<LoyaltySummaryDTO> L_LoyaltySummaries = (await ReportBL.GetLoyaltySummaryReportAsync()!).ToList();
+
+                if (!L_LoyaltySummaries.Any() || L_LoyaltySummaries.Count == 0)
+                    return NotFound("Not found any Loyalty Summary");
+
+
+                return Ok(L_LoyaltySummaries);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
+
+        }
+        
     }
 }

@@ -25,9 +25,10 @@ namespace NovaBusinessSystem.Modules.Customers.Purchases
                     {
                         HttpClient httpClient = new HttpClient();
 
-                        httpClient.BaseAddress = new Uri("http://localhost:5276/api/CustomerPurchases/");
+                        httpClient.BaseAddress = new Uri("http://localhost:5276/api/CustomersPurchases/");
 
                         var respone = await httpClient.GetAsync($"{ID}");
+
                         if (respone.IsSuccessStatusCode)
                         {
                             var L_PurchaseHistoryCustomer = await respone.Content.ReadFromJsonAsync<List<CustomerPurchaseDTO>>();
@@ -84,7 +85,7 @@ namespace NovaBusinessSystem.Modules.Customers.Purchases
                     {
                         HttpClient httpClient = new HttpClient();
 
-                        httpClient.BaseAddress = new Uri("http://localhost:5276/api/CustomerPurchases/");
+                        httpClient.BaseAddress = new Uri("http://localhost:5276/api/CustomersPurchases/");
 
                         var respone = await httpClient.GetAsync($"{ID}/SpendingSummary");
                         if (respone.IsSuccessStatusCode)
@@ -148,7 +149,7 @@ namespace NovaBusinessSystem.Modules.Customers.Purchases
 
                 HttpClient httpClient = new HttpClient();
 
-                httpClient.BaseAddress = new Uri("http://localhost:5276/api/CustomerPurchases/");
+                httpClient.BaseAddress = new Uri("http://localhost:5276/api/CustomersPurchases/");
 
                 var respone = await httpClient.GetAsync($"MonthlyPurchases");
                 if (respone.IsSuccessStatusCode)
@@ -204,7 +205,7 @@ namespace NovaBusinessSystem.Modules.Customers.Purchases
 
                 HttpClient httpClient = new HttpClient();
 
-                httpClient.BaseAddress = new Uri("http://localhost:5276/api/CustomerPurchases/");
+                httpClient.BaseAddress = new Uri("http://localhost:5276/api/CustomersPurchases/");
 
                 var respone = await httpClient.GetAsync($"CustomersRanking");
                 if (respone.IsSuccessStatusCode)

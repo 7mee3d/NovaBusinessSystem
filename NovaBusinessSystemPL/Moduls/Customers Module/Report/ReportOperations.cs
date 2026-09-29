@@ -63,7 +63,6 @@ namespace NovaBusinessSystem.Modules.Customers.Reports
             }
         }
 
-
         public static async Task GetCustomersByCityAsync()
         {
             try
@@ -120,6 +119,66 @@ namespace NovaBusinessSystem.Modules.Customers.Reports
 
             }
         }
+
+        public static async Task GetLoyaltySummaryReportAsync()
+        {
+            try
+            {
+                System.Console.WriteLine("\n\n");
+                ConsoleHelper.PrintHeader("⭐ LOYALTY SUMMARY", 7);
+                System.Console.WriteLine("\n\n");
+
+                HttpClient httpClient = new HttpClient();
+
+                httpClient.BaseAddress = new Uri("http://localhost:5276/api/CustomersReport/");
+
+                var respone = await httpClient.GetAsync($"Loyalty");
+
+                if (respone.IsSuccessStatusCode)
+                {
+                    var L_LoyaltySummary =
+                        await respone.Content.ReadFromJsonAsync<List<LoyaltySummaryDTO>>();
+
+                    if (L_LoyaltySummary == null || !L_LoyaltySummary.Any())
+                    {
+                        ConsoleHelper.ShowNotFoundMessage(
+                            "⚠️ NO LOYALTY SUMMARY DATA",
+                            "No loyalty summary data was found.");
+
+                        return;
+                    }
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}{"Level",-20} {"Customers",-15} {"Total Points",-15}");
+
+                    Console.Write(
+                        $"{ConsoleHelper.GenarateTabs(7)}{new string('-', 50)}{Environment.NewLine}");
+
+                    foreach (var item in L_LoyaltySummary)
+                    {
+                        Console.WriteLine(
+                            $"{ConsoleHelper.GenarateTabs(7)}{item.LoyaltyLevel,-20} {item.Customers,-15} {item.TotalPoints,-15}");
+                    }
+
+                    Console.Write(
+                        $"{ConsoleHelper.GenarateTabs(7)}{new string('-', 50)}{Environment.NewLine}");
+
+                    System.Console.WriteLine($"\n\n{ConsoleHelper.GenarateTabs(7)}Average Points : {(L_LoyaltySummary.Average(x => x.TotalPoints)).ToString("N2")}");
+                    return;
+                }
+
+                ConsoleHelper.ShowNotFoundMessage("⚠️ NO DATA FOUND", $"{await respone.Content.ReadAsStringAsync()}");
+
+            }
+
+            catch (Exception ex)
+            {
+                ConsoleHelper.ShowNotFoundMessage("❌ SYSTEM ERROR", ex.Message, "your request. Please try again.");
+
+            }
+        }
+
+
     }
 
 
