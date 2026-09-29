@@ -51,6 +51,12 @@ namespace NovaBusinessSystem.Modules.Customers.Reports
                             await ReportOperations.GetCustomerStatusSummaryAsync();
                             break;
                         }
+
+                    case Enumerations.EnChoicesCustomerReport._kCUSTOMERS_BY_CITY :
+                        {
+                            await ReportOperations.GetCustomersByCityAsync();
+                            break;
+                        }
                 }
 
 

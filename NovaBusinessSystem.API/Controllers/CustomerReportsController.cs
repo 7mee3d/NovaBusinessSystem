@@ -9,7 +9,7 @@ namespace NovaBusinessSystem.API
     [Route("api/CustomersReport")]
     public class CustomersReportController : ControllerBase
     {
-        [HttpGet("", Name = "GetCustomerStatusSummary")]
+        [HttpGet("Status", Name = "GetCustomerStatusSummary")]
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -27,6 +27,35 @@ namespace NovaBusinessSystem.API
 
 
                 return Ok(customerStatuses);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
+
+
+
+        }
+
+
+        [HttpGet("City", Name = "GetCustomersByCity")]
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<CustomersByCityDTO>>> GetCustomersByCityAsync()
+        {
+
+            try
+            {
+                List<CustomersByCityDTO> customersByCities = (await ReportBL.GetCustomersByCityAsync()!).ToList();
+
+                if (!customersByCities.Any() || customersByCities.Count == 0)
+                    return NotFound("Not found any Customers City");
+
+
+                return Ok(customersByCities);
             }
             catch (Exception ex)
             {
