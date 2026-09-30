@@ -23,4 +23,6 @@ Built with a structured architecture and designed for continuous development, im
 <img src="https://img.shields.io/badge/OOP-7C3AED?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/Layered%20Architecture-334155?style=for-the-badge"/>
 
+<img src="https://img.shields.io/badge/Visual%20Studio%20Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white"/>
+
 </p>
