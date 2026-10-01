@@ -52,6 +52,7 @@ namespace NovaBusinessSystem.DAL.Customers
             return L_AllCustomers;
 
         }
+        
         public static CustomerDTO? FindCustomerBy(int CustomerID)
         {
             CustomerDTO? customerDTO = null;

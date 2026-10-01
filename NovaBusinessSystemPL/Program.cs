@@ -1,4 +1,5 @@
-﻿using NovaBusinessSystemPL.Modules.Customers;
+﻿using NovaBusinessSystem.Modules.Products;
+using NovaBusinessSystemPL.Modules.Customers;
 
 namespace NovaBusinessSystem
 
@@ -12,7 +13,8 @@ namespace NovaBusinessSystem
                 
 
                //EmployeesPL.EmployeesPL.StartupEmployeesModule();
-            await CustomersPL.StartUpCustomersModule();
+           // await CustomersPL.StartUpCustomersModule();
+           await  ProductsMenu.StartupProductsSection();
         }
 
     }

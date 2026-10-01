@@ -97,5 +97,19 @@ namespace NovaBusinessSystem.Enumeration
 
 
         }
+
+        public enum EnChoicesProductsModule : byte
+        {
+            _kBACK = 0,
+            _kLIST_PRODUCTS = 1,
+            _kGET_PRODUCT_BY_ID = 2,
+            _kADD_PRODUCT = 3,
+            _kUPDATE_PRODUCT = 4,
+            _kDELETE_PRODUCT = 5,
+            _kSEARCH_AND_FILTER_PRODUCTS = 6,
+            _kINVENTORY_MANAGEMENT = 7,
+            _kPRODUCT_SALES_ANALYSIS = 8,
+            _kPRODUCT_REPORTS = 9
+        }
     }
 }
