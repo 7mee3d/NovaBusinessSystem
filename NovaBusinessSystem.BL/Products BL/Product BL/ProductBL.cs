@@ -1,5 +1,6 @@
 using NovaBusinessSystem.DAL.Products;
 using NovaBusinessSystem.DTOs.Products;
+using NovaBusinessSystem.Enumeration;
 
 namespace NovaBusinessSystem.BL.Products
 {
@@ -11,55 +12,108 @@ namespace NovaBusinessSystem.BL.Products
         public decimal Price { get; private set; }
         public int StockQuantity { get; private set; }
         public string Status { get; private set; }
-        public ProductDTO ProductDto {
+        public ProductDTO ProductDto
+        {
             get
             {
-                return new ProductDTO(this.ProductID , this.ProductName , this.Category , this.Price , this.StockQuantity , this.Status);
+                return new ProductDTO(
+                    this.ProductID,
+                    this.ProductName,
+                    this.Category,
+                    this.Price,
+                    this.StockQuantity,
+                    this.Status
+                    );
             }
 
-          }
 
-        public Product(
-
-            int productID,
-            string productName,
-            string category,
-            decimal price,
-            int stockQuantity,
-            string status
-
-            )
-        {
-            this.ProductID = productID;
-            this.ProductName = productName;
-            this.Category = category;
-            this.Price = price;
-            this.StockQuantity = stockQuantity;
-            this.Status = status;
         }
 
-        public async static Task<IEnumerable<ProductDTO>> ? GetAllProductsAsync() => await ProductsDAL.GetAllProductsAsync()!;
+        public Enumerations.EnMode enMode { get; private set; }
 
-        public async static Task<Product> GetProductByIDAsync (int productID)
+
+        public Product(ProductDTO productDto, Enumerations.EnMode mode)
         {
-            if(productID <=0 )
-            throw new Exception("Invalid Data");
+            this.ProductID = productDto.ProductID;
+            this.ProductName = productDto.ProductName;
+            this.Category = productDto.Category;
+            this.Price = productDto.Price;
+            this.StockQuantity = productDto.StockQuantity;
+            this.Status = productDto.Status;
+            this.enMode = mode;
 
-            ProductDTO productDto = await ProductsDAL.GetProductByIDAsync(productID)!; 
+        }
 
-            if(productDto is null )
-            return null !;
+        public Product(ProductRequestDTO productDto, Enumerations.EnMode mode)
+        {
+
+            this.ProductName = productDto.ProductName;
+            this.Category = productDto.Category;
+            this.Price = productDto.Price;
+            this.StockQuantity = productDto.StockQuantity;
+            this.Status = productDto.Status;
+            this.enMode = mode;
+
+        }
+
+        public Product()
+        {
+            this.ProductID = -1;
+            this.ProductName = string.Empty;
+            this.Category = string.Empty;
+            this.Price = 0.0m;
+            this.StockQuantity = -1;
+            this.Status = string.Empty;
+
+            this.enMode = Enumerations.EnMode._kADD;
+        }
+
+
+        public async static Task<IEnumerable<ProductDTO>>? GetAllProductsAsync() => await ProductsDAL.GetAllProductsAsync()!;
+
+        public async static Task<Product> GetProductByIDAsync(int productID)
+        {
+            if (productID <= 0)
+                throw new Exception("Invalid Data");
+
+            ProductDTO productDto = await ProductsDAL.GetProductByIDAsync(productID)!;
+
+            if (productDto is null)
+                return null!;
 
             return new Product(
-                productDto.ProductID , 
-                productDto.ProductName ,
-                productDto.Category ,
-                productDto.Price , 
-                productDto.StockQuantity , 
-                productDto.Status
-                ) ; 
+                productDto,
+                Enumerations.EnMode._kUPDATE
+                );
 
         }
- 
+
+        private async Task<bool>? _AddNewProduct()
+        {
+            this.ProductID = await ProductsDAL.AddNewProductAsync(this.ProductDto)!;
+            return this.ProductID > 0;
+        }
+
+        public async Task<bool> SaveMode()
+        {
+            switch (this.enMode)
+            {
+                case Enumerations.EnMode._kADD:
+                    {
+                        if (await _AddNewProduct()!)
+                        {
+                            this.enMode = Enumerations.EnMode._kUPDATE;
+                            return true;
+                        }
+                        return false;
+                    }
+
+                case Enumerations.EnMode._kUPDATE:
+                    return false;
+
+                default: return false;
+            }
+        }
+
     }
 }

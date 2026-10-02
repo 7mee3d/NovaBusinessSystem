@@ -8,7 +8,7 @@ namespace NovaBusinessSystem.DAL.Products
     public class ProductsDAL
     {
 
-        public async static Task<IEnumerable<ProductDTO>> ? GetAllProductsAsync()
+        public async static Task<IEnumerable<ProductDTO>>? GetAllProductsAsync()
         {
             List<ProductDTO> L_Products = new List<ProductDTO>();
 
@@ -50,9 +50,9 @@ namespace NovaBusinessSystem.DAL.Products
 
         }
 
-        public async static Task<ProductDTO> ? GetProductByIDAsync(int productID)
+        public async static Task<ProductDTO>? GetProductByIDAsync(int productID)
         {
-           ProductDTO productInformation = null! ; 
+            ProductDTO productInformation = null!;
 
 
             using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
@@ -60,8 +60,8 @@ namespace NovaBusinessSystem.DAL.Products
             {
 
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.Add("@ProductID" , SqlDbType.Int ).Value = productID ;
-                    
+                command.Parameters.Add("@ProductID", SqlDbType.Int).Value = productID;
+
 
                 try
                 {
@@ -71,14 +71,14 @@ namespace NovaBusinessSystem.DAL.Products
                         while (await reader.ReadAsync())
                         {
 
-                                productInformation = new ProductDTO(
-                                     reader.GetInt32(reader.GetOrdinal("ProductID")),
-                                     reader.GetString(reader.GetOrdinal("ProductName")),
-                                     reader.GetString(reader.GetOrdinal("Category")),
-                                     reader.GetDecimal(reader.GetOrdinal("Price")),
-                                     reader.GetInt32(reader.GetOrdinal("StockQuantity")),
-                                     reader.GetString(reader.GetOrdinal("Status"))
-                                 );
+                            productInformation = new ProductDTO(
+                                 reader.GetInt32(reader.GetOrdinal("ProductID")),
+                                 reader.GetString(reader.GetOrdinal("ProductName")),
+                                 reader.GetString(reader.GetOrdinal("Category")),
+                                 reader.GetDecimal(reader.GetOrdinal("Price")),
+                                 reader.GetInt32(reader.GetOrdinal("StockQuantity")),
+                                 reader.GetString(reader.GetOrdinal("Status"))
+                             );
 
                         }
 
@@ -92,6 +92,53 @@ namespace NovaBusinessSystem.DAL.Products
             return productInformation!;
 
         }
+
+        public async static Task<int>? AddNewProductAsync(ProductDTO product)
+        {
+
+            using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+            using (SqlCommand command = new SqlCommand("[dbo].[usp_AddNewProduct]", connection))
+            {
+
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.Add("@ProductName", SqlDbType.VarChar, 100).Value = product.ProductName;
+                command.Parameters.Add("@Category", SqlDbType.VarChar, 100).Value = product.Category;
+                
+                SqlParameter priceParameter =
+                    command.Parameters.Add("@Price", SqlDbType.Decimal);
+
+                priceParameter.Precision = 18;
+                priceParameter.Scale = 2;
+                priceParameter.Value = product.Price;
+                
+                command.Parameters.Add("@StockQuantity", SqlDbType.Int).Value = product.StockQuantity;
+                command.Parameters.Add("@Status", SqlDbType.VarChar, 50).Value = product.Status;
+
+                SqlParameter paramProductID = new SqlParameter("@ProductID", SqlDbType.Int)
+                {
+                    Direction = ParameterDirection.Output
+                };
+
+                command.Parameters.Add(paramProductID);
+
+
+
+                try
+                {
+                    await connection.OpenAsync();
+
+                    await command.ExecuteNonQueryAsync();
+
+                    return Convert.ToInt32(paramProductID.Value);
+
+                }
+
+                catch (SqlException) { throw; }
+                ;
+            }
+        }
+
     }
 
 }
