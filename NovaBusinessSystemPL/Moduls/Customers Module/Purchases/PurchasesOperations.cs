@@ -13,7 +13,7 @@ namespace NovaBusinessSystem.Modules.Customers.Purchases
         {
             try
             {
-                int ID = InputHelper.ReadTheID();
+                int ID =  InputHelper.ReadTheID("🔎 GET CUSTOMER BY ID" , "Enter Customer ID: ");
 
                 if (ID > 0)
                 {
@@ -73,7 +73,7 @@ namespace NovaBusinessSystem.Modules.Customers.Purchases
         {
             try
             {
-                int ID = InputHelper.ReadTheID();
+                int ID =  InputHelper.ReadTheID("🔎 GET CUSTOMER BY ID" , "Enter Customer ID: ");
 
                 if (ID > 0)
                 {

@@ -14,7 +14,7 @@ namespace NovaBusinessSystem.Modules.Customers.Loyalty
         {
             try
             {
-                int id = InputHelper.ReadTheID();
+                int id = InputHelper.ReadTheID("🔎 GET CUSTOMER BY ID" , "Enter Customer ID: ");
                 System.Console.WriteLine("\n\n\n");
 
                 HttpClient httpClient = new HttpClient();
@@ -64,7 +64,7 @@ namespace NovaBusinessSystem.Modules.Customers.Loyalty
 
             try
             {
-                int ID = InputHelper.ReadTheID()!;
+                int ID =   InputHelper.ReadTheID("🔎 GET CUSTOMER BY ID" , "Enter Customer ID: ");
 
                 if (ID > 0)
                 {
@@ -120,7 +120,7 @@ namespace NovaBusinessSystem.Modules.Customers.Loyalty
 
             try
             {
-                int ID = InputHelper.ReadTheID()!;
+                int ID = InputHelper.ReadTheID("🔎 GET CUSTOMER BY ID" , "Enter Customer ID: ");
 
                 if (ID > 0)
                 {

@@ -8,7 +8,7 @@ namespace NovaBusinessSystem.DAL.Products
     public class ProductsDAL
     {
 
-        public async static Task<IEnumerable<ProductDTO>> GetAllProductsAsync()
+        public async static Task<IEnumerable<ProductDTO>> ? GetAllProductsAsync()
         {
             List<ProductDTO> L_Products = new List<ProductDTO>();
 
@@ -47,6 +47,49 @@ namespace NovaBusinessSystem.DAL.Products
             }
 
             return L_Products;
+
+        }
+
+        public async static Task<ProductDTO> ? GetProductByIDAsync(int productID)
+        {
+           ProductDTO productInformation = null! ; 
+
+
+            using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+            using (SqlCommand command = new SqlCommand("[dbo].[usp_GetProductByID]", connection))
+            {
+
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add("@ProductID" , SqlDbType.Int ).Value = productID ;
+                    
+
+                try
+                {
+                    await connection.OpenAsync();
+
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                        while (await reader.ReadAsync())
+                        {
+
+                                productInformation = new ProductDTO(
+                                     reader.GetInt32(reader.GetOrdinal("ProductID")),
+                                     reader.GetString(reader.GetOrdinal("ProductName")),
+                                     reader.GetString(reader.GetOrdinal("Category")),
+                                     reader.GetDecimal(reader.GetOrdinal("Price")),
+                                     reader.GetInt32(reader.GetOrdinal("StockQuantity")),
+                                     reader.GetString(reader.GetOrdinal("Status"))
+                                 );
+
+                        }
+
+
+                }
+
+                catch (SqlException) { throw; }
+                ;
+            }
+
+            return productInformation!;
 
         }
     }

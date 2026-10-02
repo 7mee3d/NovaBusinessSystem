@@ -11,7 +11,13 @@ namespace NovaBusinessSystem.BL.Products
         public decimal Price { get; private set; }
         public int StockQuantity { get; private set; }
         public string Status { get; private set; }
-        public ProductDTO ProductDto { get; private set; }
+        public ProductDTO ProductDto {
+            get
+            {
+                return new ProductDTO(this.ProductID , this.ProductName , this.Category , this.Price , this.StockQuantity , this.Status);
+            }
+
+          }
 
         public Product(
 
@@ -32,8 +38,28 @@ namespace NovaBusinessSystem.BL.Products
             this.Status = status;
         }
 
-        public async static Task<IEnumerable<ProductDTO>> GetAllProductsAsync() => await ProductsDAL.GetAllProductsAsync();
+        public async static Task<IEnumerable<ProductDTO>> ? GetAllProductsAsync() => await ProductsDAL.GetAllProductsAsync()!;
 
+        public async static Task<Product> GetProductByIDAsync (int productID)
+        {
+            if(productID <=0 )
+            throw new Exception("Invalid Data");
 
+            ProductDTO productDto = await ProductsDAL.GetProductByIDAsync(productID)!; 
+
+            if(productDto is null )
+            return null !;
+
+            return new Product(
+                productDto.ProductID , 
+                productDto.ProductName ,
+                productDto.Category ,
+                productDto.Price , 
+                productDto.StockQuantity , 
+                productDto.Status
+                ) ; 
+
+        }
+ 
     }
 }

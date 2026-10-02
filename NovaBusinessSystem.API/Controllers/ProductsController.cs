@@ -31,5 +31,37 @@ namespace NovaBusinessSystem.API
                 return BadRequest($"{ex.Message}");
             }
         }
+
+        [HttpGet("{id:int}", Name = "GetProductByIDAsync")]
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<ActionResult<ProductDTO>> GetProductByIDAsync([FromRoute(Name = "id")] int id)
+        {
+            try
+            {
+
+                if (id <= 0)
+                    return BadRequest("Invalid product id");
+
+                Product product = (await Product.GetProductByIDAsync(id));
+
+                if (product is null)
+                    return NotFound("Product not found");
+
+                ProductDTO productDto = product.ProductDto;
+                if (productDto is null)
+                    return NotFound("Product not found");
+
+                return Ok(productDto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
+        }
     }
 }
