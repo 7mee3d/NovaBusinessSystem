@@ -55,7 +55,10 @@ namespace NovaBusinessSystem.Modules.Products
                     }
 
                     case Enumerations.EnChoicesProductsModule._kADD_PRODUCT:
+                    {
+                        await ProductsOperations.AddNewProductAsync();
                         break;
+                    }
 
                     case Enumerations.EnChoicesProductsModule._kUPDATE_PRODUCT:
                         break;
