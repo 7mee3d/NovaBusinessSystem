@@ -49,19 +49,22 @@ namespace NovaBusinessSystem.Modules.Products
                         }
 
                     case Enumerations.EnChoicesProductsModule._kGET_PRODUCT_BY_ID:
-                    {
-                        await ProductsOperations.GetProductByIDAsync();
-                        break;
-                    }
+                        {
+                            await ProductsOperations.GetProductByIDAsync();
+                            break;
+                        }
 
                     case Enumerations.EnChoicesProductsModule._kADD_PRODUCT:
-                    {
-                        await ProductsOperations.AddNewProductAsync();
-                        break;
-                    }
+                        {
+                            await ProductsOperations.AddNewProductAsync();
+                            break;
+                        }
 
                     case Enumerations.EnChoicesProductsModule._kUPDATE_PRODUCT:
-                        break;
+                        {
+                            await ProductsOperations.UpdateProductAsync();
+                            break;
+                        }
 
                     case Enumerations.EnChoicesProductsModule._kDELETE_PRODUCT:
                         break;

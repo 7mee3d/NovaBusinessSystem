@@ -347,5 +347,179 @@ namespace NovaBusinessSystem.Modules.Products
                     "your request. Please try again.");
             }
         }
+
+        public static async Task UpdateProductAsync()
+        {
+            try
+            {
+                Console.Clear();
+                Console.WriteLine("\n\n");
+
+                ConsoleHelper.PrintHeader("✏️  EDIT PRODUCT", 7);
+
+                Console.WriteLine("\n");
+
+                Console.Write($"{ConsoleHelper.GenarateTabs(7)}Product ID   : ");
+
+                int productID = 0;
+
+                while (!int.TryParse(Console.ReadLine(), out productID) || productID <= 0)
+                    Console.Write($"{ConsoleHelper.GenarateTabs(7)}Invalid! Product ID : ");
+
+
+                Console.Write($"{ConsoleHelper.GenarateTabs(7)}Product Name : ");
+                string productName = Console.ReadLine()!;
+
+                while (true)
+                {
+                    bool isPass = true;
+
+                    if (string.IsNullOrWhiteSpace(productName))
+                        isPass = false;
+                    else
+                    {
+                        foreach (char c in productName)
+                        {
+                            if (!char.IsLetter(c) && !char.IsWhiteSpace(c))
+                            {
+                                isPass = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!isPass)
+                    {
+                        Console.Write(
+                            $"{ConsoleHelper.GenarateTabs(7)}Invalid! Product Name : ");
+
+                        productName = Console.ReadLine()!;
+                    }
+                    else
+                        break;
+                }
+
+
+                Console.Write($"{ConsoleHelper.GenarateTabs(7)}Category     : ");
+                string category = Console.ReadLine()!;
+
+                while (true)
+                {
+                    bool isPass = true;
+
+                    if (string.IsNullOrWhiteSpace(category))
+                        isPass = false;
+                    else
+                    {
+                        foreach (char c in category)
+                        {
+                            if (!char.IsLetter(c) && !char.IsWhiteSpace(c))
+                            {
+                                isPass = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!isPass)
+                    {
+                        Console.Write(
+                            $"{ConsoleHelper.GenarateTabs(7)}Invalid! Category : ");
+
+                        category = Console.ReadLine()!;
+                    }
+                    else
+                        break;
+                }
+
+
+                Console.Write($"{ConsoleHelper.GenarateTabs(7)}Price        : ");
+
+                decimal price = 0.0m;
+
+                while (!decimal.TryParse(Console.ReadLine(), out price) || price <= 0)
+                    Console.Write($"{ConsoleHelper.GenarateTabs(7)}Invalid! Price : ");
+
+
+                Console.Write($"{ConsoleHelper.GenarateTabs(7)}Status       : ");
+                string status = Console.ReadLine()!;
+
+                while (string.IsNullOrWhiteSpace(status))
+                {
+                    Console.Write(
+                        $"{ConsoleHelper.GenarateTabs(7)}Invalid! Status : ");
+
+                    status = Console.ReadLine()!;
+                }
+
+
+                ProductUpdateDTO productUpdate = new ProductUpdateDTO(
+                    productName,
+                    category,
+                    price,
+                    status
+                );
+
+
+                using HttpClient httpClient = new HttpClient();
+
+                httpClient.BaseAddress =
+                    new Uri("http://localhost:5276/api/Products/");
+
+
+                var respone =
+                    await httpClient.PutAsJsonAsync(
+                        $"{productID}",
+                        productUpdate
+                    );
+
+
+                if (respone.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("\n\n");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}╔══════════════════════════════════════════════╗");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║           ✅ PRODUCT UPDATED                 ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}╠══════════════════════════════════════════════╣");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║ Product ID       : {productID,-25} ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║ Product Name     : {productName,-25} ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║ Category         : {category,-25} ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║ Price            : {price.ToString("N2"),-25} ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║ Status           : {status,-25} ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}╚══════════════════════════════════════════════╝");
+
+                    return;
+                }
+
+
+                ConsoleHelper.ShowNotFoundMessage(
+                    "❌ PRODUCT NOT UPDATED",
+                    await respone.Content.ReadAsStringAsync());
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.ShowNotFoundMessage(
+                    "❌ SYSTEM ERROR",
+                    ex.Message,
+                    "your request. Please try again.");
+            }
+        }
     }
 }
