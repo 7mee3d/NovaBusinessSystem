@@ -117,5 +117,57 @@ namespace NovaBusinessSystem.API
                 );
             }
         }
+
+
+        [HttpPut("{id:int}")]
+
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+
+        public async Task<ActionResult<ProductDTO>> UpdateProductAsync(
+        [FromRoute(Name = "id")] int id,
+        [FromBody] ProductUpdateDTO productUpdateDto)
+        {
+            try
+            {
+                if (id <= 0)
+                    return BadRequest("Invalid product id.");
+
+                if (productUpdateDto is null)
+                    return BadRequest("Product data is required.");
+
+                if (string.IsNullOrWhiteSpace(productUpdateDto.ProductName) ||
+                    string.IsNullOrWhiteSpace(productUpdateDto.Category) ||
+                    string.IsNullOrWhiteSpace(productUpdateDto.Status))
+                {
+                    return BadRequest("Invalid product data.");
+                }
+
+                if (productUpdateDto.Price <= 0)
+                    return BadRequest("Invalid product data.");
+
+
+                Product productObj = await Product.GetProductByIDAsync(id)!;
+
+                if (productObj is null)
+                    return NotFound("Product data is required.");
+
+                productObj.Update(productUpdateDto);
+
+                if (!await productObj.SaveMode())
+                    return BadRequest("Something went wrong.");
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    ex.Message
+                );
+            }
+        }
     }
 }

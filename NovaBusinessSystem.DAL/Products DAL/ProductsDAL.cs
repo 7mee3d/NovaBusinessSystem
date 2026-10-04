@@ -104,14 +104,14 @@ namespace NovaBusinessSystem.DAL.Products
 
                 command.Parameters.Add("@ProductName", SqlDbType.VarChar, 100).Value = product.ProductName;
                 command.Parameters.Add("@Category", SqlDbType.VarChar, 100).Value = product.Category;
-                
+
                 SqlParameter priceParameter =
                     command.Parameters.Add("@Price", SqlDbType.Decimal);
 
                 priceParameter.Precision = 18;
                 priceParameter.Scale = 2;
                 priceParameter.Value = product.Price;
-                
+
                 command.Parameters.Add("@StockQuantity", SqlDbType.Int).Value = product.StockQuantity;
                 command.Parameters.Add("@Status", SqlDbType.VarChar, 50).Value = product.Status;
 
@@ -139,6 +139,44 @@ namespace NovaBusinessSystem.DAL.Products
             }
         }
 
+        public async static Task<int>? UpdateProductAsync(int productID , ProductUpdateDTO product)
+        {
+
+            using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+            using (SqlCommand command = new SqlCommand("[dbo].[usp_UpdateProduct]", connection))
+            {
+
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.Add("@ProductName", SqlDbType.VarChar, 100).Value = product.ProductName;
+               command.Parameters.Add("@ProductID", SqlDbType.Int).Value = productID;
+
+                command.Parameters.Add("@Category", SqlDbType.VarChar, 100).Value = product.Category;
+
+                SqlParameter priceParameter =
+                    command.Parameters.Add("@Price", SqlDbType.Decimal);
+
+                priceParameter.Precision = 18;
+                priceParameter.Scale = 2;
+                priceParameter.Value = product.Price;
+
+                command.Parameters.Add("@Status", SqlDbType.VarChar, 50).Value = product.Status;
+
+
+
+
+
+                try
+                {
+                    await connection.OpenAsync();
+                    return Convert.ToInt32(await command.ExecuteScalarAsync());
+
+                }
+
+                catch (SqlException) { throw; }
+                ;
+            }
+        }
     }
 
 }

@@ -56,6 +56,15 @@ namespace NovaBusinessSystem.BL.Products
 
         }
 
+        public void Update(ProductUpdateDTO productDto)
+        {
+
+            this.ProductName = productDto.ProductName;
+            this.Category = productDto.Category;
+            this.Price = productDto.Price;
+            this.Status = productDto.Status;
+        }
+
         public Product()
         {
             this.ProductID = -1;
@@ -93,6 +102,13 @@ namespace NovaBusinessSystem.BL.Products
             this.ProductID = await ProductsDAL.AddNewProductAsync(this.ProductDto)!;
             return this.ProductID > 0;
         }
+        private async Task<bool>? _UpdateProduct()
+        {
+            ProductUpdateDTO productUpdate = new ProductUpdateDTO(this.ProductName, this.Category, this.Price, this.Status);
+
+            int rowAffective = await ProductsDAL.UpdateProductAsync(this.ProductID, productUpdate)!;
+            return rowAffective > 0;
+        }
 
         public async Task<bool> SaveMode()
         {
@@ -109,7 +125,7 @@ namespace NovaBusinessSystem.BL.Products
                     }
 
                 case Enumerations.EnMode._kUPDATE:
-                    return false;
+                    return await _UpdateProduct()!;
 
                 default: return false;
             }
