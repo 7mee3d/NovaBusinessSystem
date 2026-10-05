@@ -169,5 +169,39 @@ namespace NovaBusinessSystem.API
                 );
             }
         }
+
+        [HttpDelete("{id:int}")]
+
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+
+        public async Task<ActionResult<ProductDTO>> DeleteProductAsync(
+                [FromRoute(Name = "id")] int id)
+        {
+            try
+            {
+                if (id <= 0)
+                    return BadRequest("Invalid product id.");
+
+                Product productObj = await Product.GetProductByIDAsync(id)!;
+
+                if (productObj is null)
+                    return NotFound("Product data is required.");
+
+                if (!await productObj.DeleteProduct()!)
+                    return BadRequest("Something went wrong.");
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    ex.Message
+                );
+            }
+        }
     }
 }

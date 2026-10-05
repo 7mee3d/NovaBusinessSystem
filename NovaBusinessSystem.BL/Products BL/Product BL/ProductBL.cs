@@ -110,7 +110,7 @@ namespace NovaBusinessSystem.BL.Products
             return rowAffective > 0;
         }
 
-        public async Task<bool> SaveMode()
+        public async Task<bool>  SaveMode()
         {
             switch (this.enMode)
             {
@@ -131,5 +131,7 @@ namespace NovaBusinessSystem.BL.Products
             }
         }
 
+        public async Task<bool> ? DeleteProduct ()
+        => await ProductsDAL.DeleteProductAsync(this.ProductID)!;
     }
 }

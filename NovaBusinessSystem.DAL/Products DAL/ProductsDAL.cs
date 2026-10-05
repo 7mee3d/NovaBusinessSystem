@@ -139,7 +139,7 @@ namespace NovaBusinessSystem.DAL.Products
             }
         }
 
-        public async static Task<int>? UpdateProductAsync(int productID , ProductUpdateDTO product)
+        public async static Task<int>? UpdateProductAsync(int productID, ProductUpdateDTO product)
         {
 
             using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
@@ -149,7 +149,7 @@ namespace NovaBusinessSystem.DAL.Products
                 command.CommandType = CommandType.StoredProcedure;
 
                 command.Parameters.Add("@ProductName", SqlDbType.VarChar, 100).Value = product.ProductName;
-               command.Parameters.Add("@ProductID", SqlDbType.Int).Value = productID;
+                command.Parameters.Add("@ProductID", SqlDbType.Int).Value = productID;
 
                 command.Parameters.Add("@Category", SqlDbType.VarChar, 100).Value = product.Category;
 
@@ -170,6 +170,30 @@ namespace NovaBusinessSystem.DAL.Products
                 {
                     await connection.OpenAsync();
                     return Convert.ToInt32(await command.ExecuteScalarAsync());
+
+                }
+
+                catch (SqlException) { throw; }
+                ;
+            }
+        }
+
+        public async static Task<bool>? DeleteProductAsync(int productID)
+        {
+
+            using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+            using (SqlCommand command = new SqlCommand("[dbo].[usp_DeleteProduct]", connection))
+            {
+
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.Add("@ProductID", SqlDbType.Int).Value = productID;
+
+                try
+                {
+                    await connection.OpenAsync();
+                    await command.ExecuteNonQueryAsync();
+                    return true;
 
                 }
 

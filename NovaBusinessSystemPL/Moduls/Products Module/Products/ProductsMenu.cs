@@ -67,7 +67,11 @@ namespace NovaBusinessSystem.Modules.Products
                         }
 
                     case Enumerations.EnChoicesProductsModule._kDELETE_PRODUCT:
-                        break;
+                        {
+
+                            await ProductsOperations.DeleteProductAsync();
+                            break;
+                        }
 
                     case Enumerations.EnChoicesProductsModule._kSEARCH_AND_FILTER_PRODUCTS:
                         break;

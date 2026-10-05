@@ -521,5 +521,78 @@ namespace NovaBusinessSystem.Modules.Products
                     "your request. Please try again.");
             }
         }
+
+        public static async Task DeleteProductAsync()
+        {
+            try
+            {
+                Console.Clear();
+                Console.WriteLine("\n\n");
+
+                ConsoleHelper.PrintHeader("🗑️ DELETE PRODUCT", 7);
+
+                Console.WriteLine("\n");
+
+
+                int productID = InputHelper.ReadTheID("🔎 GET PRODUCT BY ID", "Enter Product ID: ");
+
+                using HttpClient httpClient = new HttpClient();
+
+                httpClient.BaseAddress =
+                    new Uri("http://localhost:5276/api/Products/");
+
+
+                var respone =
+                    await httpClient.DeleteAsync($"{productID}");
+
+
+                if (respone.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("\n\n");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}╔══════════════════════════════════════════════╗");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║            ✅ PRODUCT DELETED                ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}╠══════════════════════════════════════════════╣");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║ Product with ID {productID,-27}║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║ was deleted successfully.                    ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}╚══════════════════════════════════════════════╝");
+
+                    return;
+                }
+
+
+                if (respone.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    ConsoleHelper.ShowNotFoundMessage(
+                        "❌ PRODUCT NOT FOUND",
+                        $"Product with ID {productID} was not found.");
+
+                    return;
+                }
+
+
+                ConsoleHelper.ShowNotFoundMessage(
+                    "❌ PRODUCT NOT DELETED",
+                    await respone.Content.ReadAsStringAsync());
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.ShowNotFoundMessage(
+                    "❌ SYSTEM ERROR",
+                    ex.Message,
+                    "your request. Please try again.");
+            }
+        }
     }
 }
