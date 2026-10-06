@@ -106,5 +106,114 @@ namespace NovaBusinessSystem.Modules.Products.Inventory
                     "your request. Please try again.");
             }
         }
+
+        public static async Task AddStockAsync()
+        {
+            try
+            {
+                Console.Clear();
+
+                int productID = InputHelper.ReadTheID(
+                    "➕ ADD STOCK",
+                    "Enter Product ID: "
+                );
+
+                Console.Write(
+                    $"{ConsoleHelper.GenarateTabs(7)}Quantity To Add : ");
+
+                int quantityToAdd;
+
+                while (!int.TryParse(
+                           Console.ReadLine(),
+                           out quantityToAdd) ||
+                       quantityToAdd <= 0)
+                {
+                    Console.Write(
+                        $"{ConsoleHelper.GenarateTabs(7)}Invalid! Quantity To Add : ");
+                }
+
+
+                using HttpClient httpClient = new HttpClient();
+
+                httpClient.BaseAddress =
+                    new Uri("http://localhost:5276/api/Products/Inventory/");
+
+
+                var respone =
+                    await httpClient.PatchAsync(
+                        $"{productID}/Add?quantity={quantityToAdd}",
+                        null
+                    );
+
+
+                if (respone.IsSuccessStatusCode)
+                {
+                    AddStockResultDTO? result =
+                        await respone.Content
+                            .ReadFromJsonAsync<AddStockResultDTO>();
+
+                    if (result == null)
+                    {
+                        ConsoleHelper.ShowNotFoundMessage(
+                            "❌ STOCK NOT ADDED",
+                            "Failed to read stock result.");
+
+                        return;
+                    }
+
+
+                    Console.WriteLine("\n\n");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}╔══════════════════════════════════════════════╗");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║             ✅ STOCK ADDED                   ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}╠══════════════════════════════════════════════╣");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║ Product       : {result.ProductName,-28} ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║ Previous      : {result.PreviousStock,-28} ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║ Added         : {result.AddedStock,-28} ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║ New Stock     : {result.NewStock,-28} ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}╚══════════════════════════════════════════════╝");
+
+                    return;
+                }
+
+
+                if (respone.StatusCode ==
+                    System.Net.HttpStatusCode.NotFound)
+                {
+                    ConsoleHelper.ShowNotFoundMessage(
+                        "❌ PRODUCT NOT FOUND",
+                        $"Product with ID {productID} was not found.");
+
+                    return;
+                }
+
+
+                ConsoleHelper.ShowNotFoundMessage(
+                    "❌ STOCK NOT ADDED",
+                    await respone.Content.ReadAsStringAsync());
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.ShowNotFoundMessage(
+                    "❌ SYSTEM ERROR",
+                    ex.Message,
+                    "your request. Please try again.");
+            }
+        }
     }
 }

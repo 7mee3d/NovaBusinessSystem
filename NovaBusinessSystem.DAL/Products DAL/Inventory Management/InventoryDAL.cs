@@ -67,5 +67,46 @@ namespace NovaBusinessSystem.DAL.Products.Inventory
                 }
             }
         }
+
+        public static async Task<AddStockResultDTO?> AddStockAsync(int productID, int stockToAdded)
+        {
+            
+            using SqlConnection connection =
+                new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+
+            using SqlCommand command =
+                new SqlCommand("[dbo].[usp_AddStock]", connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.Add(
+                "@ProductID",
+                SqlDbType.Int
+            ).Value = productID;
+
+            command.Parameters.Add(
+                "@StockToAdded",
+                SqlDbType.Int
+            ).Value = stockToAdded;
+
+
+            await connection.OpenAsync();
+
+            using SqlDataReader reader =
+                await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                return new AddStockResultDTO(
+                    reader.GetInt32(reader.GetOrdinal("ProductID")),
+                    reader.GetString(reader.GetOrdinal("ProductName")),
+                    reader.GetInt32(reader.GetOrdinal("PreviousStock")),
+                    reader.GetInt32(reader.GetOrdinal("AddedStock")),
+                    reader.GetInt32(reader.GetOrdinal("NewStock"))
+                );
+            }
+
+            return null;
+        }
     }
 }

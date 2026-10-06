@@ -20,7 +20,7 @@ namespace NovaBusinessSystem.API
         {
             try
             {
-                List<ProductDTO> L_Products = (await Product.GetAllProductsAsync()).ToList();
+                List<ProductDTO> L_Products = (await Product.GetAllProductsAsync()!).ToList();
                 if (!L_Products.Any() || L_Products.Count == 0)
                     return NotFound("Not found any Products");
 
@@ -203,5 +203,7 @@ namespace NovaBusinessSystem.API
                 );
             }
         }
+
+        
     }
 }

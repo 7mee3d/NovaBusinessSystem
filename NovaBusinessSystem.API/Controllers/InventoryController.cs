@@ -15,7 +15,7 @@ namespace NovaBusinessSystem.API.Controllers.Products.Inventory
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
         public async Task<ActionResult<ProductStockDTO>> ViewProductStockAsync(
-                    [FromRoute] int id)
+                    [FromRoute(Name = "id")] int id)
         {
             try
             {
@@ -29,6 +29,46 @@ namespace NovaBusinessSystem.API.Controllers.Products.Inventory
                     return NotFound($"Product with ID {id} was not found.");
 
                 return Ok(productStock);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    ex.Message
+                );
+            }
+        }
+
+        [HttpPatch("{id:int}/Add")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<ActionResult<AddStockResultDTO>> AddStockAsync(
+             [FromRoute(Name = "id")] int id,
+             [FromQuery] int quantity)
+        {
+            try
+            {
+                if (id <= 0)
+                    return BadRequest("Invalid product ID.");
+
+                if (quantity <= 0)
+                    return BadRequest(
+                        "Quantity must be greater than zero.");
+
+                AddStockResultDTO? result =
+                    await InventoryManagement.AddStockAsync(
+                        id,
+                        quantity
+                    );
+
+                if (result is null)
+                    return NotFound(
+                        $"Product with ID {id} was not found.");
+
+                return Ok(result);
             }
             catch (Exception ex)
             {

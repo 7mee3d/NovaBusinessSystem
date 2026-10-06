@@ -57,6 +57,7 @@ namespace NovaBusinessSystem.Modules.Products.Inventory
 
                     case Enumerations.EnChoicesInventoryManagement._kADD_STOCK:
                     {
+                        await InventoryOperations.AddStockAsync();
                         break;
                     }
 
