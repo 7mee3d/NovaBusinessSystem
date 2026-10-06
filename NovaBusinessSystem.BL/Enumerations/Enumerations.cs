@@ -111,5 +111,18 @@ namespace NovaBusinessSystem.Enumeration
             _kPRODUCT_SALES_ANALYSIS = 8,
             _kPRODUCT_REPORTS = 9
         }
+
+        public enum EnChoicesInventoryManagement : byte
+        {
+            _kBACK = 0,
+            _kVIEW_PRODUCT_STOCK = 1,
+            _kADD_STOCK = 2,
+            _kREMOVE_STOCK = 3,
+            _kADJUST_STOCK = 4,
+            _kLOW_STOCK_PRODUCTS = 5,
+            _kOUT_OF_STOCK_PRODUCTS = 6,
+            _kINVENTORY_VALUE = 7,
+            _kSTOCK_STATISTICS = 8
+        }
     }
 }

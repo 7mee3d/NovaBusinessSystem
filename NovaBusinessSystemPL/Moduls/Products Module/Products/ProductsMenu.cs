@@ -1,5 +1,6 @@
 using NovaBusinessSystem.Helpers;
 using NovaBusinessSystem.Enumeration;
+using NovaBusinessSystem.Modules.Products.Inventory;
 
 namespace NovaBusinessSystem.Modules.Products
 {
@@ -77,7 +78,10 @@ namespace NovaBusinessSystem.Modules.Products
                         break;
 
                     case Enumerations.EnChoicesProductsModule._kINVENTORY_MANAGEMENT:
+                    {
+                        await  InventoryManagementMenu.StartupInventoryManagementSection();
                         break;
+                    }
 
                     case Enumerations.EnChoicesProductsModule._kPRODUCT_SALES_ANALYSIS:
                         break;
