@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NovaBusinessSystem.DTOs.Products.Inventory;
 using NovaBusinessSystem.BL.Products.Inventory;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace NovaBusinessSystem.API.Controllers.Products.Inventory
 {
@@ -154,6 +155,33 @@ namespace NovaBusinessSystem.API.Controllers.Products.Inventory
                     StatusCodes.Status500InternalServerError,
                     ex.Message
                 );
+            }
+        }
+
+        [HttpGet("LowStock")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<LowStockProductDTO>>> GetLowStockProducts(
+            [FromQuery] int threshold
+        )
+        {
+            try
+            {
+                if (threshold < 0)
+                    return BadRequest("Threshold cannot be negative.");
+
+                List<LowStockProductDTO> lowStockProducts = (await InventoryManagement.GetLowStockProducts(threshold)!).ToList();
+
+                if (lowStockProducts is null )
+                    return NotFound("Not found any Data");
+
+                return Ok(lowStockProducts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
     }

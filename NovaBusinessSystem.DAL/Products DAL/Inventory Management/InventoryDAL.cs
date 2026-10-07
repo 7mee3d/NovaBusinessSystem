@@ -192,5 +192,44 @@ namespace NovaBusinessSystem.DAL.Products.Inventory
 
             return null;
         }
+
+        public static async Task<IEnumerable<LowStockProductDTO>> GetLowStockProducts(int threshold)
+        {
+            List<LowStockProductDTO> lowStockProducts = new();
+
+            using SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+            using SqlCommand command = new SqlCommand("[dbo].[usp_GetLowStockProducts]", connection);
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.Add("@Threshold", SqlDbType.Int).Value = threshold;
+
+            try
+            {
+                await connection.OpenAsync();
+
+                using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        lowStockProducts.Add(
+                            new LowStockProductDTO(
+
+                                reader.GetInt32(reader.GetOrdinal("ProductID")),
+                                reader.GetString(reader.GetOrdinal("ProductName")),
+                                reader.GetString(reader.GetOrdinal("Category")),
+                                reader.GetInt32(reader.GetOrdinal("StockQuantity")),
+                                reader.GetString(reader.GetOrdinal("Status"))
+
+                            )
+                        );
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+
+            return lowStockProducts;
+        }
     }
 }

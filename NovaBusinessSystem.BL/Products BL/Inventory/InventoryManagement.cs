@@ -68,5 +68,17 @@ namespace NovaBusinessSystem.BL.Products.Inventory
                 actualStock
             );
         }
+
+        public static async Task<IEnumerable<LowStockProductDTO>> GetLowStockProducts(int threshold)
+        {
+            if (threshold < 0)
+                throw new ArgumentOutOfRangeException(
+                    nameof(threshold),
+                    "Threshold cannot be negative.");
+
+            return await InventoryDAL.GetLowStockProducts(
+                threshold
+                );
+        }
     }
 }
