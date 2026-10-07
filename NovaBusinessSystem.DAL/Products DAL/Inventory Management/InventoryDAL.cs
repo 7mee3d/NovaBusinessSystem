@@ -158,5 +158,39 @@ namespace NovaBusinessSystem.DAL.Products.Inventory
 
             return null;
         }
+
+        public static async Task<AdjustStockResultDTO?> AdjustStockAsync(
+                    int productID,
+                    int actualStock)
+        {
+            using SqlConnection connection =
+                new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+
+            using SqlCommand command =
+                new SqlCommand("[dbo].[usp_AdjustStock]", connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.Add("@ProductID", SqlDbType.Int).Value = productID;
+            command.Parameters.Add("@ActualStock", SqlDbType.Int).Value = actualStock;
+
+            await connection.OpenAsync();
+
+            using SqlDataReader reader =
+                await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                return new AdjustStockResultDTO(
+                    reader.GetInt32(reader.GetOrdinal("ProductID")),
+                    reader.GetString(reader.GetOrdinal("ProductName")),
+                    reader.GetInt32(reader.GetOrdinal("PreviousStock")),
+                    reader.GetInt32(reader.GetOrdinal("ActualStock")),
+                    reader.GetInt32(reader.GetOrdinal("Adjustment"))
+                );
+            }
+
+            return null;
+        }
     }
 }

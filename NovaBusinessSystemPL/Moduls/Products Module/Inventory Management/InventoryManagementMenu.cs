@@ -50,47 +50,48 @@ namespace NovaBusinessSystem.Modules.Products.Inventory
                 switch ((Enumerations.EnChoicesInventoryManagement)choice)
                 {
                     case Enumerations.EnChoicesInventoryManagement._kVIEW_PRODUCT_STOCK:
-                    {
-                        await InventoryOperations.ViewProductStockAsync();
-                        break;
-                    }
+                        {
+                            await InventoryOperations.ViewProductStockAsync();
+                            break;
+                        }
 
                     case Enumerations.EnChoicesInventoryManagement._kADD_STOCK:
-                    {
-                        await InventoryOperations.AddStockAsync();
-                        break;
-                    }
+                        {
+                            await InventoryOperations.AddStockAsync();
+                            break;
+                        }
 
                     case Enumerations.EnChoicesInventoryManagement._kREMOVE_STOCK:
-                    {
-                        await InventoryOperations.RemoveStockAsync();
-                        break;
-                    }
+                        {
+                            await InventoryOperations.RemoveStockAsync();
+                            break;
+                        }
 
                     case Enumerations.EnChoicesInventoryManagement._kADJUST_STOCK:
-                    {
-                        break;
-                    }
+                        {
+                            await InventoryOperations.AdjustStockAsync();
+                            break;
+                        }
 
                     case Enumerations.EnChoicesInventoryManagement._kLOW_STOCK_PRODUCTS:
-                    {
-                        break;
-                    }
+                        {
+                            break;
+                        }
 
                     case Enumerations.EnChoicesInventoryManagement._kOUT_OF_STOCK_PRODUCTS:
-                    {
-                        break;
-                    }
+                        {
+                            break;
+                        }
 
                     case Enumerations.EnChoicesInventoryManagement._kINVENTORY_VALUE:
-                    {
-                        break;
-                    }
+                        {
+                            break;
+                        }
 
                     case Enumerations.EnChoicesInventoryManagement._kSTOCK_STATISTICS:
-                    {
-                        break;
-                    }
+                        {
+                            break;
+                        }
 
                     case Enumerations.EnChoicesInventoryManagement._kBACK:
                         return;

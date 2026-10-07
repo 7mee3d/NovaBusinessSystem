@@ -48,5 +48,25 @@ namespace NovaBusinessSystem.BL.Products.Inventory
                 stockToBeRemove
             );
         }
+
+        public static async Task<AdjustStockResultDTO?> AdjustStockAsync(
+            int productID,
+            int actualStock)
+        {
+            if (productID <= 0)
+                throw new ArgumentOutOfRangeException(
+                    nameof(productID),
+                    "Product ID must be greater than zero.");
+
+            if (actualStock < 0)
+                throw new ArgumentOutOfRangeException(
+                    nameof(actualStock),
+                    "Actual stock cannot be negative.");
+
+            return await InventoryDAL.AdjustStockAsync(
+                productID,
+                actualStock
+            );
+        }
     }
 }

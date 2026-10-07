@@ -117,6 +117,45 @@ namespace NovaBusinessSystem.API.Controllers.Products.Inventory
                 );
             }
         }
+
+        [HttpPatch("{id:int}/Adjust")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<AdjustStockResultDTO>> AdjustStockAsync(
+                    [FromRoute(Name = "id")] int id,
+                    [FromQuery] int actualStock)
+        {
+            try
+            {
+                if (id <= 0)
+                    return BadRequest("Invalid product ID.");
+
+                if (actualStock < 0)
+                    return BadRequest("Actual stock cannot be negative.");
+
+                AdjustStockResultDTO? result =
+                    await InventoryManagement.AdjustStockAsync(
+                        id,
+                        actualStock
+                    );
+
+                if (result is null)
+                    return NotFound(
+                        $"Product with ID {id} was not found."
+                    );
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    ex.Message
+                );
+            }
+        }
     }
 
 }

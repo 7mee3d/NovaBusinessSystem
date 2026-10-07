@@ -325,5 +325,182 @@ namespace NovaBusinessSystem.Modules.Products.Inventory
                     "your request. Please try again.");
             }
         }
+
+        public static async Task AdjustStockAsync()
+        {
+            try
+            {
+                Console.Clear();
+
+                int productID = InputHelper.ReadTheID(
+                    "🔧 STOCK ADJUSTMENT",
+                    "Enter Product ID: "
+                );
+
+                using HttpClient httpClient = new HttpClient();
+
+                httpClient.BaseAddress =
+                    new Uri("http://localhost:5276/api/Products/Inventory/");
+
+                // Get current system stock
+                var stockResponse =
+                    await httpClient.GetAsync($"{productID}");
+
+                if (stockResponse.StatusCode ==
+                    System.Net.HttpStatusCode.NotFound)
+                {
+                    ConsoleHelper.ShowNotFoundMessage(
+                        "❌ PRODUCT NOT FOUND",
+                        $"Product with ID {productID} was not found."
+                    );
+
+                    return;
+                }
+
+                if (!stockResponse.IsSuccessStatusCode)
+                {
+                    ConsoleHelper.ShowNotFoundMessage(
+                        "❌ FAILED TO GET STOCK",
+                        await stockResponse.Content.ReadAsStringAsync()
+                    );
+
+                    return;
+                }
+
+                ProductStockDTO? productStock =
+                    await stockResponse.Content
+                        .ReadFromJsonAsync<ProductStockDTO>();
+
+                if (productStock == null)
+                {
+                    ConsoleHelper.ShowNotFoundMessage(
+                        "❌ FAILED TO GET STOCK",
+                        "Failed to read product stock."
+                    );
+
+                    return;
+                }
+
+                Console.WriteLine();
+                Console.WriteLine(
+                    $"{ConsoleHelper.GenarateTabs(7)}System Stock      : {productStock.StockQuantity}"
+                );
+
+                Console.Write(
+                    $"{ConsoleHelper.GenarateTabs(7)}Actual Stock      : "
+                );
+
+                int actualStock;
+
+                while (!int.TryParse(
+                           Console.ReadLine(),
+                           out actualStock) ||
+                       actualStock < 0)
+                {
+                    Console.Write(
+                        $"{ConsoleHelper.GenarateTabs(7)}Invalid! Actual Stock      : "
+                    );
+                }
+
+                int difference =
+                    actualStock - productStock.StockQuantity;
+
+                Console.WriteLine();
+                Console.WriteLine(
+                    $"{ConsoleHelper.GenarateTabs(7)}Difference        : {difference}"
+                );
+
+                Console.WriteLine();
+                Console.WriteLine(
+                    $"{ConsoleHelper.GenarateTabs(7)}Adjust stock from " +
+                    $"{productStock.StockQuantity} to {actualStock}?"
+                );
+
+                Console.Write(
+                    $"\n{ConsoleHelper.GenarateTabs(7)}Y / N: "
+                );
+
+                string? confirmation =
+                    Console.ReadLine()?.Trim().ToUpper();
+
+                if (confirmation != "Y")
+                {
+                    Console.WriteLine(
+                        $"\n{ConsoleHelper.GenarateTabs(7)}Adjustment cancelled."
+                    );
+
+                    return;
+                }
+
+                var respone =
+                    await httpClient.PatchAsync(
+                        $"{productID}/Adjust?actualStock={actualStock}",
+                        null
+                    );
+
+                if (respone.IsSuccessStatusCode)
+                {
+                    AdjustStockResultDTO? result =
+                        await respone.Content
+                            .ReadFromJsonAsync<AdjustStockResultDTO>();
+
+                    if (result == null)
+                    {
+                        ConsoleHelper.ShowNotFoundMessage(
+                            "❌ STOCK NOT ADJUSTED",
+                            "Failed to read adjustment result."
+                        );
+
+                        return;
+                    }
+
+                    Console.WriteLine("\n\n");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}Previous Stock : {result.PreviousStock}"
+                    );
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}Actual Stock   : {result.ActualStock}"
+                    );
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}Adjustment     : {result.Adjustment}"
+                    );
+
+                    Console.WriteLine();
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}✅ STOCK ADJUSTED"
+                    );
+
+                    return;
+                }
+
+                if (respone.StatusCode ==
+                    System.Net.HttpStatusCode.NotFound)
+                {
+                    ConsoleHelper.ShowNotFoundMessage(
+                        "❌ PRODUCT NOT FOUND",
+                        $"Product with ID {productID} was not found."
+                    );
+
+                    return;
+                }
+
+                ConsoleHelper.ShowNotFoundMessage(
+                    "❌ STOCK NOT ADJUSTED",
+                    await respone.Content.ReadAsStringAsync()
+                );
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.ShowNotFoundMessage(
+                    "❌ SYSTEM ERROR",
+                    ex.Message,
+                    "your request. Please try again."
+                );
+            }
+        }
     }
 }
