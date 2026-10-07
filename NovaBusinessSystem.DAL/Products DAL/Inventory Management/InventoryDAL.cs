@@ -70,7 +70,7 @@ namespace NovaBusinessSystem.DAL.Products.Inventory
 
         public static async Task<AddStockResultDTO?> AddStockAsync(int productID, int stockToAdded)
         {
-            
+
             using SqlConnection connection =
                 new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
 
@@ -103,6 +103,56 @@ namespace NovaBusinessSystem.DAL.Products.Inventory
                     reader.GetInt32(reader.GetOrdinal("PreviousStock")),
                     reader.GetInt32(reader.GetOrdinal("AddedStock")),
                     reader.GetInt32(reader.GetOrdinal("NewStock"))
+                );
+            }
+
+            return null;
+        }
+
+        public static async Task<RemoveStockResultDTO?> RemoveStockAsync(
+                int productID,
+                int stockToBeRemove)
+        {
+            using SqlConnection connection =
+                new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+
+            using SqlCommand command =
+                new SqlCommand("[dbo].[usp_RemoveStock]", connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.Add(
+                "@ProductID",
+                SqlDbType.Int
+            ).Value = productID;
+
+            command.Parameters.Add(
+                "@StockToBeRemove",
+                SqlDbType.Int
+            ).Value = stockToBeRemove;
+
+            await connection.OpenAsync();
+
+            using SqlDataReader reader =
+                await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                return new RemoveStockResultDTO(
+                    reader.GetInt32(
+                        reader.GetOrdinal("ProductID")),
+
+                    reader.GetString(
+                        reader.GetOrdinal("ProductName")),
+
+                    reader.GetInt32(
+                        reader.GetOrdinal("PreviousStock")),
+
+                    reader.GetInt32(
+                        reader.GetOrdinal("RemovedStock")),
+
+                    reader.GetInt32(
+                        reader.GetOrdinal("NewStock"))
                 );
             }
 

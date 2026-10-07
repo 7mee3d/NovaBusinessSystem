@@ -63,6 +63,7 @@ namespace NovaBusinessSystem.Modules.Products.Inventory
 
                     case Enumerations.EnChoicesInventoryManagement._kREMOVE_STOCK:
                     {
+                        await InventoryOperations.RemoveStockAsync();
                         break;
                     }
 

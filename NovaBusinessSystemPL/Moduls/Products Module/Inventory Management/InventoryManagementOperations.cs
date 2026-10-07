@@ -215,5 +215,115 @@ namespace NovaBusinessSystem.Modules.Products.Inventory
                     "your request. Please try again.");
             }
         }
+
+
+        public static async Task RemoveStockAsync()
+        {
+            try
+            {
+                Console.Clear();
+
+                int productID = InputHelper.ReadTheID(
+                    "➖ REMOVE STOCK",
+                    "Enter Product ID: "
+                );
+
+                Console.Write(
+                    $"{ConsoleHelper.GenarateTabs(7)}Quantity To Remove : ");
+
+                int quantityToRemove;
+
+                while (!int.TryParse(
+                           Console.ReadLine(),
+                           out quantityToRemove) ||
+                       quantityToRemove <= 0)
+                {
+                    Console.Write(
+                        $"{ConsoleHelper.GenarateTabs(7)}Invalid! Quantity To Remove : ");
+                }
+
+
+                using HttpClient httpClient = new HttpClient();
+
+                httpClient.BaseAddress =
+                    new Uri("http://localhost:5276/api/Products/Inventory/");
+
+
+                var respone =
+                    await httpClient.PatchAsync(
+                        $"{productID}/Remove?quantity={quantityToRemove}",
+                        null
+                    );
+
+
+                if (respone.IsSuccessStatusCode)
+                {
+                    RemoveStockResultDTO? result =
+                        await respone.Content
+                            .ReadFromJsonAsync<RemoveStockResultDTO>();
+
+                    if (result == null)
+                    {
+                        ConsoleHelper.ShowNotFoundMessage(
+                            "❌ STOCK NOT REMOVED",
+                            "Failed to read stock result.");
+
+                        return;
+                    }
+
+
+                    Console.WriteLine("\n\n");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}╔══════════════════════════════════════════════╗");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║            ✅ STOCK REMOVED                  ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}╠══════════════════════════════════════════════╣");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║ Product       : {result.ProductName,-28} ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║ Previous      : {result.PreviousStock,-28} ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║ Removed       : {result.RemovedStock,-28} ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║ New Stock     : {result.NewStock,-28} ║");
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}╚══════════════════════════════════════════════╝");
+
+                    return;
+                }
+
+
+                if (respone.StatusCode ==
+                    System.Net.HttpStatusCode.NotFound)
+                {
+                    ConsoleHelper.ShowNotFoundMessage(
+                        "❌ PRODUCT NOT FOUND",
+                        $"Product with ID {productID} was not found.");
+
+                    return;
+                }
+
+
+                ConsoleHelper.ShowNotFoundMessage(
+                    "❌ STOCK NOT REMOVED",
+                    await respone.Content.ReadAsStringAsync());
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.ShowNotFoundMessage(
+                    "❌ SYSTEM ERROR",
+                    ex.Message,
+                    "your request. Please try again.");
+            }
+        }
     }
 }
