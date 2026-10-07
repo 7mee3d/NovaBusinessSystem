@@ -75,6 +75,7 @@ namespace NovaBusinessSystem.Modules.Products.Inventory
 
                     case Enumerations.EnChoicesInventoryManagement._kLOW_STOCK_PRODUCTS:
                         {
+                            await InventoryOperations.GetLowStockProductsAsync();
                             break;
                         }
 

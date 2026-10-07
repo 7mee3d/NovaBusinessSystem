@@ -502,5 +502,112 @@ namespace NovaBusinessSystem.Modules.Products.Inventory
                 );
             }
         }
+
+
+        public static async Task GetLowStockProductsAsync()
+        {
+            try
+            {
+                Console.Clear();
+
+                ConsoleHelper.PrintHeader("⚠️    LOW STOCK PRODUCTS" , 7);
+                Console.Write(
+                    $"{ConsoleHelper.GenarateTabs(7)}Enter Low Stock Threshold: ");
+
+                int threshold;
+
+                while (!int.TryParse(Console.ReadLine(), out threshold) ||
+                       threshold < 0)
+                {
+                    Console.Write(
+                        $"{ConsoleHelper.GenarateTabs(7)}Invalid! Enter Low Stock Threshold: ");
+                }
+
+                using HttpClient httpClient = new HttpClient();
+
+                httpClient.BaseAddress =
+                    new Uri("http://localhost:5276/api/Products/Inventory/");
+
+                var respone =
+                    await httpClient.GetAsync(
+                        $"LowStock?threshold={threshold}"
+                    );
+
+                if (!respone.IsSuccessStatusCode)
+                {
+                    ConsoleHelper.ShowNotFoundMessage(
+                        "❌ FAILED TO GET LOW STOCK PRODUCTS",
+                        await respone.Content.ReadAsStringAsync()
+                    );
+
+                    return;
+                }
+
+                List<LowStockProductDTO>? products =
+                    await respone.Content
+                        .ReadFromJsonAsync<List<LowStockProductDTO>>();
+
+                if (products == null || products.Count == 0)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}No low stock products found."
+                    );
+
+                    return;
+                }
+
+                Console.WriteLine("\n\n");
+
+                Console.WriteLine(
+                    $"{ConsoleHelper.GenarateTabs(7)}╔══════════════════════════════════════════════════════════╗");
+
+                Console.WriteLine(
+                    $"{ConsoleHelper.GenarateTabs(7)}║                  ⚠️  LOW STOCK PRODUCTS                   ║");
+
+                Console.WriteLine(
+                    $"{ConsoleHelper.GenarateTabs(7)}╠══════════════════════════════════════════════════════════╣");
+
+                Console.WriteLine(
+                    $"{ConsoleHelper.GenarateTabs(7)}║ Threshold : {threshold,-44} ║");
+
+                Console.WriteLine(
+                    $"{ConsoleHelper.GenarateTabs(7)}╠══════════════════════════════════════════════════════════╣");
+
+                Console.WriteLine(
+                    $"{ConsoleHelper.GenarateTabs(7)}║ {"ID",-5}{"Product",-25}{"Category",-17}{"Stock",-10}║");
+
+                Console.WriteLine(
+                    $"{ConsoleHelper.GenarateTabs(7)}║ -------------------------------------------------------- ║");
+
+                foreach (LowStockProductDTO product in products)
+                {
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}║ " +
+                        $"{product.ProductID,-5}" +
+                        $"{product.ProductName,-25}" +
+                        $"{product.Category,-17}" +
+                        $"{product.StockQuantity,-10}" +
+                        $"║");
+                }
+
+                Console.WriteLine(
+                    $"{ConsoleHelper.GenarateTabs(7)}╠══════════════════════════════════════════════════════════╣");
+
+                Console.WriteLine(
+                    $"{ConsoleHelper.GenarateTabs(7)}║ Low Stock Products: {products.Count,-37}║");
+
+                Console.WriteLine(
+                    $"{ConsoleHelper.GenarateTabs(7)}╚══════════════════════════════════════════════════════════╝");
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.ShowNotFoundMessage(
+                    "❌ SYSTEM ERROR",
+                    ex.Message,
+                    "your request. Please try again."
+                );
+            }
+        }
     }
 }
