@@ -174,10 +174,29 @@ namespace NovaBusinessSystem.API.Controllers.Products.Inventory
 
                 List<LowStockProductDTO> lowStockProducts = (await InventoryManagement.GetLowStockProducts(threshold)!).ToList();
 
-                if (lowStockProducts is null )
+                if (lowStockProducts is null)
                     return NotFound("Not found any Data");
 
                 return Ok(lowStockProducts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("OutStock")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<OutOfStockProductDTO>>> GetOutOfStockProducts()
+        {
+            try
+            {
+                List<OutOfStockProductDTO> outOfStockProducts = (await InventoryManagement.GetOutOfStockProducts()).ToList();
+
+                return Ok(outOfStockProducts);
             }
             catch (Exception ex)
             {

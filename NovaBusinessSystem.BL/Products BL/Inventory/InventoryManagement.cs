@@ -80,5 +80,10 @@ namespace NovaBusinessSystem.BL.Products.Inventory
                 threshold
                 );
         }
+
+        public static async Task<IEnumerable<OutOfStockProductDTO>> GetOutOfStockProducts()
+        {
+            return await InventoryDAL.GetOutOfStockProducts();
+        }
     }
 }

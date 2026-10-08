@@ -231,5 +231,45 @@ namespace NovaBusinessSystem.DAL.Products.Inventory
 
             return lowStockProducts;
         }
+
+        public static async Task<IEnumerable<OutOfStockProductDTO>> GetOutOfStockProducts()
+        {
+
+            List<OutOfStockProductDTO> outOfStockProducts = new();
+
+            using SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+            using SqlCommand command = new SqlCommand("[dbo].[GetOutOfStockProducts]", connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            try
+            {
+                await connection.OpenAsync();
+
+                using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        outOfStockProducts.Add(
+                            new OutOfStockProductDTO(
+
+                        reader.GetInt32(reader.GetOrdinal("ProductID")),
+                        reader.GetString(reader.GetOrdinal("ProductName")),
+                        reader.GetString(reader.GetOrdinal("Category")),
+                        reader.GetString(reader.GetOrdinal("Status"))
+
+                            )
+                        );
+                    }
+                }
+
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+
+            return outOfStockProducts ;
+        }
     }
 }

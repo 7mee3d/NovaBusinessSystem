@@ -510,7 +510,7 @@ namespace NovaBusinessSystem.Modules.Products.Inventory
             {
                 Console.Clear();
 
-                ConsoleHelper.PrintHeader("⚠️    LOW STOCK PRODUCTS" , 7);
+                ConsoleHelper.PrintHeader("⚠️    LOW STOCK PRODUCTS", 7);
                 Console.Write(
                     $"{ConsoleHelper.GenarateTabs(7)}Enter Low Stock Threshold: ");
 
@@ -599,6 +599,88 @@ namespace NovaBusinessSystem.Modules.Products.Inventory
 
                 Console.WriteLine(
                     $"{ConsoleHelper.GenarateTabs(7)}╚══════════════════════════════════════════════════════════╝");
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.ShowNotFoundMessage(
+                    "❌ SYSTEM ERROR",
+                    ex.Message,
+                    "your request. Please try again."
+                );
+            }
+        }
+
+        public static async Task GetOutOfStockProductsAsync()
+        {
+            try
+            {
+                Console.Clear();
+
+                ConsoleHelper.PrintHeader(
+                    "❌ OUT OF STOCK",
+                    7
+                );
+
+                Console.WriteLine("\n\n");
+
+                using HttpClient httpClient = new HttpClient();
+
+                httpClient.BaseAddress =
+                    new Uri("http://localhost:5276/api/Products/Inventory/");
+
+                var respone =
+                    await httpClient.GetAsync("OutStock");
+
+                if (!respone.IsSuccessStatusCode)
+                {
+                    ConsoleHelper.ShowNotFoundMessage(
+                        "❌ FAILED TO GET OUT OF STOCK PRODUCTS",
+                        await respone.Content.ReadAsStringAsync()
+                    );
+
+                    return;
+                }
+
+                List<OutOfStockProductDTO>? products =
+                    await respone.Content
+                        .ReadFromJsonAsync<List<OutOfStockProductDTO>>();
+
+                if (products == null || products.Count == 0)
+                {
+                    Console.WriteLine();
+
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(7)}No out of stock products found."
+                    );
+
+                    return;
+                }
+
+                Console.WriteLine(
+                    $"{ConsoleHelper.GenarateTabs(6)}" +
+                    $"{"ID",-15} {"Product",-25} {"Category",-20} {"Status",-15}"
+                );
+
+                Console.WriteLine(
+                    $"{ConsoleHelper.GenarateTabs(6)}" +
+                    $"{new string('-', 75)}"
+                );
+
+                foreach (OutOfStockProductDTO product in products)
+                {
+                    Console.WriteLine(
+                        $"{ConsoleHelper.GenarateTabs(6)}" +
+                        $"{product.ProductID,-15} " +
+                        $"{product.ProductName,-25} " +
+                        $"{product.Category,-20} " +
+                        $"{product.Status,-15}"
+                    );
+                }
+
+                Console.WriteLine(
+                    $"\n\n{ConsoleHelper.GenarateTabs(6)}" +
+                    $"Total Out Of Stock: {products.Count}"
+                );
             }
             catch (Exception ex)
             {

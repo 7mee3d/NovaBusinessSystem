@@ -81,6 +81,7 @@ namespace NovaBusinessSystem.Modules.Products.Inventory
 
                     case Enumerations.EnChoicesInventoryManagement._kOUT_OF_STOCK_PRODUCTS:
                         {
+                            await InventoryOperations.GetOutOfStockProductsAsync();
                             break;
                         }
 
