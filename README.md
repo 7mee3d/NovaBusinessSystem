@@ -1,8 +1,15 @@
 # 💼 Nova Business System
 
-> A C#/.NET business system focused on practical backend development and real-world software engineering.
+> A training project built with **C# and .NET** to develop a simple business management system and apply programming concepts in practice.
 
-Built with a structured architecture and designed for continuous development, improvement, and future expansion.
+## 🎯 About the Project
+
+The project focuses on backend development, database management using **SQL Server** and **T-SQL**, and building **RESTful APIs** with **ASP.NET Core**.
+
+## 🚀 Future Improvements
+
+The project is designed to evolve over time, with opportunities to improve existing features and add new functionality.
+
 
 ## ⚡ Tech Stack
 
