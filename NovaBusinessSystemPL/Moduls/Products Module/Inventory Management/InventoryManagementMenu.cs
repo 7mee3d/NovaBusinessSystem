@@ -87,6 +87,7 @@ namespace NovaBusinessSystem.Modules.Products.Inventory
 
                     case Enumerations.EnChoicesInventoryManagement._kINVENTORY_VALUE:
                         {
+                            await InventoryOperations.GetInventoryValueAsync();
                             break;
                         }
 

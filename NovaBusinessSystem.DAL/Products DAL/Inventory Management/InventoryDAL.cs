@@ -269,7 +269,46 @@ namespace NovaBusinessSystem.DAL.Products.Inventory
                 throw;
             }
 
-            return outOfStockProducts ;
+            return outOfStockProducts;
+        }
+
+
+        public static async Task<InventoryValueDTO?>  ? GetInventoryValueAsync()
+        {
+
+            using SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+
+            using SqlCommand command = new SqlCommand("[dbo].[usp_GetInventoryValue]", connection);
+
+
+            command.CommandType = CommandType.StoredProcedure;
+
+
+            try
+            {
+                await connection.OpenAsync();
+
+
+                using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    if (await reader.ReadAsync())
+                    {
+                        return new InventoryValueDTO(
+                            reader.GetInt32(reader.GetOrdinal("TotalProducts")),
+                            Convert.ToInt32(reader["TotalStockUnits"]),
+                            Convert.ToDecimal(reader["TotalInventoryValue"]),
+                            Convert.ToDecimal(reader["AverageProductPrice"]),
+                            Convert.ToDecimal(reader["AverageStock"]),
+                            reader["ProductName"].ToString()!,
+                            Convert.ToDecimal(reader["StockValue"])
+                        );
+                    }
+
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            return null ; 
         }
     }
 }

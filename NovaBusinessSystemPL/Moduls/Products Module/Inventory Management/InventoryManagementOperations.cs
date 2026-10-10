@@ -691,5 +691,65 @@ namespace NovaBusinessSystem.Modules.Products.Inventory
                 );
             }
         }
+
+        public static async Task GetInventoryValueAsync()
+        {
+            try
+            {
+                Console.Clear();
+                ConsoleHelper.PrintHeader("💰 INVENTORY VALUE", 7);
+
+                using HttpClient httpClient = new HttpClient();
+                httpClient.BaseAddress = new Uri("http://localhost:5276/api/Products/Inventory/");
+
+                var respone = await httpClient.GetAsync("Values");
+
+                if (!respone.IsSuccessStatusCode)
+                {
+                    ConsoleHelper.ShowNotFoundMessage(
+                        "❌ FAILED TO GET INVENTORY VALUE",
+                        await respone.Content.ReadAsStringAsync());
+
+                    return;
+                }
+
+                InventoryValueDTO? inventoryValue =
+                    await respone.Content.ReadFromJsonAsync<InventoryValueDTO>();
+
+                if (inventoryValue == null)
+                {
+                    ConsoleHelper.ShowNotFoundMessage(
+                        "❌ NO INVENTORY DATA",
+                        "Failed to read inventory value.");
+
+                    return;
+                }
+
+                string tabs = ConsoleHelper.GenarateTabs(7);
+
+                Console.WriteLine("\n");
+                Console.WriteLine($"{tabs}╔════════════════════════════════════════════════════╗");
+                Console.WriteLine($"{tabs}║                 💰 INVENTORY VALUE                 ║");
+                Console.WriteLine($"{tabs}╠════════════════════════════════════════════════════╣");
+                Console.WriteLine($"{tabs}║ Total Products        : {inventoryValue.TotalProducts,-26:N0} ║");
+                Console.WriteLine($"{tabs}║ Total Stock Units     : {inventoryValue.TotalStockUnits,-26:N0} ║");
+                Console.WriteLine($"{tabs}║ Total Inventory Value : {inventoryValue.TotalInventoryValue,-26:N2} ║");
+                Console.WriteLine($"{tabs}║ Average Product Price : {inventoryValue.AverageProductPrice,-26:N2} ║");
+                Console.WriteLine($"{tabs}║ Average Stock         : {inventoryValue.AverageStock,-26:N2} ║");
+                Console.WriteLine($"{tabs}╠════════════════════════════════════════════════════╣");
+                Console.WriteLine($"{tabs}║ Most Valuable Stock   : {inventoryValue.MostValuableStock,-26} ║");
+                Console.WriteLine($"{tabs}║ Stock Value           : {inventoryValue.StockValue,-26:N2} ║");
+                Console.WriteLine($"{tabs}╚════════════════════════════════════════════════════╝");
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.ShowNotFoundMessage(
+                    "❌ SYSTEM ERROR",
+                    ex.Message,
+                    "your request. Please try again.");
+            }
+        }
+
+
     }
 }

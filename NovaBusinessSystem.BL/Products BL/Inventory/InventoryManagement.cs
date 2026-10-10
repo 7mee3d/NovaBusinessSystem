@@ -85,5 +85,8 @@ namespace NovaBusinessSystem.BL.Products.Inventory
         {
             return await InventoryDAL.GetOutOfStockProducts();
         }
+
+        public static async Task <InventoryValueDTO?>  ? GetInventoryValueAsync () => await InventoryDAL.GetInventoryValueAsync()!;
+    
     }
 }

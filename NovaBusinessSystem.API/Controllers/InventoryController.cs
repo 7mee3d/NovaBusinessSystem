@@ -203,6 +203,29 @@ namespace NovaBusinessSystem.API.Controllers.Products.Inventory
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+
+        [HttpGet("Values")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<InventoryValueDTO>> GetInventoryValueAsync()
+        {
+            try
+            {
+                InventoryValueDTO? inventoryValue = await InventoryManagement.GetInventoryValueAsync()!;
+
+                if (inventoryValue is null)
+                    return NotFound("Not found any Data");
+
+                return Ok(inventoryValue);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 
 }
