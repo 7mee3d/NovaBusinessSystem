@@ -10,8 +10,10 @@ namespace NovaBusinessSystem.API
     public class SalesController : ControllerBase
     {
 
-        [HttpGet("{id:int}")]
-
+        [HttpGet("{id:int}/Histories")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<ProductSalesHistoryDTO>>> GetProductSalesHistoriesAsync(
             [FromRoute(Name = "id")] int id
         )
@@ -31,6 +33,35 @@ namespace NovaBusinessSystem.API
                 List<ProductSalesHistoryDTO> L_ProductSalesHistories = (await Sales.GetProductSalesHistoriesAsync(id)!).ToList();
 
                 return Ok(L_ProductSalesHistories);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("{id:int}/Summaries")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<ProductSalesSummaryDTO>>> GetProductSalesSummariesAsync(
+                   [FromRoute(Name = "id")] int id
+               )
+
+        {
+            try
+            {
+                if (id <= 0)
+                    return BadRequest("Invalid product id");
+
+                Product product = await Product.GetProductByIDAsync(id);
+
+                if (product is null)
+                    return NotFound($"The Product id [{id}] does not exists");
+
+                List<ProductSalesSummaryDTO> L_ProductSalesSummaries = (await Sales.ProductSalesSummariesAsync(id)!).ToList();
+
+                return Ok(L_ProductSalesSummaries);
             }
             catch (Exception ex)
             {

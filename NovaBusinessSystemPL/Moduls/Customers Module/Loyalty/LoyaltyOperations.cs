@@ -219,7 +219,7 @@ namespace NovaBusinessSystem.Modules.Customers.Loyalty
             {
 
                 HttpClient httpClient = new HttpClient();
-
+                //http://localhost:5276/api/CustomersLoyalty/Statistics
                 httpClient.BaseAddress = new Uri("http://localhost:5276/api/Loyalty/");
 
                 var respone = await httpClient.GetAsync("Statistics/");
