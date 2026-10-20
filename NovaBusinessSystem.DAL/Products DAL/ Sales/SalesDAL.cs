@@ -94,10 +94,49 @@ namespace NovaBusinessSystem.DAL.Products.Sales
             {
                 throw;
             }
-            
+
             return L_ProductSalesSummaries;
         }
 
+
+        public static async Task<IEnumerable<TopSellingProductDTO>> GetTopSellingProductsAsync(int rank)
+        {
+            List<TopSellingProductDTO> L_TopSellingProducts = new();
+
+            using SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+            using SqlCommand command = new SqlCommand("[dbo].[usp_GetTopSellingProducts]", connection);
+
+
+            command.CommandType = System.Data.CommandType.StoredProcedure;
+
+            command.Parameters.Add("@Rank", System.Data.SqlDbType.Int).Value = rank;
+
+            try
+            {
+                await connection.OpenAsync();
+
+                using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        L_TopSellingProducts.Add(
+                            new TopSellingProductDTO(
+                                reader.GetInt64(reader.GetOrdinal("Rank")),
+                                reader.GetString(reader.GetOrdinal("ProductName")),
+                                reader.GetInt32(reader.GetOrdinal("UnitsSold")),
+                                reader.GetInt32(reader.GetOrdinal("Orders"))
+                            )
+                        );
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+
+            return L_TopSellingProducts;
+        }
 
     }
 }
