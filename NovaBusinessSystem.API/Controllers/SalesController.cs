@@ -91,5 +91,28 @@ namespace NovaBusinessSystem.API
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet("{rank:int}/LeastSelling")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<LeastSellingProductDTO>>> GetLeastSellingProductsAsync(
+                [FromRoute(Name = "rank")] int rank
+            )
+
+        {
+            try
+            {
+                if (rank <= 0)
+                    return BadRequest("Invalid rank");
+
+                List<LeastSellingProductDTO> leastSellingProducts = (await Sales.GetLeastSellingProductsAsync(rank)!).ToList();
+
+                return Ok(leastSellingProducts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }
