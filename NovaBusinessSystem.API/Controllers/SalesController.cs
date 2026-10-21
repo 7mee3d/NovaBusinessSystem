@@ -142,7 +142,7 @@ namespace NovaBusinessSystem.API
 
         [HttpGet("{id:int}/Monthly")]
 
-        public async Task<Results<Ok<List<MonthlyProductSalesDTO>>, BadRequest<string>>>  GetMonthlyProductSalesAsync([FromRoute(Name = "id")] int id)
+        public async Task<Results<Ok<List<MonthlyProductSalesDTO>>, BadRequest<string>>> GetMonthlyProductSalesAsync([FromRoute(Name = "id")] int id)
         {
             if (id <= 0)
                 return TypedResults.BadRequest("Invalid product id");
@@ -152,6 +152,16 @@ namespace NovaBusinessSystem.API
             return TypedResults.Ok(monthlyProductSales.ToList());
         }
 
+        [HttpGet("CategoryPerformances")]
+
+        public async Task<Ok<List<CategoryPerformanceDTO>>> GetCategoryPerformancesAsync()
+        {
+
+            var categoryPerformances =
+                await Sales.GetCategoryPerformancesAsync();
+
+            return TypedResults.Ok(categoryPerformances.ToList());
+        }
 
     }
 }

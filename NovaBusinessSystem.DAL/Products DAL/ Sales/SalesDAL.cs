@@ -260,5 +260,40 @@ namespace NovaBusinessSystem.DAL.Products.Sales
 
             return monthlyProductSales;
         }
+
+        public static async Task<IEnumerable<CategoryPerformanceDTO>> GetCategoryPerformancesAsync ()
+        {
+            List<CategoryPerformanceDTO> categoryPerformances = new();
+
+            using var connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+            using var command = new SqlCommand ("[dbo].[usp_GetCategoryPerformance]" , connection)
+            {
+              CommandType  = System.Data.CommandType.StoredProcedure   
+            };
+
+            await connection.OpenAsync();
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            var category = reader.GetOrdinal("Category");
+            var  products = reader.GetOrdinal("Products");
+            var  unitsSold = reader.GetOrdinal("UnitsSold");
+            var revenue  = reader.GetOrdinal("Revenue");
+
+            while (await reader.ReadAsync())
+            {
+                categoryPerformances.Add(new CategoryPerformanceDTO(
+
+                    reader.GetString(category),
+                    reader.GetInt32(products) , 
+                    reader.GetInt32(unitsSold),
+                    reader.GetDecimal(revenue)
+
+                ));
+
+            }
+
+            return categoryPerformances;
+        }
     }
 }

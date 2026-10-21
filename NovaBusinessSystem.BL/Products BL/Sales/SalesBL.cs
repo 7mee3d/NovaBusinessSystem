@@ -55,5 +55,7 @@ namespace NovaBusinessSystem.BL.Products.Sales
 
             return await SalesDAL.GetMonthlyProductSalesAsync(productID);
         }
+
+        public static async Task<IEnumerable<CategoryPerformanceDTO>> GetCategoryPerformancesAsync () => await SalesDAL.GetCategoryPerformancesAsync ();
     }
 }
