@@ -1,3 +1,4 @@
+using System.ComponentModel.Design.Serialization;
 using System.Reflection.Metadata.Ecma335;
 using Microsoft.Data.SqlClient;
 using NovaBusinessSystem.DTOs.Products.Sales;
@@ -177,5 +178,41 @@ namespace NovaBusinessSystem.DAL.Products.Sales
             return L_LeastSellingProducts;
         }
 
+        public static async Task<IEnumerable<ProductRevenueRankingDTO>> GetProductRevenueRankingsAsync(int rank)
+        {
+            List<ProductRevenueRankingDTO> L_ProductRevenueRankings = new();
+
+            using SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+            using SqlCommand command = new SqlCommand("[dbo].[usp_GetProductRevenueRanking]", connection);
+
+            command.CommandType = System.Data.CommandType.StoredProcedure;
+            command.Parameters.Add("@Rank" , System.Data.SqlDbType.Int).Value = rank;
+            try
+            {
+                await connection.OpenAsync();
+
+                using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        L_ProductRevenueRankings.Add(
+
+                            new ProductRevenueRankingDTO(
+
+                                        reader.GetInt64(reader.GetOrdinal("Rank")),
+                                        reader.GetString(reader.GetOrdinal("ProductName")),
+                                        reader.GetInt32(reader.GetOrdinal("Units")),
+                                        reader.GetDecimal(reader.GetOrdinal("RevenueFromCompletedSales"))
+                            )
+                        );
+                    }
+                }
+            }catch(SqlException )
+            {
+                throw;
+            }
+
+            return L_ProductRevenueRankings;
+        }
     }
 }

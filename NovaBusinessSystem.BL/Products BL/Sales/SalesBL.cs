@@ -24,20 +24,28 @@ namespace NovaBusinessSystem.BL.Products.Sales
             return await SalesDAL.GetProductSalesSummariesAsync(productID);
         }
 
-        public static async Task<IEnumerable<TopSellingProductDTO>> TopSellingProductsAsync (int rank)
+        public static async Task<IEnumerable<TopSellingProductDTO>> TopSellingProductsAsync(int rank)
         {
-            if( rank <= 0 ) 
-             throw new ArgumentOutOfRangeException($"The rank = {rank} out of range");
+            if (rank <= 0)
+                throw new ArgumentOutOfRangeException($"The rank = {rank} out of range");
 
             return await SalesDAL.GetTopSellingProductsAsync(rank);
         }
 
-          public static async Task<IEnumerable<LeastSellingProductDTO>> GetLeastSellingProductsAsync (int rank)
+        public static async Task<IEnumerable<LeastSellingProductDTO>> GetLeastSellingProductsAsync(int rank)
         {
-            if( rank <= 0 ) 
-             throw new ArgumentOutOfRangeException($"The rank = {rank} out of range");
+            if (rank <= 0)
+                throw new ArgumentOutOfRangeException($"The rank = {rank} out of range");
 
             return await SalesDAL.GetLeastSellingProductsAsync(rank);
+        }
+
+        public static async Task<IEnumerable<ProductRevenueRankingDTO>> GetProductRevenueRankingsAsync(int rank)
+        {
+            if (rank <= 0)
+                throw new ArgumentOutOfRangeException($"The rank = {rank} out of range");
+
+            return await SalesDAL.GetProductRevenueRankingsAsync(rank);
         }
     }
 }

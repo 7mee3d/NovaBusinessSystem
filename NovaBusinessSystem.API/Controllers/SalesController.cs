@@ -114,5 +114,28 @@ namespace NovaBusinessSystem.API
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet("{rank:int}/RevenueRankings")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<ProductRevenueRankingDTO>>> GetProductRevenueRankingsAsync(
+            [FromRoute(Name = "rank")] int rank
+        )
+
+        {
+            try
+            {
+                if (rank <= 0)
+                    return BadRequest("Invalid rank");
+
+                List<ProductRevenueRankingDTO> productRevenueRanking = (await Sales.GetProductRevenueRankingsAsync(rank)!).ToList();
+
+                return Ok(productRevenueRanking);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }
