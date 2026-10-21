@@ -186,7 +186,7 @@ namespace NovaBusinessSystem.DAL.Products.Sales
             using SqlCommand command = new SqlCommand("[dbo].[usp_GetProductRevenueRanking]", connection);
 
             command.CommandType = System.Data.CommandType.StoredProcedure;
-            command.Parameters.Add("@Rank" , System.Data.SqlDbType.Int).Value = rank;
+            command.Parameters.Add("@Rank", System.Data.SqlDbType.Int).Value = rank;
             try
             {
                 await connection.OpenAsync();
@@ -207,12 +207,58 @@ namespace NovaBusinessSystem.DAL.Products.Sales
                         );
                     }
                 }
-            }catch(SqlException )
+            }
+            catch (SqlException)
             {
                 throw;
             }
 
             return L_ProductRevenueRankings;
+        }
+
+
+        public static async Task<IEnumerable<MonthlyProductSalesDTO>> GetMonthlyProductSalesAsync(int productID)
+        {
+            List<MonthlyProductSalesDTO> monthlyProductSales = new();
+
+            using var connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+            using var command = new SqlCommand("[dbo].[usp_GetMonthlyProductSales]", connection)
+            {
+                CommandType = System.Data.CommandType.StoredProcedure
+            };
+
+            command.Parameters.Add("@ProductID", System.Data.SqlDbType.Int).Value = productID;
+
+            await connection.OpenAsync();
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            var month = reader.GetOrdinal("Month");
+            var orders = reader.GetOrdinal("Orders");
+            var units = reader.GetOrdinal("Units");
+            var revenue = reader.GetOrdinal("Revenue");
+            var previous = reader.GetOrdinal("Previous");
+            var change = reader.GetOrdinal("Change");
+
+            while (await reader.ReadAsync())
+            {
+                decimal? previousRevenue = reader.IsDBNull(previous)
+                                    ? null
+                                    : reader.GetDecimal(previous);
+
+                monthlyProductSales.Add(new MonthlyProductSalesDTO(
+                    reader.GetString(month),
+                    reader.GetInt32(orders),
+                    reader.GetInt32(units),
+                    reader.GetDecimal(revenue),
+                     previousRevenue,
+                    reader.GetString(change)
+                )
+            );
+
+            }
+
+            return monthlyProductSales;
         }
     }
 }

@@ -47,5 +47,13 @@ namespace NovaBusinessSystem.BL.Products.Sales
 
             return await SalesDAL.GetProductRevenueRankingsAsync(rank);
         }
+
+        public static async Task<IEnumerable<MonthlyProductSalesDTO>> GetMonthlyProductSalesAsync(int productID)
+        {
+            if (productID <= 0)
+                throw new ArgumentOutOfRangeException($"The product id = {productID} out of range");
+
+            return await SalesDAL.GetMonthlyProductSalesAsync(productID);
+        }
     }
 }

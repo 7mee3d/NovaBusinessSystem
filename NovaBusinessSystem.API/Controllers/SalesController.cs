@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using NovaBusinessSystem.BL.Products;
 using NovaBusinessSystem.BL.Products.Sales;
@@ -137,5 +138,20 @@ namespace NovaBusinessSystem.API
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+
+        [HttpGet("{id:int}/Monthly")]
+
+        public async Task<Results<Ok<List<MonthlyProductSalesDTO>>, BadRequest<string>>>  GetMonthlyProductSalesAsync([FromRoute(Name = "id")] int id)
+        {
+            if (id <= 0)
+                return TypedResults.BadRequest("Invalid product id");
+            var monthlyProductSales =
+                await Sales.GetMonthlyProductSalesAsync(id);
+
+            return TypedResults.Ok(monthlyProductSales.ToList());
+        }
+
+
     }
 }
