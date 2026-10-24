@@ -163,5 +163,19 @@ namespace NovaBusinessSystem.API
             return TypedResults.Ok(categoryPerformances.ToList());
         }
 
+        [HttpGet("{id:int}/CustomerSales")]
+
+        public async Task<Results<Ok<ProductCustomerSalesDTO>, BadRequest<string>>> GetProductCustomerSalesAsync([FromRoute(Name = "id")] int id)
+        {
+
+            if (id <= 0)
+                return TypedResults.BadRequest("Invalid product id ");
+
+            var productSalesCustomer =
+                await Sales.GetProductCustomerSalesAsync(id);
+
+            return TypedResults.Ok(productSalesCustomer);
+        }
+
     }
 }

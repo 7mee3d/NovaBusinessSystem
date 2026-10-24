@@ -261,14 +261,14 @@ namespace NovaBusinessSystem.DAL.Products.Sales
             return monthlyProductSales;
         }
 
-        public static async Task<IEnumerable<CategoryPerformanceDTO>> GetCategoryPerformancesAsync ()
+        public static async Task<IEnumerable<CategoryPerformanceDTO>> GetCategoryPerformancesAsync()
         {
             List<CategoryPerformanceDTO> categoryPerformances = new();
 
             using var connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
-            using var command = new SqlCommand ("[dbo].[usp_GetCategoryPerformance]" , connection)
+            using var command = new SqlCommand("[dbo].[usp_GetCategoryPerformance]", connection)
             {
-              CommandType  = System.Data.CommandType.StoredProcedure   
+                CommandType = System.Data.CommandType.StoredProcedure
             };
 
             await connection.OpenAsync();
@@ -276,16 +276,16 @@ namespace NovaBusinessSystem.DAL.Products.Sales
             using var reader = await command.ExecuteReaderAsync();
 
             var category = reader.GetOrdinal("Category");
-            var  products = reader.GetOrdinal("Products");
-            var  unitsSold = reader.GetOrdinal("UnitsSold");
-            var revenue  = reader.GetOrdinal("Revenue");
+            var products = reader.GetOrdinal("Products");
+            var unitsSold = reader.GetOrdinal("UnitsSold");
+            var revenue = reader.GetOrdinal("Revenue");
 
             while (await reader.ReadAsync())
             {
                 categoryPerformances.Add(new CategoryPerformanceDTO(
 
                     reader.GetString(category),
-                    reader.GetInt32(products) , 
+                    reader.GetInt32(products),
                     reader.GetInt32(unitsSold),
                     reader.GetDecimal(revenue)
 
@@ -294,6 +294,43 @@ namespace NovaBusinessSystem.DAL.Products.Sales
             }
 
             return categoryPerformances;
+        }
+
+        public static async Task<ProductCustomerSalesDTO?> GetProductCustomerSalesAsync(int productID)
+        {
+            using var connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+            using var command = new SqlCommand("[dbo].[usp_GetProductCustomerAnalysis]", connection)
+            {
+                CommandType = System.Data.CommandType.StoredProcedure
+            };
+
+            command.Parameters.Add("@ProductID" , System.Data.SqlDbType.Int).Value = productID;
+            
+            await connection.OpenAsync();
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            if (!await reader.ReadAsync())
+                return null;
+
+            var productName = reader.GetOrdinal("ProductName");
+            var uniqueCustomers = reader.GetOrdinal("UniqueCustomers");
+            var totalOrders = reader.GetOrdinal("TotalOrders");
+            var unitsSold = reader.GetOrdinal("UnitsSold");
+            var topCustomer = reader.GetOrdinal("TopCustomer");
+            var unitsPurchased = reader.GetOrdinal("UnitsPurchased");
+            var amountSpent = reader.GetOrdinal("AmountSpent");
+
+            return new ProductCustomerSalesDTO(
+                                                 reader.GetString(productName),
+                                                 reader.GetInt32(uniqueCustomers),
+                                                 reader.GetInt32(totalOrders),
+                                                 reader.GetInt32(unitsSold),
+                                                 reader.GetString(topCustomer),
+                                                 reader.GetInt32(unitsPurchased),
+                                                 reader.GetDecimal(amountSpent)
+                                             );
+
         }
     }
 }
