@@ -1,4 +1,9 @@
+using NovaBusinessSystem.BL.Products.Reports;
+using NovaBusinessSystem.DAL.Products.Reports;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddScoped<IReportsDAL , ReportsDAL> ();
+builder.Services.AddScoped<ReportsBL> ();
 
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
