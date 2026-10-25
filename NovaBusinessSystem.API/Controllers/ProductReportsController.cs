@@ -8,11 +8,11 @@ using NovaBusinessSystem.DTOs.Products.Reports;
 [Route("api/ProductReports")]
 public class ProductReportsController : ControllerBase
 {
-    
-    private readonly ReportsBL _reportsBL ;
-    public ProductReportsController (ReportsBL reportsBL)
+
+    private readonly ReportsBL _reportsBL;
+    public ProductReportsController(ReportsBL reportsBL)
     {
-        this._reportsBL = reportsBL ; 
+        this._reportsBL = reportsBL;
     }
 
 
@@ -21,5 +21,12 @@ public class ProductReportsController : ControllerBase
     public async Task<Ok<IEnumerable<ProductStatusSummaryDTO>>> GetProductStatusSummariesAsync()
     {
         return TypedResults.Ok(await _reportsBL.GetProductStatusSummariesAsync());
+    }
+
+    [HttpGet("Category")]
+
+    public async Task<Ok<IEnumerable<ProductsByCategoryDTO>>> GetProductByCategoriesAsync()
+    {
+        return TypedResults.Ok(await _reportsBL.GetProductByCategoriesAsync());
     }
 }

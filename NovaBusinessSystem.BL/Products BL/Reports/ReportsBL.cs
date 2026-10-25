@@ -17,7 +17,10 @@ namespace NovaBusinessSystem.BL.Products.Reports
 
         public Task<IEnumerable<ProductStatusSummaryDTO>> GetProductStatusSummariesAsync()
         {
-            return  _reportsDAL.GetProductStatusSummariesAsync();
+            return _reportsDAL.GetProductStatusSummariesAsync();
         }
+
+        public Task<IEnumerable<ProductsByCategoryDTO>> GetProductByCategoriesAsync()
+        => _reportsDAL.GetProductByCategoriesAsync();
     }
 }

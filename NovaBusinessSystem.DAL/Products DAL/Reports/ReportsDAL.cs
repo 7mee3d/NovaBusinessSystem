@@ -33,5 +33,36 @@ namespace NovaBusinessSystem.DAL.Products.Reports
 
             return Summaries;
         }
+
+        public async Task<IEnumerable<ProductsByCategoryDTO>> GetProductByCategoriesAsync()
+        {
+            List<ProductsByCategoryDTO> productsByCategories = new();
+
+            using var connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+            using var command = new SqlCommand("[dbo].[usp_GetProductsByCategory]", connection)
+            {
+                CommandType = System.Data.CommandType.StoredProcedure
+            };
+
+
+            await connection.OpenAsync();
+
+            using var reader = await command.ExecuteReaderAsync();
+
+
+            var category = reader.GetOrdinal("Category");
+            var products = reader.GetOrdinal("Products");
+
+            while (await reader.ReadAsync())
+            {
+                productsByCategories.Add(new ProductsByCategoryDTO(
+                    reader.GetString(category),
+                    reader.GetInt32(products)
+                ));
+            }
+
+            return productsByCategories;
+
+        }
     }
 }
