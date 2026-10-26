@@ -128,7 +128,41 @@ namespace NovaBusinessSystem.DAL.Products.Reports
             }
 
 
-            return inventoryValuations ;
+            return inventoryValuations;
+        }
+
+        public async Task<IEnumerable<SalesPerformanceReportDTO>> GetSalesPerformanceReportsAsync()
+        {
+            List<SalesPerformanceReportDTO> salesPerformanceReports = new();
+
+            using var connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+            using var command = new SqlCommand("[dbo].[usp_GetSalesPerformanceReport]", connection)
+            {
+                CommandType = System.Data.CommandType.StoredProcedure
+            };
+
+
+            await connection.OpenAsync();
+
+            using var reader = await command.ExecuteReaderAsync();
+            var productName = reader.GetOrdinal("ProductName");
+            var orders = reader.GetOrdinal("Orders");
+            var units = reader.GetOrdinal("Units");
+            var revenue = reader.GetOrdinal("Revenue");
+            var performance = reader.GetOrdinal("Performance");
+
+            while (await reader.ReadAsync())
+            {
+                salesPerformanceReports.Add(new SalesPerformanceReportDTO(
+                    reader.GetString(productName),
+                    reader.GetInt32(orders),
+                    reader.GetInt32(units),
+                    reader.GetDecimal(revenue),
+                    reader.GetString(performance)
+                ));
+            }
+
+            return salesPerformanceReports;
         }
     }
 }

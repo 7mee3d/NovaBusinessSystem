@@ -23,10 +23,13 @@ namespace NovaBusinessSystem.BL.Products.Reports
         public Task<IEnumerable<ProductsByCategoryDTO>> GetProductByCategoriesAsync()
         => _reportsDAL.GetProductByCategoriesAsync();
 
-        public Task<IEnumerable<StockLevelReportDTO>>  GetStockLevelReportsAsync() 
-        => _reportsDAL.GetStockLevelReportsAsync(); 
+        public Task<IEnumerable<StockLevelReportDTO>> GetStockLevelReportsAsync()
+        => _reportsDAL.GetStockLevelReportsAsync();
 
-         public Task<IEnumerable<InventoryValuationDTO>>  GetInventoryValuationsAsync() 
-        => _reportsDAL.GetInventoryValuationsAsync(); 
+        public Task<IEnumerable<InventoryValuationDTO>> GetInventoryValuationsAsync()
+        => _reportsDAL.GetInventoryValuationsAsync();
+
+        public Task<IEnumerable<SalesPerformanceReportDTO>> GetSalesPerformanceReportsAsync()
+        => _reportsDAL.GetSalesPerformanceReportsAsync();
     }
 }
