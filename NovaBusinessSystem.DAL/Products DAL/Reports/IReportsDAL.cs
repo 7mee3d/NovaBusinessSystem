@@ -11,7 +11,7 @@ namespace NovaBusinessSystem.DAL.Products.Reports
         Task <IEnumerable<StockLevelReportDTO>> GetStockLevelReportsAsync();
         Task<IEnumerable<InventoryValuationDTO>> GetInventoryValuationsAsync ();
         Task <IEnumerable<SalesPerformanceReportDTO>> GetSalesPerformanceReportsAsync ();
-
+        Task <IEnumerable<CategoryRevenueReportDTO>> GetCategoryRevenueReportsAsync ();
 }
  
 }

@@ -164,5 +164,40 @@ namespace NovaBusinessSystem.DAL.Products.Reports
 
             return salesPerformanceReports;
         }
+
+        public async Task<IEnumerable<CategoryRevenueReportDTO>> GetCategoryRevenueReportsAsync()
+        {
+            List<CategoryRevenueReportDTO> categoryRevenueReports = new();
+
+            using var connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+            using var command = new SqlCommand("[dbo].[usp_GetCategoryRevenueReport]", connection)
+            {
+                CommandType = System.Data.CommandType.StoredProcedure
+            };
+
+            await connection.OpenAsync();
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            var rank = reader.GetOrdinal("Rank");
+            var category = reader.GetOrdinal("Category");
+            var orders = reader.GetOrdinal("Orders");
+            var units = reader.GetOrdinal("Units");
+            var revenue = reader.GetOrdinal("Revenue");
+
+            while (await reader.ReadAsync())
+            {
+                categoryRevenueReports.Add(new CategoryRevenueReportDTO(
+                    reader.GetInt64(rank),
+                    reader.GetString(category),
+                    reader.GetInt32(orders),
+                    reader.GetInt32(units),
+                    reader.GetDecimal(revenue)
+                ));
+            }
+
+            return categoryRevenueReports;
+        }
+
     }
 }
