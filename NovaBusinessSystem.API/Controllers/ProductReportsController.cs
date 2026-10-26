@@ -17,16 +17,24 @@ public class ProductReportsController : ControllerBase
 
 
     [HttpGet("StatusSummary")]
-
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<Ok<IEnumerable<ProductStatusSummaryDTO>>> GetProductStatusSummariesAsync()
     {
         return TypedResults.Ok(await _reportsBL.GetProductStatusSummariesAsync());
     }
 
     [HttpGet("Category")]
-
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<Ok<IEnumerable<ProductsByCategoryDTO>>> GetProductByCategoriesAsync()
     {
         return TypedResults.Ok(await _reportsBL.GetProductByCategoriesAsync());
+    }
+
+    [HttpGet("StockLevels")]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+    public async Task<Ok<IEnumerable<StockLevelReportDTO>>> GetStockLevelReportsAsync()
+    {
+        return TypedResults.Ok(await _reportsBL.GetStockLevelReportsAsync());
     }
 }

@@ -64,5 +64,35 @@ namespace NovaBusinessSystem.DAL.Products.Reports
             return productsByCategories;
 
         }
+
+        public async Task<IEnumerable<StockLevelReportDTO>> GetStockLevelReportsAsync()
+        {
+            List<StockLevelReportDTO> stockLevelReports = new();
+
+
+            using var connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+            using var command = new SqlCommand("[dbo].[usp_GetStockLevelReport]", connection);
+
+            await connection.OpenAsync();
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            var productName = reader.GetOrdinal("ProductName");
+            var stockQuantity = reader.GetOrdinal("StockQuantity");
+            var stockLevel = reader.GetOrdinal("StockLevel");
+
+            while (await reader.ReadAsync())
+            {
+                stockLevelReports.Add(new StockLevelReportDTO(
+                    reader.GetString(productName),
+                    reader.GetInt32(stockQuantity),
+                    reader.GetString(stockLevel)
+                ));
+            }
+
+
+            return stockLevelReports;
+        }
+
     }
 }
