@@ -71,7 +71,11 @@ namespace NovaBusinessSystem.DAL.Products.Reports
 
 
             using var connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
-            using var command = new SqlCommand("[dbo].[usp_GetStockLevelReport]", connection);
+            using var command = new SqlCommand("[dbo].[usp_GetStockLevelReport]", connection)
+            {
+                CommandType = System.Data.CommandType.StoredProcedure
+            };
+
 
             await connection.OpenAsync();
 
@@ -94,5 +98,37 @@ namespace NovaBusinessSystem.DAL.Products.Reports
             return stockLevelReports;
         }
 
+        public async Task<IEnumerable<InventoryValuationDTO>> GetInventoryValuationsAsync()
+        {
+            List<InventoryValuationDTO> inventoryValuations = new();
+
+            using var connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+            using var command = new SqlCommand("[dbo].[usp_GetInventoryValuation]", connection)
+            {
+                CommandType = System.Data.CommandType.StoredProcedure
+            };
+
+            await connection.OpenAsync();
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            var category = reader.GetOrdinal("Category");
+            var products = reader.GetOrdinal("Products");
+            var units = reader.GetOrdinal("Units");
+            var inventoryValue = reader.GetOrdinal("InventoryValue");
+
+            while (await reader.ReadAsync())
+            {
+                inventoryValuations.Add(new InventoryValuationDTO(
+                    reader.GetString(category),
+                    reader.GetInt32(products),
+                    reader.GetInt32(units),
+                    reader.GetDecimal(inventoryValue)
+                ));
+            }
+
+
+            return inventoryValuations ;
+        }
     }
 }

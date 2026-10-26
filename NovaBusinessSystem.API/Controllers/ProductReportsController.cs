@@ -17,6 +17,7 @@ public class ProductReportsController : ControllerBase
 
 
     [HttpGet("StatusSummary")]
+    [ProducesResponseType(typeof(IEnumerable<ProductStatusSummaryDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<Ok<IEnumerable<ProductStatusSummaryDTO>>> GetProductStatusSummariesAsync()
     {
@@ -24,6 +25,7 @@ public class ProductReportsController : ControllerBase
     }
 
     [HttpGet("Category")]
+    [ProducesResponseType(typeof(IEnumerable<ProductsByCategoryDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<Ok<IEnumerable<ProductsByCategoryDTO>>> GetProductByCategoriesAsync()
     {
@@ -31,10 +33,21 @@ public class ProductReportsController : ControllerBase
     }
 
     [HttpGet("StockLevels")]
+    [ProducesResponseType(typeof(IEnumerable<StockLevelReportDTO>), StatusCodes.Status200OK)]
+
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
     public async Task<Ok<IEnumerable<StockLevelReportDTO>>> GetStockLevelReportsAsync()
     {
         return TypedResults.Ok(await _reportsBL.GetStockLevelReportsAsync());
+    }
+
+    [HttpGet("InventoryValuation")]
+    [ProducesResponseType(typeof(IEnumerable<InventoryValuationDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+    public async Task<Ok<IEnumerable<InventoryValuationDTO>>> GetInventoryValuationsAsync()
+    {
+        return TypedResults.Ok(await _reportsBL.GetInventoryValuationsAsync());
     }
 }
