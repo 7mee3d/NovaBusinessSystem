@@ -70,4 +70,20 @@ public class ProductReportsController : ControllerBase
     {
         return TypedResults.Ok(await _reportsBL.GetCategoryRevenueReportsAsync());
     }
+
+    [HttpGet("TopSellingProducts")]
+    [ProducesResponseType(typeof(IEnumerable<TopSellingProductDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
+    public async Task<IActionResult> GetTopSellingProductsAsync(
+    [FromQuery] int rank)
+    {
+        if (rank <= 0)
+            return BadRequest("Rank is reqired");
+
+        var products = await _reportsBL.GetTopSellingProductsAsync(rank);
+
+        return Ok(products);
+    }
 }

@@ -1,4 +1,5 @@
 
+using System.Data;
 using Microsoft.Data.SqlClient;
 using NovaBusinessSystem.DTOs.Products.Reports;
 
@@ -198,6 +199,42 @@ namespace NovaBusinessSystem.DAL.Products.Reports
 
             return categoryRevenueReports;
         }
+        public async Task<IEnumerable<TopSellingProductDTO>> GetTopSellingProductsAsync(int rank)
+        {
+            List<TopSellingProductDTO> topSellingProducts = new List<TopSellingProductDTO>();
 
+            using SqlConnection connection = new SqlConnection(
+                HelperDAL.HelperDAL.ConnectionString);
+
+            using SqlCommand command = new SqlCommand(
+                "[dbo].[usp_GetTopSellingProducts]", connection)
+            {
+
+                CommandType = CommandType.StoredProcedure
+            };
+
+            command.Parameters.Add("@Rank", SqlDbType.Int).Value = rank;
+
+            await connection.OpenAsync();
+
+            using SqlDataReader reader = await command.ExecuteReaderAsync();
+
+            var productRank = reader.GetOrdinal("Rank");
+            var productName = reader.GetOrdinal("ProductName");
+            var category = reader.GetOrdinal("Category");
+            var units = reader.GetOrdinal("Units");
+
+            while (await reader.ReadAsync())
+            {
+                topSellingProducts.Add(new TopSellingProductDTO(
+                    reader.GetInt64(productRank),
+                    reader.GetString(productName),
+                    reader.GetString(category),
+                    reader.GetInt32(units)
+                ));
+            }
+
+            return topSellingProducts;
+        }
     }
 }

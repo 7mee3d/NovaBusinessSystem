@@ -34,5 +34,13 @@ namespace NovaBusinessSystem.BL.Products.Reports
 
         public Task<IEnumerable<CategoryRevenueReportDTO>> GetCategoryRevenueReportsAsync()
         => _reportsDAL.GetCategoryRevenueReportsAsync();
+
+        public Task<IEnumerable<TopSellingProductDTO>> GetTopSellingProductsAsync(int rank)
+        {
+            if (rank <= 0)
+                throw new ArgumentOutOfRangeException($"The rank {rank} out of range");
+
+            return _reportsDAL.GetTopSellingProductsAsync(rank);
+        }
     }
 }
