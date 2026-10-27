@@ -57,7 +57,10 @@ namespace NovaBusinessSystem.BL.Products.Reports
         public Task<IEnumerable<UnsoldProductDTO>> GetUnsoldProductsAsync()
         => _reportsDAL.GetUnsoldProductsAsync();
 
-
+        public Task<IEnumerable<MonthlyProductPerformanceDTO>> GetMonthlyProductPerformanceAsync()
+        {
+            return _reportsDAL.GetMonthlyProductPerformanceAsync();
+        }
 
     }
 }

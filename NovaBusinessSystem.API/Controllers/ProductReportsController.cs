@@ -111,4 +111,14 @@ public class ProductReportsController : ControllerBase
         return TypedResults.Ok(
             await _reportsBL.GetUnsoldProductsAsync());
     }
+
+    [HttpGet("MonthlyPerformance")]
+    [ProducesResponseType(typeof(IEnumerable<MonthlyProductPerformanceDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+    public async Task<Ok<IEnumerable<MonthlyProductPerformanceDTO>>> GetMonthlyProductPerformanceAsync()
+    {
+        return TypedResults.Ok(
+            await _reportsBL.GetMonthlyProductPerformanceAsync());
+    }
 }

@@ -306,5 +306,42 @@ namespace NovaBusinessSystem.DAL.Products.Reports
 
             return unsoldProducts;
         }
+
+        public async Task<IEnumerable<MonthlyProductPerformanceDTO>> GetMonthlyProductPerformanceAsync()
+        {
+            List<MonthlyProductPerformanceDTO> monthlyProductPerformance = new();
+
+            using SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+
+            using SqlCommand command = new SqlCommand("[dbo].[usp_GetMonthlyProductPerformance]", connection)
+            {
+
+                CommandType = CommandType.StoredProcedure
+            };
+
+            await connection.OpenAsync();
+
+            using SqlDataReader reader = await command.ExecuteReaderAsync();
+
+            var month = reader.GetOrdinal("Month");
+            var orders = reader.GetOrdinal("Orders");
+            var units = reader.GetOrdinal("Units");
+            var revenue = reader.GetOrdinal("Revenue");
+            var growth = reader.GetOrdinal("Growth");
+
+            while (await reader.ReadAsync())
+            {
+                monthlyProductPerformance.Add(
+                    new MonthlyProductPerformanceDTO(
+                        reader.GetString(month),
+                        reader.GetInt32(orders),
+                        reader.GetInt32(units),
+                        reader.GetDecimal(revenue),
+                        reader.GetString(growth)
+                    ));
+            }
+
+            return monthlyProductPerformance;
+        }
     }
 }

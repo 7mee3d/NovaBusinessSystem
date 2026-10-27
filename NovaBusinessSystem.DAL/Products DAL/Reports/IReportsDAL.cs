@@ -15,6 +15,8 @@ namespace NovaBusinessSystem.DAL.Products.Reports
         Task<IEnumerable<TopSellingProductDTO>> GetTopSellingProductsAsync(int rank);
         Task<IEnumerable<SlowMovingProductDTO>> GetSlowMovingProductsAsync (int maximumUnitsSold);
         Task<IEnumerable<UnsoldProductDTO>> GetUnsoldProductsAsync ();
+     Task<IEnumerable<MonthlyProductPerformanceDTO>> GetMonthlyProductPerformanceAsync();
+        
     }
 
 }
