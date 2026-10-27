@@ -1,6 +1,8 @@
 
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using NovaBusinessSystem.BL.Products.Reports;
 using NovaBusinessSystem.DTOs.Products.Reports;
 
@@ -85,5 +87,18 @@ public class ProductReportsController : ControllerBase
         var products = await _reportsBL.GetTopSellingProductsAsync(rank);
 
         return Ok(products);
+    }
+
+    [HttpGet("SlowMovingProducts")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<Results<Ok<IEnumerable<SlowMovingProductDTO>>, BadRequest<string>>> GetSlowMovingProductsAsync(
+    [FromQuery(Name = "maximumUnitsSold")]int maximumUnitsSold)
+    {
+        if (maximumUnitsSold <= 0)
+            return TypedResults.BadRequest($"The {nameof(maximumUnitsSold)} is not valid");
+
+        return TypedResults.Ok(
+            await _reportsBL.GetSlowMovingProductsAsync(maximumUnitsSold));
     }
 }

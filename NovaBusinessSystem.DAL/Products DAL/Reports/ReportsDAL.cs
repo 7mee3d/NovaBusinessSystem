@@ -236,5 +236,41 @@ namespace NovaBusinessSystem.DAL.Products.Reports
 
             return topSellingProducts;
         }
+
+
+        public  async Task<IEnumerable<SlowMovingProductDTO>> GetSlowMovingProductsAsync(
+            int maximumUnitsSold)
+        {
+            List<SlowMovingProductDTO> slowMovingProducts = new();
+
+            using var connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+
+            using var command = new SqlCommand("[dbo].[usp_GetSlowMovingProducts]", connection){
+
+                CommandType = CommandType.StoredProcedure
+            };
+
+            command.Parameters.Add("@MaximumUnitsSold", SqlDbType.Int).Value = maximumUnitsSold;
+
+            await connection.OpenAsync();
+
+            using SqlDataReader reader = await command.ExecuteReaderAsync();
+
+            var productName = reader.GetOrdinal("ProductName");
+            var category = reader.GetOrdinal("Category");
+            var unitsSold = reader.GetOrdinal("UnitsSold");
+
+            while (await reader.ReadAsync())
+            {
+                slowMovingProducts.Add(new SlowMovingProductDTO(
+                    reader.GetString(productName),
+                    reader.GetString(category),
+                    reader.GetInt32(unitsSold)
+                ));
+            }
+
+            return slowMovingProducts;
+        }
+
     }
 }
