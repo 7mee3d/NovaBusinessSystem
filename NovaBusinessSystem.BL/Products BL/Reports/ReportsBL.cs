@@ -47,11 +47,17 @@ namespace NovaBusinessSystem.BL.Products.Reports
             int maximumUnitsSold)
         {
             {
-                    if(maximumUnitsSold <= 0 ) 
+                if (maximumUnitsSold <= 0)
                     throw new ArgumentOutOfRangeException($"The {nameof(maximumUnitsSold)} is not valid");
 
-                    return _reportsDAL.GetSlowMovingProductsAsync(maximumUnitsSold);
+                return _reportsDAL.GetSlowMovingProductsAsync(maximumUnitsSold);
             }
         }
+
+        public Task<IEnumerable<UnsoldProductDTO>> GetUnsoldProductsAsync()
+        => _reportsDAL.GetUnsoldProductsAsync();
+
+
+
     }
 }

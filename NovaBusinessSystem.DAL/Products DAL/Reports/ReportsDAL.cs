@@ -238,14 +238,15 @@ namespace NovaBusinessSystem.DAL.Products.Reports
         }
 
 
-        public  async Task<IEnumerable<SlowMovingProductDTO>> GetSlowMovingProductsAsync(
+        public async Task<IEnumerable<SlowMovingProductDTO>> GetSlowMovingProductsAsync(
             int maximumUnitsSold)
         {
             List<SlowMovingProductDTO> slowMovingProducts = new();
 
             using var connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
 
-            using var command = new SqlCommand("[dbo].[usp_GetSlowMovingProducts]", connection){
+            using var command = new SqlCommand("[dbo].[usp_GetSlowMovingProducts]", connection)
+            {
 
                 CommandType = CommandType.StoredProcedure
             };
@@ -272,5 +273,38 @@ namespace NovaBusinessSystem.DAL.Products.Reports
             return slowMovingProducts;
         }
 
+        public async Task<IEnumerable<UnsoldProductDTO>> GetUnsoldProductsAsync()
+        {
+            List<UnsoldProductDTO> unsoldProducts = new();
+
+            using SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+
+            using SqlCommand command = new SqlCommand("[dbo].[usp_GetUnsoldProducts]", connection)
+            {
+
+                CommandType = CommandType.StoredProcedure
+            };
+
+            await connection.OpenAsync();
+
+            using SqlDataReader reader = await command.ExecuteReaderAsync();
+
+            var productID = reader.GetOrdinal("ProductID");
+            var productName = reader.GetOrdinal("ProductName");
+            var category = reader.GetOrdinal("Category");
+            var stockQuantity = reader.GetOrdinal("StockQuantity");
+
+            while (await reader.ReadAsync())
+            {
+                unsoldProducts.Add(new UnsoldProductDTO(
+                    reader.GetInt32(productID),
+                    reader.GetString(productName),
+                    reader.GetString(category),
+                    reader.GetInt32(stockQuantity)
+                ));
+            }
+
+            return unsoldProducts;
+        }
     }
 }

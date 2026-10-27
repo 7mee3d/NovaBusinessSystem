@@ -210,7 +210,7 @@ namespace NovaBusinessSystem.BL.Customers
             return isFound;
         }
 
-        public static bool IsEmailExists(string Email) => CustomersDAL.IsTheEmailExists(Email);
+        public static bool IsEmailExists(int id , string Email) => CustomersDAL.IsTheEmailExists(id , Email);
 
         public static bool IsStatusValid(string Status)
         {

@@ -52,7 +52,7 @@ namespace NovaBusinessSystem.DAL.Customers
             return L_AllCustomers;
 
         }
-        
+
         public static CustomerDTO? FindCustomerBy(int CustomerID)
         {
             CustomerDTO? customerDTO = null;
@@ -152,7 +152,7 @@ namespace NovaBusinessSystem.DAL.Customers
             }
         }
 
-        public static bool IsTheEmailExists(string Email)
+        public static bool IsTheEmailExists(int id, string Email)
         {
 
             using (SqlConnection connection =
@@ -166,6 +166,8 @@ namespace NovaBusinessSystem.DAL.Customers
                 command.Parameters.Add("@Email", SqlDbType.NVarChar, 150)
                     .Value = Email;
 
+                command.Parameters.Add("@ID", SqlDbType.Int)
+                                 .Value = id;
                 try
                 {
                     connection.Open();

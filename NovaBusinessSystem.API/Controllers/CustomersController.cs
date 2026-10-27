@@ -70,14 +70,13 @@ namespace NovaBusinessSystem.API
                 if (customer is null)
                     return BadRequest("The Customer is null ");
 
-                if (
-                    CustomersBL.CheckStringIsValid(customer.FirstName) ||
-                    CustomersBL.CheckStringIsValid(customer.LastName) ||
-                    CustomersBL.CheckStringIsValid(customer.Email) ||
-                    CustomersBL.CheckStringIsValid(customer.Phone) ||
-                    CustomersBL.CheckStringIsValid(customer.City) ||
-                    CustomersBL.CheckStringIsValid(customer.Status)
-                   )
+            if (
+                !CustomersBL.CheckStringIsValid(customer.FirstName) ||
+                !CustomersBL.CheckStringIsValid(customer.LastName) ||
+                !CustomersBL.CheckStringIsValid(customer.City) ||
+                !CustomersBL.CheckStringIsValid(customer.Status)
+                )
+
                     return BadRequest("Invalid Data");
 
                 if (!CustomersBL.IsStatusValid(customer.Status))
@@ -118,13 +117,12 @@ namespace NovaBusinessSystem.API
             if (id < 0)
                 return BadRequest("Invalid Data 1");
 
-            if (CustomersBL.IsEmailExists(customer.Email))
-                return BadRequest("Invalid Data Email");
+            if (CustomersBL.IsEmailExists(id , customer.Email))
+                return BadRequest("Invalid Data Email Exists");
 
             if (
                 !CustomersBL.CheckStringIsValid(customer.FirstName) ||
                 !CustomersBL.CheckStringIsValid(customer.LastName) ||
-                !CustomersBL.CheckStringIsValid(customer.Email) ||
                 !CustomersBL.CheckStringIsValid(customer.City) ||
                 !CustomersBL.CheckStringIsValid(customer.Status)
                 )

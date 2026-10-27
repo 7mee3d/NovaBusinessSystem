@@ -92,13 +92,23 @@ public class ProductReportsController : ControllerBase
     [HttpGet("SlowMovingProducts")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<Results<Ok<IEnumerable<SlowMovingProductDTO>>, BadRequest<string>>> GetSlowMovingProductsAsync(
-    [FromQuery(Name = "maximumUnitsSold")]int maximumUnitsSold)
+    [FromQuery(Name = "maximumUnitsSold")] int maximumUnitsSold)
     {
         if (maximumUnitsSold <= 0)
             return TypedResults.BadRequest($"The {nameof(maximumUnitsSold)} is not valid");
 
         return TypedResults.Ok(
             await _reportsBL.GetSlowMovingProductsAsync(maximumUnitsSold));
+    }
+
+    [HttpGet("UnsoldProducts")]
+    [ProducesResponseType(typeof(IEnumerable<UnsoldProductDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<Ok<IEnumerable<UnsoldProductDTO>>> GetUnsoldProductsAsync()
+    {
+        return TypedResults.Ok(
+            await _reportsBL.GetUnsoldProductsAsync());
     }
 }
