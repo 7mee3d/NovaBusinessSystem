@@ -1,9 +1,14 @@
+using DataAccessLayer;
+using NovaBusinessSystem.BL;
 using NovaBusinessSystem.BL.Products.Reports;
 using NovaBusinessSystem.DAL.Products.Reports;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IReportsDAL , ReportsDAL> ();
 builder.Services.AddScoped<ReportsBL> ();
+
+builder.Services.AddScoped<IEmployeesDAL , EmployeesDAL> ();
+builder.Services.AddScoped<EmployeesBL> ();
 
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();

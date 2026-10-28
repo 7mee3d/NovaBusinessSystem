@@ -1,12 +1,19 @@
 ﻿using System.Data;
 using DataAccessLayer;
 using NovaBusinessSystem.BL.Departments;
+using NovaBusinessSystem.DTOs.Employees;
 using NovaBusinessSystem.Enumeration;
 
 namespace NovaBusinessSystem.BL;
 
 public class EmployeesBL
 {
+    private readonly IEmployeesDAL _employeeDAL;
+
+    public EmployeesBL(IEmployeesDAL employeesDAL)
+    {
+        this._employeeDAL = employeesDAL;
+    }
 
     public int ID { get; set; }
     public string FirstName { get; set; }
@@ -20,7 +27,7 @@ public class EmployeesBL
     public string Email { get; set; }
     public Enumerations.EnStatus Status { get; set; }
 
-    private EmployeesBL ? _InfoManager = null;
+    private EmployeesBL? _InfoManager = null;
     public EmployeesBL ManagerInfo
     {
         get
@@ -92,16 +99,10 @@ public class EmployeesBL
         this.enMode = Enumerations.EnMode._kUPDATE;
     }
 
-    public static DataTable GetAllEmployees(
-
-        string? FullName = null,
-        string? DepartmentName = null,
-        string? JobTitle = null,
-        string? Status = null
-
-        )
-            => EmployeesDAL.GetListEmployees(FullName, DepartmentName, JobTitle, Status);
-
+    public Task<IEnumerable<EmployeeDetailsResponseDto>> GetEmployeeDetailsResponsesAsync()
+    {
+        return _employeeDAL.GetAllEmployeeDetailsAsync();
+    }
 
     public static EmployeesBL FindEmployeeBy(int EmployeeID)
     {
@@ -198,10 +199,9 @@ public class EmployeesBL
 
     public static DataTable GetDepartmentSammary() => EmployeesDAL.GetDepartmentSammary();
 
-
     public static DataTable GetSalarySummary() => EmployeesDAL.GetSalarySummary();
 
-    public static Dictionary<string,int> GetEmployeeStatus() => EmployeesDAL.GetEmployeeStatus();
-     public static Dictionary<string?,int?>  GetHiringSummary() => EmployeesDAL.GetHiringSummary();
+    public static Dictionary<string, int> GetEmployeeStatus() => EmployeesDAL.GetEmployeeStatus();
+    public static Dictionary<string?, int?> GetHiringSummary() => EmployeesDAL.GetHiringSummary();
 }
 

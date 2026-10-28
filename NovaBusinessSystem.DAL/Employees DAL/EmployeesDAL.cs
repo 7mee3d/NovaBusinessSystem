@@ -1,59 +1,43 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Data;
-using System.IO.Pipelines;
+﻿using System.Data;
 using Microsoft.Data.SqlClient;
+using NovaBusinessSystem.DTOs.Employees;
 
 namespace DataAccessLayer;
 
-public class EmployeesDAL
+public class EmployeesDAL : IEmployeesDAL
 {
-
-    public static DataTable GetListEmployees(
-
-        string? FullName = null,
-        string? DepartmentName = null,
-        string? JobTitle = null,
-        string? Status = null
-
-        )
+    public async Task<IEnumerable<EmployeeDetailsResponseDto>> GetAllEmployeeDetailsAsync()
     {
+        List<EmployeeDetailsResponseDto> employees = new();
 
-        DataTable DT_AllEmployees = new DataTable();
+        using SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
 
-        using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
+        using SqlCommand command = new SqlCommand("[dbo].[usp_ListEmployees]", connection);
+
+        await connection.OpenAsync();
+
+        using SqlDataReader reader = await command.ExecuteReaderAsync();
+
+        var employeeID = reader.GetOrdinal("EmployeeID");
+        var name = reader.GetOrdinal("FullName");
+        var department = reader.GetOrdinal("DepartmentName");
+        var jobTitle = reader.GetOrdinal("JobTitle");
+        var salary = reader.GetOrdinal("Salary");
+        var status = reader.GetOrdinal("Status");
+
+        while (await reader.ReadAsync())
         {
-
-
-            using (SqlCommand command = new SqlCommand("[dbo].[usp_ListEmployees]", connection))
-            {
-                command.CommandType = CommandType.StoredProcedure;
-
-                command.Parameters.AddWithValue("@FullName", FullName is not null ? FullName : DBNull.Value);
-                command.Parameters.AddWithValue("@DepartmentName", DepartmentName is not null ? DepartmentName : DBNull.Value);
-                command.Parameters.AddWithValue("@JobTitle", JobTitle is not null ? JobTitle : DBNull.Value);
-                command.Parameters.AddWithValue("@Status", Status is not null ? Status : DBNull.Value);
-
-                try
-                {
-                    connection.Open();
-                    // way one useing Data Adapter (DOn't use SqlConnection ) 
-                    //Way Two using Data Reader (Must declare SqlConnection )
-
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader.HasRows)
-                            DT_AllEmployees.Load(reader);
-                    }
-
-                }
-                catch (SqlException SEX)
-                {
-                    throw;
-                }
-            }
+            employees.Add(new EmployeeDetailsResponseDto(
+                reader.GetInt32(employeeID),
+                reader.GetString(name),
+                reader.GetString(department),
+                reader.GetString(jobTitle),
+                reader.GetDecimal(salary),
+                reader.GetString(status)
+            ));
         }
 
-        return DT_AllEmployees;
+        return employees;
     }
 
     public static bool GetEmployeeBy(
@@ -402,13 +386,15 @@ public class EmployeesDAL
                     while (reader.Read())
                         AllHiringSummary.Add(reader["HireYear"].ToString()!, Convert.ToInt32(reader["Employees Hired"]));
 
-            }catch
+            }
+            catch
             {
-                
-            };
+
+            }
+            ;
         }
 
-        return AllHiringSummary; 
+        return AllHiringSummary;
 
     }
 }
