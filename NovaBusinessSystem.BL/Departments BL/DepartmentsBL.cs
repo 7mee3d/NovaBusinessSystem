@@ -3,12 +3,11 @@ namespace NovaBusinessSystem.BL.Departments;
 
 public class DepartmentsBL
 {
-    public DepartmentsBL()
+    private readonly IDepartmentDAL _departmentDAL;
+
+    public DepartmentsBL(IDepartmentDAL departmentDAL)
     {
-        this.DepartmentID = default;
-        this.DepartmentName = default;
-        this.Budget = default;
-        this.Location = default;
+        this._departmentDAL = departmentDAL;
     }
 
     public int DepartmentID { get; set; }
@@ -27,14 +26,14 @@ public class DepartmentsBL
         this.Location = Location;
     }
 
-    public static DepartmentsBL GetDepartmentBy(int DepartmentID)
+    public async Task<DepartmentsBL> GetDepartmentBy(int DepartmentID)
     {
         string DepartmentName = "", Location = "";
         decimal Budget = 0.0m;
 
-        bool IsFound = DepartmentsDAL.GetDepartmentBy(DepartmentID, ref DepartmentName, ref Location, ref Budget);
+        var departmnet = await this._departmentDAL.GetDepartmentAsync(DepartmentID);
 
-        if (IsFound)
+        if (departmnet is not null)
             return new DepartmentsBL(DepartmentID, DepartmentName, Location, Budget);
         else return null;
 

@@ -40,103 +40,50 @@ public class EmployeesDAL : IEmployeesDAL
         return employees;
     }
 
-    public static bool GetEmployeeBy(
-
-        int employeeID,
-        ref string firstName,
-        ref string lastName,
-        ref int departmentID,
-        ref int managerID,
-        ref string jobTitle,
-        ref decimal salary,
-        ref DateTime hireDate,
-        ref string phone,
-        ref string email,
-        ref byte status
-
-     )
+    public async Task<EmployeeResponseDto?> GetEmployeeAsync(int employeeID)
     {
+        
+        using var connection = new SqlConnection( HelperDAL.HelperDAL.ConnectionString);
 
-        bool isFound = false;
-
-        using (SqlConnection connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString))
-        using (SqlCommand command = new SqlCommand("[dbo].[usp_GetEmployeeByID]", connection))
+        using var command = new SqlCommand("[dbo].[usp_GetEmployeeByID]", connection)
         {
-            command.CommandType = CommandType.StoredProcedure;
+            CommandType = CommandType.StoredProcedure
+        };
 
-            command.Parameters.AddWithValue("@EmployeeID", employeeID);
+        command.Parameters.Add("@EmployeeID", SqlDbType.Int).Value = employeeID;
 
-            //output parameters 
+        await connection.OpenAsync();
 
-            SqlParameter paramFirstName = command.Parameters.Add("@FirstName", SqlDbType.NVarChar, 200);
-            paramFirstName.Direction = ParameterDirection.Output;
+        using var reader = await command.ExecuteReaderAsync();
 
-            SqlParameter paramLastName = command.Parameters.Add("@LastName", SqlDbType.NVarChar, 200);
-            paramLastName.Direction = ParameterDirection.Output;
+        if (!await reader.ReadAsync())
+            return null;
 
-            SqlParameter paramDepartmentID = command.Parameters.Add("@DepartmentID", SqlDbType.Int);
-            paramDepartmentID.Direction = ParameterDirection.Output;
+        var firstName = reader.GetOrdinal("FirstName");
+        var lastName = reader.GetOrdinal("LastName");
+        var departmentID = reader.GetOrdinal("DepartmentName");
+        var managerName = reader.GetOrdinal("ManagerName");
+        var jobTitle = reader.GetOrdinal("JobTitle");
+        var salary = reader.GetOrdinal("Salary");
+        var hireDate = reader.GetOrdinal("HireDate");
+        var phone = reader.GetOrdinal("Phone");
+        var email = reader.GetOrdinal("Email");
+        var status = reader.GetOrdinal("Status");
 
-            SqlParameter paramManagerID = command.Parameters.Add("@ManagerID", SqlDbType.Int);
-            paramManagerID.Direction = ParameterDirection.Output;
-
-            SqlParameter paramJobTitle = command.Parameters.Add("@JobTitle", SqlDbType.NVarChar, 200);
-            paramJobTitle.Direction = ParameterDirection.Output;
-
-            SqlParameter paramSalary = command.Parameters.Add("@Salary", SqlDbType.Decimal);
-            paramSalary.Precision = 10;
-            paramSalary.Scale = 2;
-            paramSalary.Direction = ParameterDirection.Output;
-
-            SqlParameter paramHireDate = command.Parameters.Add("@HireDate", SqlDbType.Date);
-            paramHireDate.Direction = ParameterDirection.Output;
-
-            SqlParameter paramPhone = command.Parameters.Add("@Phone", SqlDbType.Char, 11);
-            paramPhone.Direction = ParameterDirection.Output;
-
-            SqlParameter paramEmail = command.Parameters.Add("@Email", SqlDbType.VarChar, -1);
-            paramEmail.Direction = ParameterDirection.Output;
-
-            SqlParameter paramStatus = command.Parameters.Add("@Status", SqlDbType.TinyInt);
-            paramStatus.Direction = ParameterDirection.Output;
-
-
-            try
-            {
-
-                connection.Open();
-
-                command.ExecuteNonQuery();
-
-
-                firstName = (string)paramFirstName.Value;
-                lastName = (string)paramLastName.Value;
-                departmentID = (int)paramDepartmentID.Value;
-                managerID = (int)(paramManagerID.Value ?? -1);
-                jobTitle = (string)paramJobTitle.Value;
-                salary = (decimal)paramSalary.Value;
-                hireDate = (DateTime)paramHireDate.Value;
-                phone = (string)paramPhone.Value;
-                email = (string)paramEmail.Value;
-                status = (byte)paramStatus.Value;
-
-                isFound = true;
-
-            }
-            catch (SqlException SEX)
-            {
-
-                if (SEX.Number == 50001)
-                    isFound = false;
-                else
-                    throw;
-
-            }
-        }
-
-        return isFound;
+        return new EmployeeResponseDto(
+            employeeID,
+            reader.GetString(firstName),
+            reader.GetString(lastName),
+            reader.GetString(departmentID),
+            reader.GetString(managerName),
+            reader.GetString(jobTitle),
+            reader.GetDecimal(salary),
+            reader.GetDateTime(hireDate),
+            reader.IsDBNull(phone) ? null : reader.GetString(phone),
+            reader.IsDBNull(email) ? null : reader.GetString(email),
+            reader.GetString(status)
+        );
     }
-
 
     public static int AddNewEmployee(
          string firstName,

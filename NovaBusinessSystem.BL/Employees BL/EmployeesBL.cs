@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using DataAccessLayer;
-using NovaBusinessSystem.BL.Departments;
 using NovaBusinessSystem.DTOs.Employees;
 using NovaBusinessSystem.Enumeration;
 
@@ -9,10 +8,12 @@ namespace NovaBusinessSystem.BL;
 public class EmployeesBL
 {
     private readonly IEmployeesDAL _employeeDAL;
+    private readonly IDepartmentDAL _departmentDAL;
 
-    public EmployeesBL(IEmployeesDAL employeesDAL)
+    public EmployeesBL(IEmployeesDAL employeesDAL, IDepartmentDAL departmentDAL)
     {
         this._employeeDAL = employeesDAL;
+        this._departmentDAL = departmentDAL;
     }
 
     public int ID { get; set; }
@@ -27,30 +28,66 @@ public class EmployeesBL
     public string Email { get; set; }
     public Enumerations.EnStatus Status { get; set; }
 
-    private EmployeesBL? _InfoManager = null;
-    public EmployeesBL ManagerInfo
+    public string GetStatusStr
     {
         get
         {
-            if (_InfoManager is null)
-                _InfoManager = FindEmployeeBy(this.ManagerID);
-
-            return _InfoManager;
+            switch (this.Status)
+            {
+                case Enumerations.EnStatus._kINACTIVE:
+                    return "Inactive";
+                case Enumerations.EnStatus._kACTIVE:
+                    return "Active";
+                case Enumerations.EnStatus._kSUSPENDED:
+                    return "Suspended";
+                default: return "Unknown";
+            }
         }
-
     }
-    private DepartmentsBL _DepartmentInfo = null;
-    public DepartmentsBL DepartmentInfo
-    {
 
+    public EmployeeResponseDto Dto
+    {
         get
         {
-            if (_DepartmentInfo is null)
-                _DepartmentInfo = DepartmentsBL.GetDepartmentBy(DepartmentID);
-
-            return _DepartmentInfo;
+            return new EmployeeResponseDto(
+                ID,
+                FirstName,
+                LastName,
+                _departmentName ?? "N/A",
+                _managerName ?? "N/A",
+                JobTitle,
+                Salary,
+                HireDate,
+                Phone,
+                Email,
+                GetStatusStr
+            );
         }
     }
+
+    private string? _departmentName;
+    private string? _managerName;
+
+    public async Task LoadDtoDataAsync()
+    {
+        var department = await _departmentDAL.GetDepartmentAsync(DepartmentID);
+
+        _departmentName = department?.DepartmentName;
+
+        if (ManagerID > 0)
+        {
+            var manager = await FindEmployeeByAsync(ManagerID);
+
+            _managerName = manager is null
+                ? "N/A"
+                : $"{manager.FirstName} {manager.LastName}";
+        }
+        else
+        {
+            _managerName = "N/A";
+        }
+    }
+
 
     public Enumerations.EnMode enMode { get; set; }
 
@@ -72,31 +109,19 @@ public class EmployeesBL
 
     }
 
-    public EmployeesBL(
-        int EmployeeID,
-        string FirstName,
-        string lastName,
-        int DepartmentID,
-        int ManagerID,
-        string jobTitle,
-        decimal salary,
-        DateTime hireDate,
-        string phone,
-        string email,
-        Enumerations.EnStatus status)
+    public EmployeesBL(EmployeeResponseDto employee, Enumerations.EnMode mode)
     {
-        this.ID = EmployeeID;
-        this.FirstName = FirstName;
-        this.LastName = lastName;
-        this.DepartmentID = DepartmentID;
-        this.ManagerID = ManagerID;
-        this.JobTitle = jobTitle;
-        this.Salary = salary;
-        this.HireDate = hireDate;
-        this.Phone = phone;
-        this.Email = email;
-        this.Status = status;
-        this.enMode = Enumerations.EnMode._kUPDATE;
+        this.ID = employee.EmployeeID;
+        this._departmentName = employee.Department ;
+        this._managerName = employee.Manager;
+        this.FirstName = employee.FirstName;
+        this.LastName = employee.LastName;
+        this.JobTitle = employee.JobTitle;
+        this.Salary = employee.Salary;
+        this.HireDate = employee.HireDate;
+        this.Phone = employee.Phone ?? string.Empty;
+        this.Email = employee.Email ?? string.Empty;
+        this.enMode = mode;
     }
 
     public Task<IEnumerable<EmployeeDetailsResponseDto>> GetEmployeeDetailsResponsesAsync()
@@ -104,46 +129,16 @@ public class EmployeesBL
         return _employeeDAL.GetAllEmployeeDetailsAsync();
     }
 
-    public static EmployeesBL FindEmployeeBy(int EmployeeID)
+    public async Task<EmployeesBL?> FindEmployeeByAsync(
+        int employeeID)
     {
+        EmployeeResponseDto? employee =
+            await _employeeDAL.GetEmployeeAsync(employeeID);
 
-        string FirstName = "", LastName = "", JobTitle = "", Phone = "", Email = "";
-        decimal Salary = 0.0m;
-        DateTime HireDate = DateTime.Now;
-        byte Status = 0;
-        int DepartmentID = 0, ManagerID = 0;
+        if (employee is null)
+            return null;
 
-        bool IsFound = EmployeesDAL.GetEmployeeBy(
-            EmployeeID,
-            ref FirstName,
-            ref LastName,
-            ref DepartmentID,
-            ref ManagerID,
-            ref JobTitle,
-            ref Salary,
-            ref HireDate,
-            ref Phone,
-            ref Email,
-            ref Status
-           );
-
-        if (IsFound)
-            return new EmployeesBL(
-            EmployeeID,
-            FirstName,
-            LastName,
-            DepartmentID,
-            ManagerID,
-            JobTitle,
-            Salary,
-            HireDate,
-            Phone,
-            Email,
-            (Enumerations.EnStatus)Status);
-
-        else return null;
-
-
+        return new EmployeesBL(employee, Enumerations.EnMode._kUPDATE);
     }
 
     private bool _AddNewEmployee()
