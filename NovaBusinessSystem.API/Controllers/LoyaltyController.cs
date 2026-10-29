@@ -1,184 +1,135 @@
 using Microsoft.AspNetCore.Mvc;
-using NovaBusinessSystem.BL.Customers;
-using NovaBusinessSystem.BL.Customers.Loyalty;
-using NovaBusinessSystem.DTOs;
+using NovaBusinessSystem.BL.Interfaces;
+using NovaBusinessSystem.DTOs.Customers.Loyalty;
 
-namespace NovaBusinessSystem.API
+namespace NovaBusinessSystem.API.Controllers.Customers;
+
+[ApiController]
+[Route("api/Customers/Loyalty")]
+public class LoyaltyController : ControllerBase
 {
-    [ApiController]
-    [Route("api/CustomersLoyalty")]
-    public class LoyaltyController : ControllerBase
+    private readonly ILoyaltyService _loyaltyService;
+    private readonly ICustomersService _customersService;
+
+    public LoyaltyController(
+        ILoyaltyService loyaltyService,
+        ICustomersService customersService)
     {
+        _loyaltyService = loyaltyService
+            ?? throw new ArgumentNullException(nameof(loyaltyService));
 
-        [HttpGet("{id:int}")]
+        _customersService = customersService
+            ?? throw new ArgumentNullException(nameof(customersService));
+    }
 
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpGet("{id:int}/Points")]
+    [ProducesResponseType(typeof(CustomerPointsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<CustomerPointsDto>> GetCustomerPointsAsync(
+        [FromRoute] int id)
+    {
+        if (id <= 0)
+            return BadRequest("Customer ID must be greater than zero.");
 
-        public async Task<ActionResult<CustomerPointsDTO>> ViewCustomerPoints([FromRoute(Name = "id")] int id)
-        {
+        var customerPoints = await _loyaltyService.GetCustomerPointsAsync(id);
 
-            try
-            {
+        if (customerPoints is null)
+            return NotFound($"Customer with ID {id} was not found.");
 
-                if (id < 0)
-                    return BadRequest(new { Message = $"Invalid Data {id}" });
+        return Ok(customerPoints);
+    }
 
-                CustomerPointsDTO? customerPointsDTO = await LoyaltyBL.ViewCustomerPointsAsync(id)!;
+    [HttpPatch("{id:int}/Points/Add")]
+    [ProducesResponseType(typeof(PointsTransactionResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<PointsTransactionResultDto>> AddPointsAsync(
+        [FromRoute] int id,
+        [FromQuery] int points)
+    {
+        if (id <= 0 || points <= 0)
+            return BadRequest("Customer ID and points must be greater than zero.");
 
-                if (customerPointsDTO is null)
-                    return NotFound(new { Message = "The Customer does not exists" });
+        var customer = await _customersService.GetByIdAsync(id);
 
-                return Ok(customerPointsDTO);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"{ex.Message}");
-            }
-        }
+        if (customer is null)
+            return NotFound($"Customer with ID {id} was not found.");
 
-        [HttpPatch("{id:int}/{points:int}/AddPoints")]
+        int previousPoints = customer.LoyaltyPoints;
 
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        var added = await _loyaltyService.AddPointsAsync(id, points);
 
-        public async Task<ActionResult<PointsTransactionResultDTO>> ViewCustomerPoints(
-            [FromRoute(Name = "id")] int id, [FromRoute(Name = "points")] int points
-         )
-        {
+        if (!added)
+            return Conflict("Unable to add loyalty points.");
 
-            try
-            {
+        var result = new PointsTransactionResultDto(
+            $"{customer.FirstName} {customer.LastName}",
+            previousPoints,
+            points,
+            previousPoints + points
+        );
 
-                if (id < 0 || points < 0)
-                    return BadRequest(new { Message = $"Invalid Data" });
+        return Ok(result);
+    }
 
-                CustomersBL? customer = CustomersBL.Find(id)!;
+    [HttpPatch("{id:int}/Points/Redeem")]
+    [ProducesResponseType(typeof(PointsTransactionResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<PointsTransactionResultDto>> RedeemPointsAsync(
+        [FromRoute] int id,
+        [FromQuery] int points)
+    {
+        if (id <= 0 || points <= 0)
+            return BadRequest("Customer ID and points must be greater than zero.");
 
-                if (customer is null)
-                    return NotFound(new { Message = "The Customer does not exists" });
+        var customer = await _customersService.GetByIdAsync(id);
 
-                if (!await LoyaltyBL.AddPointsToCustomerAsync(id , points))
-                    return Conflict(new { Message = "Once happens" });
+        if (customer is null)
+            return NotFound($"Customer with ID {id} was not found.");
 
-                PointsTransactionResultDTO pointsTransactionResultDTO = new PointsTransactionResultDTO(
-                                string.Join(" ", customer.FirstName, customer.LastName),
-                                customer.LoyaltyPoints,
-                                points,
-                                customer.LoyaltyPoints + points
-                    );
+        int previousPoints = customer.LoyaltyPoints;
 
-                return Ok(pointsTransactionResultDTO);
+        if (points > previousPoints)
+            return Conflict("Insufficient loyalty points.");
 
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"{ex.Message}");
-            }
-        }
+        var redeemed = await _loyaltyService.RedeemPointsAsync(id, points);
 
-        [HttpPatch("{id:int}/{points:int}/RedeemPoints")]
+        if (!redeemed)
+            return Conflict("Unable to redeem loyalty points.");
 
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        var result = new PointsTransactionResultDto(
+            $"{customer.FirstName} {customer.LastName}",
+            previousPoints,
+            points,
+            previousPoints - points
+        );
 
-        public async Task<ActionResult<PointsTransactionResultDTO>> RedeemPointsCustomer(
-                 [FromRoute(Name = "id")] int id, [FromRoute(Name = "points")] int points
-                 )
-        {
+        return Ok(result);
+    }
 
-            try
-            {
+    [HttpGet("TopCustomers")]
+    [ProducesResponseType(typeof(IEnumerable<TopLoyaltyCustomerDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<TopLoyaltyCustomerDto>>> GetTopLoyaltyCustomersAsync()
+    {
+        var customers = await _loyaltyService.GetTopLoyaltyCustomersAsync();
 
-                if (id < 0 || points < 0)
-                    return BadRequest($"Invalid Data");
+        return Ok(customers);
+    }
 
-                CustomersBL? customer = CustomersBL.Find(id)!;
+    [HttpGet("Statistics")]
+    [ProducesResponseType(typeof(LoyaltyStatisticsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<LoyaltyStatisticsDto>> GetLoyaltyStatisticsAsync()
+    {
+        var statistics = await _loyaltyService.GetLoyaltyStatisticsAsync();
 
-                if (customer is null)
-                    return NotFound("The Customer does not exists");
+        if (statistics is null)
+            return NotFound("Loyalty statistics were not found.");
 
-                int previousPoints = customer.LoyaltyPoints;
-
-                if (!await LoyaltyBL.RedeemPointsToCustomerAsync(id , customer.LoyaltyPoints , points))
-                    return Conflict("Insufficient points.");
-
-                PointsTransactionResultDTO pointsTransactionResultDTO = new PointsTransactionResultDTO(
-                                string.Join(" ", customer.FirstName, customer.LastName),
-                                customer.LoyaltyPoints,
-                                points,
-                                customer.LoyaltyPoints - points
-                    );
-
-                return Ok(pointsTransactionResultDTO);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"{ex.Message}");
-            }
-        }
-
-
-        [HttpGet("TopCustomers")]
-
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
-        public async Task<ActionResult<IEnumerable<TopLoyaltyCustomerDTO>>> GetTopLoyaltyCustomers()
-        {
-            try
-            {
-
-                List<TopLoyaltyCustomerDTO> topLoyaltyCustomers =
-                    (await LoyaltyBL.GetTopLoyaltyCustomersAsync()!).ToList();
-
-                if (!topLoyaltyCustomers.Any() || topLoyaltyCustomers.Count <= 0)
-                    return NotFound("No loyalty customers found.");
-
-
-                return Ok(topLoyaltyCustomers);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"{ex.Message}");
-            }
-
-        }
-
-        [HttpGet("Statistics")]
-
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
-        public async Task<ActionResult<LoyaltyStatisticsDTO>> GetLoyaltyStatistics()
-        {
-
-            try
-            {
-
-                LoyaltyStatisticsDTO loyaltyStatisticsDTO =
-                    await LoyaltyBL.GetLoyaltyStatisticsAsync()!;
-
-                if (loyaltyStatisticsDTO is null)
-                    return NotFound("No loyalty Statistics found.");
-
-
-                return Ok(loyaltyStatisticsDTO);
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"{ex.Message}");
-            }
-
-        }
+        return Ok(statistics);
     }
 }

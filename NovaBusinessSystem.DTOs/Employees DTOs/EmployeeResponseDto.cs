@@ -1,7 +1,7 @@
 namespace NovaBusinessSystem.DTOs.Employees
 {
     public record EmployeeResponseDto(
-        int EmployeeID,
+        int? EmployeeID,
         string FirstName,
         string LastName,
         string Department,

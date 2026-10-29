@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../NovaBusinessSystem.BL/NovaBusinessSystemBL.csproj" />
+    <ProjectReference Include="../NovaBusinessSystem.DAL/DataAccessLayer.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,195 +1,120 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using NovaBusinessSystem.BL.Customers;
+using NovaBusinessSystem.BL.Interfaces;
+using NovaBusinessSystem.DTOs.Customers;
 
-using NovaBusinessSystem.DTOs;
+namespace NovaBusinessSystem.API.Controllers;
 
-namespace NovaBusinessSystem.API
+[ApiController]
+[Route("api/[controller]")]
+public class CustomersController : ControllerBase
 {
-    [ApiController]
-    [Route("api/Customers")]
-    public class CustomersController : ControllerBase
+    private readonly ICustomersService _service;
+
+    public CustomersController(ICustomersService service)
     {
-        [HttpGet("", Name = "GetAllCustomers")]
+        _service = service ?? throw new ArgumentNullException(nameof(service));
+    }
 
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<List<CustomerDTO>> GetAllCustomers()
-        {
-            List<CustomerDTO> allCustomers =
-                CustomersBL.GetCustomersList().ToList();
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<CustomerResponseDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<CustomerResponseDto>>> GetAllAsync()
+    {
+        var customers = await _service.GetAllAsync();
 
-            if (allCustomers is null || !allCustomers.Any())
-                return BadRequest("Not have any data");
+        return Ok(customers);
+    }
 
-            return Ok(allCustomers);
-        }
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(typeof(CustomerResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<CustomerResponseDto>> GetByIdAsync([FromRoute] int id)
+    {
+        if (id <= 0)
+            return BadRequest("Customer ID must be greater than zero.");
 
-        [HttpGet("{id:int}", Name = "GetCustomerByID")]
+        var customer = await _service.GetByIdAsync(id);
 
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<CustomerDTO> GetCustomerByID([FromRoute(Name = "id")] int id)
-        {
+        if (customer is null)
+            return NotFound();
 
-            try
-            {
-                if (id <= 0)
-                    return BadRequest("Invalid Data");
+        return Ok(customer);
+    }
 
-                CustomersBL? customer = CustomersBL.Find(id);
+    [HttpPost]
+    [ProducesResponseType(typeof(CustomerResponseDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<CustomerResponseDto>> CreateAsync(
+        [FromBody] CustomerCreateRequestDto customer)
+    {
+        if (await _service.IsEmailExistsAsync(0, customer.Email))
+            return Conflict("A customer with this email already exists.");
 
-                if (customer is null)
-                    return NotFound("The Customer not found");
+        var customerID = await _service.AddAsync(customer);
 
-                return Ok(customer.CDTO);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"{ex.Message}");
-            }
+        var createdCustomer = await _service.GetByIdAsync(customerID);
 
+        if (createdCustomer is null)
+            return Problem(
+                statusCode: StatusCodes.Status500InternalServerError,
+                title: "Customer creation failed",
+                detail: "The customer was created, but could not be retrieved."
+            );
 
-        }
+        return CreatedAtAction(
+            nameof(GetByIdAsync),
+            new { id = customerID },
+            createdCustomer
+        );
+    }
 
+    [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> UpdateAsync(
+        [FromRoute] int id,
+        [FromBody] CustomerCreateRequestDto customer)
+    {
+        if (id <= 0)
+            return BadRequest("Customer ID must be greater than zero.");
 
-        [HttpPost("")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        var existingCustomer = await _service.GetByIdAsync(id);
 
-        public ActionResult AddNewCustomer([FromBody] CustomerAddDTO customer)
-        {
+        if (existingCustomer is null)
+            return NotFound();
 
-            try
-            {
+        if (await _service.IsEmailExistsAsync(id, customer.Email))
+            return Conflict("A customer with this email already exists.");
 
-                if (customer is null)
-                    return BadRequest("The Customer is null ");
+        await _service.UpdateAsync(id, customer);
 
-            if (
-                !CustomersBL.CheckStringIsValid(customer.FirstName) ||
-                !CustomersBL.CheckStringIsValid(customer.LastName) ||
-                !CustomersBL.CheckStringIsValid(customer.City) ||
-                !CustomersBL.CheckStringIsValid(customer.Status)
-                )
+        return NoContent();
+    }
 
-                    return BadRequest("Invalid Data");
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+    {
+        if (id <= 0)
+            return BadRequest("Customer ID must be greater than zero.");
 
-                if (!CustomersBL.IsStatusValid(customer.Status))
-                    return BadRequest("Invalid Data Status");
+        var existingCustomer = await _service.GetByIdAsync(id);
 
+        if (existingCustomer is null)
+            return NotFound();
 
-                CustomersBL customersBL = new CustomersBL();
+        var deleted = await _service.DeleteAsync(id);
 
-                customersBL.ConvertAddDTOtoObject(customer);
+        if (!deleted)
+            return NotFound();
 
-
-                if (!customersBL.SaveModeCustomer())
-                    return BadRequest("Connot Be Added This Customer");
-
-
-                return CreatedAtAction(nameof(GetCustomerByID), new { Id = customersBL.CustomerID }, customersBL.CDTO);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"{ex.Message}");
-            }
-        }
-
-        [HttpPut("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-
-        public ActionResult UpdateCustomer([FromRoute(Name = "id")] int id, [FromBody] CustomerAddDTO customer)
-        {
-
-            try {
-
-            if (customer is null)
-                return BadRequest("The Customer is null ");
-            if (id < 0)
-                return BadRequest("Invalid Data 1");
-
-            if (CustomersBL.IsEmailExists(id , customer.Email))
-                return BadRequest("Invalid Data Email Exists");
-
-            if (
-                !CustomersBL.CheckStringIsValid(customer.FirstName) ||
-                !CustomersBL.CheckStringIsValid(customer.LastName) ||
-                !CustomersBL.CheckStringIsValid(customer.City) ||
-                !CustomersBL.CheckStringIsValid(customer.Status)
-                )
-
-                return BadRequest("Invalid Data 2 ");
-
-            if (!CustomersBL.IsStatusValid(customer.Status))
-                return BadRequest("Invalid Data Status ");
-
-            CustomersBL customersBL = CustomersBL.Find(id)!;
-
-            if (customersBL is null)
-                return NotFound("The Customer not found");
-
-            customersBL.ConvertAddDTOtoObject(customer);
-
-
-            if (!customersBL.SaveModeCustomer())
-                return BadRequest("Connot Be Updated This Customer");
-
-            return NoContent();
-
-            }catch(Exception ex)
-            {
-                return BadRequest($"{ex.Message}");
-
-            }
-        }
-
-        [HttpDelete("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public ActionResult DeleteCustomer([FromRoute(Name = "id")] int id)
-        {
-
-            if (id <= 0)
-                return BadRequest("Invalid Customer ID.");
-
-            CustomersBL? customersBL = CustomersBL.Find(id);
-
-            if (customersBL is null)
-                return NotFound("The Customer was not found.");
-            try
-            {
-                if (!customersBL.DeleteCustomer())
-                    return NotFound($"Customer with ID {id} was not found.");
-
-                return NoContent();
-            }
-            catch (SqlException ex) when (ex.Number == 547)
-            {
-                return Conflict(
-                    "This customer cannot be deleted because they have related sales."
-                );
-            }
-            catch (SqlException)
-            {
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError,
-                    "A database error occurred."
-                );
-            }
-
-        }
-
+        return NoContent();
     }
 }

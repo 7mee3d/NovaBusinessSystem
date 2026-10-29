@@ -1,209 +1,111 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using NovaBusinessSystem.BL.Interfaces;
 using NovaBusinessSystem.DTOs.Products;
-using NovaBusinessSystem.BL.Products;
 
-namespace NovaBusinessSystem.API
+namespace NovaBusinessSystem.API.Controllers;
+
+[ApiController]
+[Route("api/Products")]
+public class ProductsController : ControllerBase
 {
+    private readonly IProductsService _service;
 
-    [Route("api/Products")]
-    [ApiController]
-    public class ProductsController : ControllerBase
+    public ProductsController(IProductsService service)
     {
-        [HttpGet("", Name = "GetAllProductsAsync")]
+        _service = service;
+    }
 
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpGet]
+    [ProducesResponseType(
+        typeof(IEnumerable<ProductResponseDto>),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<Ok<IEnumerable<ProductResponseDto>>> GetAllAsync()
+    {
+        var products = await _service.GetAllAsync();
 
-        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetAllProductsAsync()
-        {
-            try
-            {
-                List<ProductDTO> L_Products = (await Product.GetAllProductsAsync()!).ToList();
-                if (!L_Products.Any() || L_Products.Count == 0)
-                    return NotFound("Not found any Products");
+        return TypedResults.Ok(products);
+    }
 
-                return Ok(L_Products);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"{ex.Message}");
-            }
-        }
+    [HttpGet("{id:int}", Name = nameof(GetProductByIdAsync))]
+    [ProducesResponseType(
+        typeof(ProductResponseDto),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<
+        Results<
+            Ok<ProductResponseDto>,
+            BadRequest<string>,
+            NotFound<string>>> GetProductByIdAsync(
+                [FromRoute] int id)
+    {
+        if (id <= 0)
+            return TypedResults.BadRequest("Product ID must be greater than zero.");
 
-        [HttpGet("{id:int}", Name = "GetProductByID")]
+        var product = await _service.GetProductByIDAsync(id);
 
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        if (product is null)
+            return TypedResults.NotFound("Product not found.");
 
-        public async Task<ActionResult<ProductDTO>> GetProductByIDAsync(
-              [FromRoute] int id)
-        {
-            try
-            {
-                if (id <= 0)
-                    return BadRequest("Invalid product id");
+        return TypedResults.Ok(product);
+    }
 
-                Product? product = await Product.GetProductByIDAsync(id);
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<CreatedAtRoute<int>> AddAsync(
+        [FromBody] ProductCreateRequestDto product)
+    {
+        var newProductId = await _service.AddProductAsync(product);
 
-                if (product is null)
-                    return NotFound("Product not found");
+        return TypedResults.CreatedAtRoute(
+            newProductId,
+            nameof(GetProductByIdAsync),
+            new { id = newProductId });
+    }
 
-                ProductDTO productDto = product.ProductDto;
+    [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<
+        Results<NoContent, BadRequest<string>, NotFound<string>>> UpdateAsync(
+            [FromRoute] int id,
+            [FromBody] ProductUpdateRequestDto product)
+    {
+        if (id <= 0)
+            return TypedResults.BadRequest("Product ID must be greater than zero.");
 
-                if (productDto is null)
-                    return NotFound("Product not found");
+        var updated = await _service.UpdateProductAsync(id, product);
 
-                return Ok(productDto);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError,
-                    ex.Message
-                );
-            }
-        }
+        if (!updated)
+            return TypedResults.NotFound("Product not found.");
 
-        [HttpPost]
+        return TypedResults.NoContent();
+    }
 
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<
+        Results<NoContent, BadRequest<string>, NotFound<string>>> DeleteAsync(
+            [FromRoute] int id)
+    {
+        if (id <= 0)
+            return TypedResults.BadRequest("Product ID must be greater than zero.");
 
-        public async Task<ActionResult<ProductDTO>> AddNewProductAsync(
-                [FromBody] ProductRequestDTO product)
-        {
-            try
-            {
-                if (product is null)
-                    return BadRequest("Product data is required.");
+        var deleted = await _service.DeleteProductAsync(id);
 
-                if (string.IsNullOrWhiteSpace(product.ProductName) ||
-                    string.IsNullOrWhiteSpace(product.Category) ||
-                    string.IsNullOrWhiteSpace(product.Status))
-                {
-                    return BadRequest("Invalid product data.");
-                }
+        if (!deleted)
+            return TypedResults.NotFound("Product not found.");
 
-                if (product.Price <= 0 ||
-                    product.StockQuantity < 0)
-                {
-                    return BadRequest("Invalid product data.");
-                }
-
-                Product productObj = new Product(
-                    product,
-                    Enumeration.Enumerations.EnMode._kADD
-                );
-
-                if (!await productObj.SaveMode())
-                    return BadRequest("Something went wrong.");
-
-                return CreatedAtRoute(
-                    "GetProductByID",
-                    new { id = productObj.ProductID },
-                    productObj.ProductDto
-                     );
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError,
-                    ex.Message
-                );
-            }
-        }
-
-
-        [HttpPut("{id:int}")]
-
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-
-        public async Task<ActionResult<ProductDTO>> UpdateProductAsync(
-        [FromRoute(Name = "id")] int id,
-        [FromBody] ProductUpdateDTO productUpdateDto)
-        {
-            try
-            {
-                if (id <= 0)
-                    return BadRequest("Invalid product id.");
-
-                if (productUpdateDto is null)
-                    return BadRequest("Product data is required.");
-
-                if (string.IsNullOrWhiteSpace(productUpdateDto.ProductName) ||
-                    string.IsNullOrWhiteSpace(productUpdateDto.Category) ||
-                    string.IsNullOrWhiteSpace(productUpdateDto.Status))
-                {
-                    return BadRequest("Invalid product data.");
-                }
-
-                if (productUpdateDto.Price <= 0)
-                    return BadRequest("Invalid product data.");
-
-
-                Product productObj = await Product.GetProductByIDAsync(id)!;
-
-                if (productObj is null)
-                    return NotFound("Product data is required.");
-
-                productObj.Update(productUpdateDto);
-
-                if (!await productObj.SaveMode())
-                    return BadRequest("Something went wrong.");
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError,
-                    ex.Message
-                );
-            }
-        }
-
-        [HttpDelete("{id:int}")]
-
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-
-        public async Task<ActionResult<ProductDTO>> DeleteProductAsync(
-                [FromRoute(Name = "id")] int id)
-        {
-            try
-            {
-                if (id <= 0)
-                    return BadRequest("Invalid product id.");
-
-                Product productObj = await Product.GetProductByIDAsync(id)!;
-
-                if (productObj is null)
-                    return NotFound("Product data is required.");
-
-                if (!await productObj.DeleteProduct()!)
-                    return BadRequest("Something went wrong.");
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(
-                    StatusCodes.Status500InternalServerError,
-                    ex.Message
-                );
-            }
-        }
-
-        
+        return TypedResults.NoContent();
     }
 }

@@ -1,120 +1,54 @@
 using Microsoft.AspNetCore.Mvc;
-using NovaBusinessSystem.BL.Customers.Reports;
+using NovaBusinessSystem.BL.Interfaces;
 using NovaBusinessSystem.DTOs.Customers.Reports;
 
-namespace NovaBusinessSystem.API
+namespace NovaBusinessSystem.API.Controllers.Customers;
+
+[ApiController]
+[Route("api/customers/reports")]
+public class CustomersReportController : ControllerBase
 {
+    private readonly IReportsService _reportsService;
 
-    [ApiController]
-    [Route("api/CustomersReport")]
-    public class CustomersReportController : ControllerBase
+    public CustomersReportController(IReportsService reportsService)
     {
-        [HttpGet("Status", Name = "GetCustomerStatusSummary")]
+        _reportsService = reportsService
+            ?? throw new ArgumentNullException(nameof(reportsService));
+    }
 
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<CustomerStatusDTO>>> GetCustomerStatusSummaryAsync()
-        {
+    [HttpGet("status", Name = "GetCustomerStatusSummary")]
+    [ProducesResponseType(typeof(IEnumerable<CustomerStatusReportDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<CustomerStatusReportDto>>> GetCustomerStatusSummaryAsync()
+    {
+        var customerStatuses = await _reportsService.GetCustomerStatusSummaryAsync();
 
-            try
-            {
-                List<CustomerStatusDTO> customerStatuses = (await ReportBL.GetCustomerStatusSummaryAsync()!).ToList();
+        return Ok(customerStatuses);
+    }
 
-                if (!customerStatuses.Any() || customerStatuses.Count == 0)
-                    return NotFound("Not found any Customers Status");
+    [HttpGet("cities", Name = "GetCustomersByCity")]
+    [ProducesResponseType(typeof(IEnumerable<CustomersByCityReportDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<CustomersByCityReportDto>>> GetCustomersByCityAsync()
+    {
+        var customersByCity = await _reportsService.GetCustomersByCityAsync();
 
+        return Ok(customersByCity);
+    }
 
-                return Ok(customerStatuses);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"{ex.Message}");
-            }
+    [HttpGet("loyalty", Name = "GetLoyaltySummaryReport")]
+    [ProducesResponseType(typeof(IEnumerable<LoyaltyLevelSummaryReportDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<LoyaltyLevelSummaryReportDto>>> GetLoyaltySummaryReportAsync()
+    {
+        var loyaltySummary = await _reportsService.GetLoyaltySummaryReportAsync();
 
+        return Ok(loyaltySummary);
+    }
 
+    [HttpGet("registrations", Name = "GetCustomerRegistrationSummary")]
+    [ProducesResponseType(typeof(IEnumerable<CustomerRegistrationSummaryDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<CustomerRegistrationSummaryDto>>> GetRegistrationSummaryAsync()
+    {
+        var registrationSummary = await _reportsService.GetRegistrationSummaryAsync();
 
-        }
-
-
-        [HttpGet("City", Name = "GetCustomersByCity")]
-
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<CustomersByCityDTO>>> GetCustomersByCityAsync()
-        {
-
-            try
-            {
-                List<CustomersByCityDTO> customersByCities = (await ReportBL.GetCustomersByCityAsync()!).ToList();
-
-                if (!customersByCities.Any() || customersByCities.Count == 0)
-                    return NotFound("Not found any Customers City");
-
-
-                return Ok(customersByCities);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"{ex.Message}");
-            }
-
-
-        }
-
-        [HttpGet("Loyalty", Name = "GetLoyaltySummaryReport")]
-
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<CustomersByCityDTO>>> GetLoyaltySummaryReportAsync()
-        {
-
-            try
-            {
-                List<LoyaltySummaryDTO> L_LoyaltySummaries = (await ReportBL.GetLoyaltySummaryReportAsync()!).ToList();
-
-                if (!L_LoyaltySummaries.Any() || L_LoyaltySummaries.Count == 0)
-                    return NotFound("Not found any Loyalty Summary");
-
-
-                return Ok(L_LoyaltySummaries);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"{ex.Message}");
-            }
-
-        }
-
-        [HttpGet("Registration", Name = "GetRegistrationSummary")]
-
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<CustomersByCityDTO>>> GetRegistrationSummaryAsync()
-        {
-
-            try
-            {
-                List<RegistrationSummaryDTO> L_RegistrationSummaries = (await ReportBL.GetRegistrationSummaryAsync()!).ToList();
-
-                if (!L_RegistrationSummaries.Any() || L_RegistrationSummaries.Count == 0)
-                    return NotFound("Not found any Registration Summary");
-
-
-                return Ok(L_RegistrationSummaries);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"{ex.Message}");
-            }
-
-        }
+        return Ok(registrationSummary);
     }
 }

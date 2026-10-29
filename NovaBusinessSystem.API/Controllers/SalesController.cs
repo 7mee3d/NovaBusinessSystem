@@ -1,181 +1,122 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using NovaBusinessSystem.BL.Products;
-using NovaBusinessSystem.BL.Products.Sales;
+using NovaBusinessSystem.BL.Interfaces;
 using NovaBusinessSystem.DTOs.Products.Sales;
 
-namespace NovaBusinessSystem.API
+namespace NovaBusinessSystem.API.Controllers.Products.Sales;
+
+[ApiController]
+[Route("api/Sales")]
+public class SalesController : ControllerBase
 {
-    [ApiController]
-    [Route("api/Sales")]
-    public class SalesController : ControllerBase
+    private readonly ISalesService _service;
+
+    public SalesController(ISalesService service)
     {
+        _service = service ?? throw new ArgumentNullException(nameof(service));
+    }
 
-        [HttpGet("{id:int}/Histories")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<ProductSalesHistoryDTO>>> GetProductSalesHistoriesAsync(
-            [FromRoute(Name = "id")] int id
-        )
+    [HttpGet("{id:int}/Histories")]
+    [ProducesResponseType(typeof(IEnumerable<ProductSalesHistoryDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<ProductSalesHistoryDto>>> GetProductSalesHistoriesAsync(
+        [FromRoute] int id)
+    {
+        if (id <= 0)
+            return BadRequest("Product ID must be greater than zero.");
 
-        {
+        var histories = await _service.GetProductSalesHistoriesAsync(id);
+        return Ok(histories);
+    }
 
-            try
-            {
-                if (id <= 0)
-                    return BadRequest("Invalid product id");
+    [HttpGet("{id:int}/Summaries")]
+    [ProducesResponseType(typeof(IEnumerable<ProductSalesSummaryDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<IEnumerable<ProductSalesSummaryDto>>> GetProductSalesSummariesAsync(
+        [FromRoute] int id)
+    {
+        if (id <= 0)
+            return BadRequest("Product ID must be greater than zero.");
 
-                Product product = await Product.GetProductByIDAsync(id);
+        var summaries = await _service.GetProductSalesSummariesAsync(id);
+        return Ok(summaries);
+    }
 
-                if (product is null)
-                    return NotFound($"The Product id [{id}] does not exists");
+    [HttpGet("TopSelling")]
+    [ProducesResponseType(typeof(IEnumerable<TopSellingProductDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<IEnumerable<TopSellingProductDto>>> GetTopSellingProductsAsync(
+        [FromQuery] int rank)
+    {
+        if (rank <= 0)
+            return BadRequest("Rank must be greater than zero.");
 
-                List<ProductSalesHistoryDTO> L_ProductSalesHistories = (await Sales.GetProductSalesHistoriesAsync(id)!).ToList();
+        var products = await _service.GetTopSellingProductsAsync(rank);
+        return Ok(products);
+    }
 
-                return Ok(L_ProductSalesHistories);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
+    [HttpGet("LeastSelling")]
+    [ProducesResponseType(typeof(IEnumerable<LeastSellingProductDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<IEnumerable<LeastSellingProductDto>>> GetLeastSellingProductsAsync(
+        [FromQuery] int rank)
+    {
+        if (rank <= 0)
+            return BadRequest("Rank must be greater than zero.");
 
-        [HttpGet("{id:int}/Summaries")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<ProductSalesSummaryDTO>>> GetProductSalesSummariesAsync(
-                   [FromRoute(Name = "id")] int id
-               )
+        var products = await _service.GetLeastSellingProductsAsync(rank);
+        return Ok(products);
+    }
 
-        {
-            try
-            {
-                if (id <= 0)
-                    return BadRequest("Invalid product id");
+    [HttpGet("RevenueRankings")]
+    [ProducesResponseType(typeof(IEnumerable<ProductRevenueRankingDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<IEnumerable<ProductRevenueRankingDto>>> GetProductRevenueRankingsAsync(
+        [FromQuery] int rank)
+    {
+        if (rank <= 0)
+            return BadRequest("Rank must be greater than zero.");
 
-                Product product = await Product.GetProductByIDAsync(id);
+        var rankings = await _service.GetProductRevenueRankingsAsync(rank);
+        return Ok(rankings);
+    }
 
-                if (product is null)
-                    return NotFound($"The Product id [{id}] does not exists");
+    [HttpGet("{id:int}/Monthly")]
+    [ProducesResponseType(typeof(IEnumerable<MonthlyProductSalesDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<IEnumerable<MonthlyProductSalesDto>>> GetMonthlyProductSalesAsync(
+        [FromRoute] int id)
+    {
+        if (id <= 0)
+            return BadRequest("Product ID must be greater than zero.");
 
-                List<ProductSalesSummaryDTO> L_ProductSalesSummaries = (await Sales.ProductSalesSummariesAsync(id)!).ToList();
+        var monthlySales = await _service.GetMonthlyProductSalesAsync(id);
+        return Ok(monthlySales);
+    }
 
-                return Ok(L_ProductSalesSummaries);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
+    [HttpGet("CategoryPerformances")]
+    [ProducesResponseType(typeof(IEnumerable<CategoryPerformanceDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<CategoryPerformanceDto>>> GetCategoryPerformancesAsync()
+    {
+        var performances = await _service.GetCategoryPerformancesAsync();
+        return Ok(performances);
+    }
 
-        [HttpGet("{rank:int}/TopSelling")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<TopSellingProductDTO>>> TopSellingProductsAsync(
-                   [FromRoute(Name = "rank")] int rank
-               )
+    [HttpGet("{id:int}/CustomerSales")]
+    [ProducesResponseType(typeof(ProductCustomerSalesDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ProductCustomerSalesDto>> GetProductCustomerSalesAsync(
+        [FromRoute] int id)
+    {
+        if (id <= 0)
+            return BadRequest("Product ID must be greater than zero.");
 
-        {
-            try
-            {
-                if (rank <= 0)
-                    return BadRequest("Invalid rank");
+        var customerSales = await _service.GetProductCustomerSalesAsync(id);
 
-                List<TopSellingProductDTO> topSellingProducts = (await Sales.TopSellingProductsAsync(rank)!).ToList();
+        if (customerSales is null)
+            return NotFound($"Sales analysis for product ID {id} was not found.");
 
-                return Ok(topSellingProducts);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-        [HttpGet("{rank:int}/LeastSelling")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<LeastSellingProductDTO>>> GetLeastSellingProductsAsync(
-                [FromRoute(Name = "rank")] int rank
-            )
-
-        {
-            try
-            {
-                if (rank <= 0)
-                    return BadRequest("Invalid rank");
-
-                List<LeastSellingProductDTO> leastSellingProducts = (await Sales.GetLeastSellingProductsAsync(rank)!).ToList();
-
-                return Ok(leastSellingProducts);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-        [HttpGet("{rank:int}/RevenueRankings")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<ProductRevenueRankingDTO>>> GetProductRevenueRankingsAsync(
-            [FromRoute(Name = "rank")] int rank
-        )
-
-        {
-            try
-            {
-                if (rank <= 0)
-                    return BadRequest("Invalid rank");
-
-                List<ProductRevenueRankingDTO> productRevenueRanking = (await Sales.GetProductRevenueRankingsAsync(rank)!).ToList();
-
-                return Ok(productRevenueRanking);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-
-        [HttpGet("{id:int}/Monthly")]
-
-        public async Task<Results<Ok<List<MonthlyProductSalesDTO>>, BadRequest<string>>> GetMonthlyProductSalesAsync([FromRoute(Name = "id")] int id)
-        {
-            if (id <= 0)
-                return TypedResults.BadRequest("Invalid product id");
-            var monthlyProductSales =
-                await Sales.GetMonthlyProductSalesAsync(id);
-
-            return TypedResults.Ok(monthlyProductSales.ToList());
-        }
-
-        [HttpGet("CategoryPerformances")]
-
-        public async Task<Ok<List<CategoryPerformanceDTO>>> GetCategoryPerformancesAsync()
-        {
-
-            var categoryPerformances =
-                await Sales.GetCategoryPerformancesAsync();
-
-            return TypedResults.Ok(categoryPerformances.ToList());
-        }
-
-        [HttpGet("{id:int}/CustomerSales")]
-
-        public async Task<Results<Ok<ProductCustomerSalesDTO>, BadRequest<string>>> GetProductCustomerSalesAsync([FromRoute(Name = "id")] int id)
-        {
-
-            if (id <= 0)
-                return TypedResults.BadRequest("Invalid product id ");
-
-            var productSalesCustomer =
-                await Sales.GetProductCustomerSalesAsync(id);
-
-            return TypedResults.Ok(productSalesCustomer);
-        }
-
+        return Ok(customerSales);
     }
 }

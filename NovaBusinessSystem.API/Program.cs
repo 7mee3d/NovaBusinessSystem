@@ -1,24 +1,34 @@
-using DataAccessLayer;
-using NovaBusinessSystem.BL;
-using NovaBusinessSystem.BL.Departments;
-using NovaBusinessSystem.BL.Products.Reports;
-using NovaBusinessSystem.DAL.Products.Reports;
+using System.Reflection;
+using NovaBusinessSystem.BL.Services;
+using NovaBusinessSystem.DAL.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddScoped<IReportsDAL, ReportsDAL>();
-builder.Services.AddScoped<ReportsBL>();
-
-builder.Services.AddScoped<IDepartmentDAL, DepartmentsDAL>();
-builder.Services.AddScoped<DepartmentsBL>();
-
-builder.Services.AddScoped<IEmployeesDAL, EmployeesDAL>();
-builder.Services.AddScoped<EmployeesBL>();
-
-
 
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 builder.Services.AddControllers();
+
+// Auto-register project dependencies
+var assemblies = new[]
+{
+    typeof(EmployeesService).Assembly,
+    typeof(EmployeesRepository).Assembly
+}.Distinct();
+
+foreach (var assembly in assemblies)
+{
+    foreach (var implementation in assembly.GetTypes().Where(t =>
+        t.IsClass && !t.IsAbstract && !t.IsGenericType))
+    {
+        foreach (var serviceInterface in implementation.GetInterfaces()
+            .Where(i => i.Name == $"I{implementation.Name}"))
+        {
+            builder.Services.AddScoped(
+                serviceInterface,
+                implementation);
+        }
+    }
+}
 
 var app = builder.Build();
 
@@ -33,7 +43,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.MapControllers();
 
 app.Run();

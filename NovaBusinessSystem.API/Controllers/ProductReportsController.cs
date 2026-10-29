@@ -1,124 +1,117 @@
-
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using NovaBusinessSystem.BL.Products.Reports;
+using NovaBusinessSystem.BL.Interfaces;
 using NovaBusinessSystem.DTOs.Products.Reports;
+
+namespace NovaBusinessSystem.API.Controllers.Products.Reports;
 
 [ApiController]
 [Route("api/ProductReports")]
 public class ProductReportsController : ControllerBase
 {
+    private readonly IProductsReportsService _service;
 
-    private readonly ReportsBL _reportsBL;
-    public ProductReportsController(ReportsBL reportsBL)
+    public ProductReportsController(IProductsReportsService service)
     {
-        this._reportsBL = reportsBL;
+        _service = service ?? throw new ArgumentNullException(nameof(service));
     }
 
-
     [HttpGet("StatusSummary")]
-    [ProducesResponseType(typeof(IEnumerable<ProductStatusSummaryDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<ProductStatusSummaryReportDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<Ok<IEnumerable<ProductStatusSummaryDTO>>> GetProductStatusSummariesAsync()
+    public async Task<ActionResult<IEnumerable<ProductStatusSummaryReportDto>>> GetProductStatusSummariesAsync()
     {
-        return TypedResults.Ok(await _reportsBL.GetProductStatusSummariesAsync());
+        var reports = await _service.GetProductStatusSummariesAsync();
+        return Ok(reports);
     }
 
     [HttpGet("Category")]
-    [ProducesResponseType(typeof(IEnumerable<ProductsByCategoryDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<ProductsByCategoryReportDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<Ok<IEnumerable<ProductsByCategoryDTO>>> GetProductByCategoriesAsync()
+    public async Task<ActionResult<IEnumerable<ProductsByCategoryReportDto>>> GetProductByCategoriesAsync()
     {
-        return TypedResults.Ok(await _reportsBL.GetProductByCategoriesAsync());
+        var reports = await _service.GetProductByCategoriesAsync();
+        return Ok(reports);
     }
 
     [HttpGet("StockLevels")]
-    [ProducesResponseType(typeof(IEnumerable<StockLevelReportDTO>), StatusCodes.Status200OK)]
-
+    [ProducesResponseType(typeof(IEnumerable<StockLevelReportDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
-    public async Task<Ok<IEnumerable<StockLevelReportDTO>>> GetStockLevelReportsAsync()
+    public async Task<ActionResult<IEnumerable<StockLevelReportDto>>> GetStockLevelReportsAsync()
     {
-        return TypedResults.Ok(await _reportsBL.GetStockLevelReportsAsync());
+        var reports = await _service.GetStockLevelReportsAsync();
+        return Ok(reports);
     }
 
     [HttpGet("InventoryValuation")]
-    [ProducesResponseType(typeof(IEnumerable<InventoryValuationDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<InventoryValuationReportDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
-    public async Task<Ok<IEnumerable<InventoryValuationDTO>>> GetInventoryValuationsAsync()
+    public async Task<ActionResult<IEnumerable<InventoryValuationReportDto>>> GetInventoryValuationsAsync()
     {
-        return TypedResults.Ok(await _reportsBL.GetInventoryValuationsAsync());
+        var reports = await _service.GetInventoryValuationsAsync();
+        return Ok(reports);
     }
-
 
     [HttpGet("SalesPerformance")]
-    [ProducesResponseType(typeof(IEnumerable<SalesPerformanceReportDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<SalesPerformanceReportDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
-    public async Task<Ok<IEnumerable<SalesPerformanceReportDTO>>> GetSalesPerformanceReportsAsync()
+    public async Task<ActionResult<IEnumerable<SalesPerformanceReportDto>>> GetSalesPerformanceReportsAsync()
     {
-        return TypedResults.Ok(await _reportsBL.GetSalesPerformanceReportsAsync());
+        var reports = await _service.GetSalesPerformanceReportsAsync();
+        return Ok(reports);
     }
 
-
     [HttpGet("CategoryRevenue")]
-    [ProducesResponseType(typeof(IEnumerable<CategoryRevenueReportDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<CategoryRevenueReportDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
-    public async Task<Ok<IEnumerable<CategoryRevenueReportDTO>>> GetCategoryRevenueReportsAsync()
+    public async Task<ActionResult<IEnumerable<CategoryRevenueReportDto>>> GetCategoryRevenueReportsAsync()
     {
-        return TypedResults.Ok(await _reportsBL.GetCategoryRevenueReportsAsync());
+        var reports = await _service.GetCategoryRevenueReportsAsync();
+        return Ok(reports);
     }
 
     [HttpGet("TopSellingProducts")]
-    [ProducesResponseType(typeof(IEnumerable<TopSellingProductDTO>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(IEnumerable<TopSellingProductReportDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-
-    public async Task<IActionResult> GetTopSellingProductsAsync(
-    [FromQuery] int rank)
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<IEnumerable<TopSellingProductReportDto>>> GetTopSellingProductsAsync(
+        [FromQuery] int rank)
     {
         if (rank <= 0)
-            return BadRequest("Rank is reqired");
+            return BadRequest("Rank must be greater than zero.");
 
-        var products = await _reportsBL.GetTopSellingProductsAsync(rank);
-
+        var products = await _service.GetTopSellingProductsAsync(rank);
         return Ok(products);
     }
 
     [HttpGet("SlowMovingProducts")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<SlowMovingProductReportDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<Results<Ok<IEnumerable<SlowMovingProductDTO>>, BadRequest<string>>> GetSlowMovingProductsAsync(
-    [FromQuery(Name = "maximumUnitsSold")] int maximumUnitsSold)
+    public async Task<ActionResult<IEnumerable<SlowMovingProductReportDto>>> GetSlowMovingProductsAsync(
+        [FromQuery] int maximumUnitsSold)
     {
         if (maximumUnitsSold <= 0)
-            return TypedResults.BadRequest($"The {nameof(maximumUnitsSold)} is not valid");
+            return BadRequest("Maximum units sold must be greater than zero.");
 
-        return TypedResults.Ok(
-            await _reportsBL.GetSlowMovingProductsAsync(maximumUnitsSold));
+        var products = await _service.GetSlowMovingProductsAsync(maximumUnitsSold);
+        return Ok(products);
     }
 
     [HttpGet("UnsoldProducts")]
-    [ProducesResponseType(typeof(IEnumerable<UnsoldProductDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<UnsoldProductReportDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<Ok<IEnumerable<UnsoldProductDTO>>> GetUnsoldProductsAsync()
+    public async Task<ActionResult<IEnumerable<UnsoldProductReportDto>>> GetUnsoldProductsAsync()
     {
-        return TypedResults.Ok(
-            await _reportsBL.GetUnsoldProductsAsync());
+        var products = await _service.GetUnsoldProductsAsync();
+        return Ok(products);
     }
 
     [HttpGet("MonthlyPerformance")]
-    [ProducesResponseType(typeof(IEnumerable<MonthlyProductPerformanceDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<MonthlyProductPerformanceReportDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
-    public async Task<Ok<IEnumerable<MonthlyProductPerformanceDTO>>> GetMonthlyProductPerformanceAsync()
+    public async Task<ActionResult<IEnumerable<MonthlyProductPerformanceReportDto>>> GetMonthlyProductPerformanceAsync()
     {
-        return TypedResults.Ok(
-            await _reportsBL.GetMonthlyProductPerformanceAsync());
+        var reports = await _service.GetMonthlyProductPerformanceAsync();
+        return Ok(reports);
     }
 }
