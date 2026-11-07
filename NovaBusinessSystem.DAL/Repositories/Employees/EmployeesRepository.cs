@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using NovaBusinessSystem.BL.Interfaces;

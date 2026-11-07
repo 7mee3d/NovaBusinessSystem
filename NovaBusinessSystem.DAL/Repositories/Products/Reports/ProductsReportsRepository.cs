@@ -202,15 +202,14 @@ namespace NovaBusinessSystem.DAL.Products.Reports
 
         public async Task<IEnumerable<TopSellingProductReportDto>> GetTopSellingProductsAsync(int rank)
         {
-            List<TopSellingProductReportDto> topSellingProducts = new();
+            var topSellingProducts = new List<TopSellingProductReportDto>();
 
-            using SqlConnection connection = new SqlConnection(
+            using var connection = new SqlConnection(
                 HelperDAL.HelperDAL.ConnectionString);
 
-            using SqlCommand command = new SqlCommand(
+            using var command = new SqlCommand(
                 "[dbo].[usp_GetTopSellingProducts]", connection)
             {
-
                 CommandType = CommandType.StoredProcedure
             };
 
@@ -218,26 +217,25 @@ namespace NovaBusinessSystem.DAL.Products.Reports
 
             await connection.OpenAsync();
 
-            using SqlDataReader reader = await command.ExecuteReaderAsync();
+            using var reader = await command.ExecuteReaderAsync();
 
-            var productRank = reader.GetOrdinal("Rank");
-            var productName = reader.GetOrdinal("ProductName");
-            var category = reader.GetOrdinal("Category");
-            var units = reader.GetOrdinal("Units");
+            var rankOrdinal = reader.GetOrdinal("Rank");
+            var productNameOrdinal = reader.GetOrdinal("ProductName");
+            var unitsSoldOrdinal = reader.GetOrdinal("UnitsSold");
+            var ordersOrdinal = reader.GetOrdinal("Orders");
 
             while (await reader.ReadAsync())
             {
                 topSellingProducts.Add(new TopSellingProductReportDto(
-                    reader.GetInt64(productRank),
-                    reader.GetString(productName),
-                    reader.GetString(category),
-                    reader.GetInt32(units)
+                    reader.GetInt64(rankOrdinal),
+                    reader.GetString(productNameOrdinal),
+                    reader.GetInt32(unitsSoldOrdinal),
+                    reader.GetInt32(ordersOrdinal)
                 ));
             }
 
             return topSellingProducts;
         }
-
 
         public async Task<IEnumerable<SlowMovingProductReportDto>> GetSlowMovingProductsAsync(
             int maximumUnitsSold)
