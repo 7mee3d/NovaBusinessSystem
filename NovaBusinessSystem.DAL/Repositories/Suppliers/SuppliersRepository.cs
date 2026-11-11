@@ -7,6 +7,7 @@ namespace NovaBusinessSystem.DAL.Repositories;
 
 public class SuppliersRepository : ISuppliersRepository
 {
+
     public async Task<SupplierListResponseDTO> GetSupplierListAsync(SupplierListRequestDTO supplier)
     {
 
@@ -31,7 +32,7 @@ public class SuppliersRepository : ISuppliersRepository
 
         await connection.OpenAsync();
         List<SupplierListItemResponseDTO> suppliers = new();
-        
+
         using (var reader = await command.ExecuteReaderAsync())
         {
             while (await reader.ReadAsync())
@@ -56,5 +57,62 @@ public class SuppliersRepository : ISuppliersRepository
 
     }
 
+    public async Task<SupplierDetailsResponseDTO?> GetSupplierDetailsResponseAsync(int supplierID)
+    {
+        using var connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+
+        using var command = new SqlCommand("[dbo].[usp_GetSupplierByID]", connection)
+        {
+            CommandType = System.Data.CommandType.StoredProcedure
+        };
+
+        command.Parameters.Add("@SupplierID", System.Data.SqlDbType.Int).Value = supplierID;
+
+        await connection.OpenAsync();
+
+        using var reader = await command.ExecuteReaderAsync();
+
+        if (!await reader.ReadAsync())
+            return null;
+
+        var supplierDetails = new SupplierDetailsDTO(
+            SupplierID: reader.GetInt32(reader.GetOrdinal("SupplierID")),
+            SupplierName: reader.GetString(reader.GetOrdinal("SupplierName")),
+            ContactName: reader.IsDBNull(reader.GetOrdinal("ContactName"))
+                ? null
+                : reader.GetString(reader.GetOrdinal("ContactName")),
+            Email: reader.IsDBNull(reader.GetOrdinal("Email"))
+                ? null
+                : reader.GetString(reader.GetOrdinal("Email")),
+            Phone: reader.IsDBNull(reader.GetOrdinal("Phone"))
+                ? null
+                : reader.GetString(reader.GetOrdinal("Phone")),
+            City: reader.IsDBNull(reader.GetOrdinal("City"))
+                ? null
+                : reader.GetString(reader.GetOrdinal("City")),
+            Country: reader.IsDBNull(reader.GetOrdinal("Country"))
+                ? null
+                : reader.GetString(reader.GetOrdinal("Country")),
+            PaymentTerms: $"{(int)reader.GetInt16(reader.GetOrdinal("PaymentTermsDays"))} Days",
+            Status: reader.GetString(reader.GetOrdinal("Status"))
+        );
+
+        var supplierProcurementSummary = new SupplierProcurementSummaryDTO(
+            TotalPurchaseOrders: reader.GetInt32(reader.GetOrdinal("TotalPurchaseOrders")),
+            FullyReceivedOrders: reader.GetInt32(reader.GetOrdinal("FullyReceivedOrders")),
+            OpenOrders: reader.GetInt32(reader.GetOrdinal("OpenOrders")),
+            CancelledOrders: reader.GetInt32(reader.GetOrdinal("CancelledOrders")),
+            TotalOrderedValue: reader.GetDecimal(reader.GetOrdinal("TotalOrderedValue")),
+            AcceptedReceivedValue: reader.GetDecimal(reader.GetOrdinal("AcceptedReceivedValue")),
+            LastPurchaseOrderDate: reader.IsDBNull(reader.GetOrdinal("LastPurchaseOrder"))
+                ? null
+                : reader.GetDateTime(reader.GetOrdinal("LastPurchaseOrder"))
+        );
+
+        return new SupplierDetailsResponseDTO(
+            supplierDetails,
+            supplierProcurementSummary
+        );
+    }
 
 }

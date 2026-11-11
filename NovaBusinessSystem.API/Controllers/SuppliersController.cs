@@ -19,6 +19,9 @@ public class SuppliersController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<Results<Ok<SupplierListResponseDTO>, BadRequest<string>>> GetSupplierListAsync(
         [FromQuery] SupplierListRequestDTO supplierRequest
         )
@@ -30,5 +33,22 @@ public class SuppliersController : ControllerBase
          await _service.GetSupplierListAsync(supplierRequest);
 
         return TypedResults.Ok(SupplierListResponse);
+    }
+
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<Results<Ok<SupplierDetailsResponseDTO>, BadRequest<string>>> GetSupplierDetailsResponseAsync(
+        [FromRoute(Name = "id")] int id
+        )
+    {
+        if (id <= 0)
+            return TypedResults.BadRequest($"{nameof(id)} is zero or negative");
+
+        var SupplierDetailsResponse =
+         await _service.GetSupplierDetailsResponseAsync(id);
+
+        return TypedResults.Ok(SupplierDetailsResponse);
     }
 }
