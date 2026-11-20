@@ -159,4 +159,49 @@ public class SuppliersRepository : ISuppliersRepository
         );
 
     }
+
+    public async Task<SupplierUpdateResponseDto?> UpdateSupplier(int supplierID, SupplierUpdateRequestDto supplierUpdate)
+    {
+
+        List<SupplierUpdateResponseDto> suppliers = new();
+
+        using var connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+        using var command = new SqlCommand("[dbo].[usp_UpdateSupplier]", connection)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+
+        command.Parameters.Add("@SupplierID", SqlDbType.Int).Value = supplierID;
+        command.Parameters.Add("@SupplierName", SqlDbType.NVarChar, 100).Value = supplierUpdate.SupplierName;
+        command.Parameters.Add("@ContactName", SqlDbType.NVarChar, 100).Value = supplierUpdate.ContactName;
+        command.Parameters.Add("@Email", SqlDbType.VarChar, 254).Value = (object?)supplierUpdate.Email ?? DBNull.Value;
+        command.Parameters.Add("@Phone", SqlDbType.VarChar, 20).Value = (object?)supplierUpdate.Phone ?? DBNull.Value;
+        command.Parameters.Add("@AddressLine", SqlDbType.NVarChar, 250).Value = (object?)supplierUpdate.AddressLine ?? DBNull.Value;
+        command.Parameters.Add("@City", SqlDbType.NVarChar, 50).Value = (object?)supplierUpdate.City ?? DBNull.Value;
+        command.Parameters.Add("@Country", SqlDbType.NVarChar, 100).Value = (object?)supplierUpdate.Country ?? DBNull.Value;
+        command.Parameters.Add("@TaxNumber", SqlDbType.NVarChar, 100).Value = (object?)supplierUpdate.TaxNumber ?? DBNull.Value;
+        command.Parameters.Add("@PaymentTermsDays", SqlDbType.Int).Value = supplierUpdate.PaymentTermsDays;
+        command.Parameters.Add("@Status", SqlDbType.VarChar, 20).Value = supplierUpdate.Status;
+        command.Parameters.Add("@Notes", SqlDbType.NVarChar, 1000).Value = (object?)supplierUpdate.Notes ?? DBNull.Value;
+
+        await connection.OpenAsync();
+
+        using var reader = await command.ExecuteReaderAsync();
+
+        if (!await reader.ReadAsync())
+            return null;
+
+        var supplierIdOrdinal = reader.GetOrdinal("SupplierID");
+        var supplierNameOrdinal = reader.GetOrdinal("SupplierName");
+        var statusOrdinal = reader.GetOrdinal("Status");
+        var updatedAtOrdinal = reader.GetOrdinal("UpdatedAt");
+
+        return new SupplierUpdateResponseDto(
+            reader.GetInt32(supplierIdOrdinal),
+            reader.GetString(supplierNameOrdinal),
+            reader.GetString(statusOrdinal),
+            reader.GetDateTime(updatedAtOrdinal)
+        );
+    }
 }

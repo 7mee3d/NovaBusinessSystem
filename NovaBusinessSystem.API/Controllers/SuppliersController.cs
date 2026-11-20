@@ -1,4 +1,5 @@
 
+using System.Runtime.Serialization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using NovaBusinessSystem.BL.Interfaces;
@@ -65,5 +66,26 @@ public class SuppliersController : ControllerBase
             return TypedResults.BadRequest("Failed to create supplier.");
 
         return TypedResults.Ok(supplierResponse);
+    }
+
+
+    [HttpPut("{id:int}")]
+    [ProducesResponseType(typeof(SupplierUpdateResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<Results<Ok<SupplierUpdateResponseDto>, BadRequest<string>, NotFound<string>>> UpdateSupplier(
+    [FromRoute(Name = "id")] int id,
+    [FromBody] SupplierUpdateRequestDto updateRequest)
+    {
+        if (id <= 0)
+            return TypedResults.BadRequest("Invalid supplier ID.");
+
+        var supplierUpdateResponse = await _service.UpdateSupplier(id, updateRequest);
+
+        if (supplierUpdateResponse is null)
+            return TypedResults.NotFound("Supplier was not found.");
+
+        return TypedResults.Ok(supplierUpdateResponse);
     }
 }

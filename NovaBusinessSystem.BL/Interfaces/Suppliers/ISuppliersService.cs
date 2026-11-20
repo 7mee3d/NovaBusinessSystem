@@ -7,4 +7,5 @@ public interface ISuppliersService
     Task<SupplierListResponseDTO> GetSupplierListAsync(SupplierListRequestDTO supplier);
     Task<SupplierDetailsResponseDTO?> GetSupplierDetailsResponseAsync(int supplierID);
     Task<SupplierCreateResponseDto?> CreateSupplierAsync(SupplierCreateRequestDto supplierRequest);
+    Task<SupplierUpdateResponseDto?> UpdateSupplier(int supplierID, SupplierUpdateRequestDto supplierUpdate);
 }

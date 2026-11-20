@@ -4,42 +4,41 @@ using System.ComponentModel.DataAnnotations;
 namespace NovaBusinessSystem.DTOs.Suppliers;
 
 public record SupplierUpdateRequestDto(
-    
-    [property: Required]
-    [property: StringLength(100, MinimumLength = 1)]
+    [Required]
+    [StringLength(100, MinimumLength = 1)]
     string SupplierName,
 
-    [property: Required]
-    [property: StringLength(100, MinimumLength = 1)]
+    [Required]
+    [StringLength(100, MinimumLength = 1)]
     string ContactName,
 
-    [property: EmailAddress]
-    [property: StringLength(254)]
+    [EmailAddress]
+    [StringLength(254)]
     string? Email,
 
-    [property: Phone]
-    [property: StringLength(20)]
+    [Phone]
+    [StringLength(20)]
     string? Phone,
 
-    [property: StringLength(250)]
+    [StringLength(250)]
     string? AddressLine,
 
-    [property: StringLength(50)]
+    [StringLength(50)]
     string? City,
 
-    [property: StringLength(100)]
+    [StringLength(100)]
     string? Country,
 
-    [property: StringLength(100)]
+    [StringLength(100)]
     string? TaxNumber,
 
-    [property: Range(0, 365)]
+    [Range(0, 365)]
     int PaymentTermsDays,
 
-    [property: Required]
-    [property: RegularExpression("^(Active|Inactive|Blocked)$")]
+    [Required]
+    [RegularExpression("^(Active|Inactive|Blocked)$")]
     string Status,
 
-    [property: StringLength(1000)]
+    [StringLength(1000)]
     string? Notes
 );

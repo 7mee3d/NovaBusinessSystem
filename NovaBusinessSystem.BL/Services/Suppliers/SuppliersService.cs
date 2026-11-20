@@ -35,4 +35,15 @@ public class SuppliersService : ISuppliersService
 
         return _repository.GetSupplierListAsync(supplier);
     }
+
+    public Task<SupplierUpdateResponseDto?> UpdateSupplier(int supplierID, SupplierUpdateRequestDto supplierUpdate)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(supplierID);
+
+        ArgumentNullException.ThrowIfNull(supplierUpdate);
+
+
+        return _repository.UpdateSupplier(supplierID, supplierUpdate);
+
+    }
 }
