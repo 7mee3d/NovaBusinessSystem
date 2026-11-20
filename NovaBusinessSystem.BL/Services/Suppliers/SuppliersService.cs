@@ -46,4 +46,12 @@ public class SuppliersService : ISuppliersService
         return _repository.UpdateSupplier(supplierID, supplierUpdate);
 
     }
+
+    public  Task<DeleteSupplierResponseDto?> DeleteSupplierAsync(int supplierID)
+    {
+        if (supplierID <= 0)
+            throw new ArgumentException("Invalid supplier ID.");
+
+        return  _repository.DeleteSupplierAsync(supplierID);
+    }
 }

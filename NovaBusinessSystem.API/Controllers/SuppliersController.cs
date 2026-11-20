@@ -88,4 +88,20 @@ public class SuppliersController : ControllerBase
 
         return TypedResults.Ok(supplierUpdateResponse);
     }
+
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(typeof(DeleteSupplierResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<Results<Ok<DeleteSupplierResponseDto>, NotFound>> DeleteSupplier(
+        [FromRoute(Name = "id")] int supplierID
+        )
+    {
+        var result = await _service.DeleteSupplierAsync(supplierID);
+
+        if (result is null)
+            return TypedResults.NotFound();
+
+        return TypedResults.Ok(result);
+    }
 }

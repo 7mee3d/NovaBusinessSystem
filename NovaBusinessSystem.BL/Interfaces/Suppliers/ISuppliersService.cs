@@ -8,4 +8,5 @@ public interface ISuppliersService
     Task<SupplierDetailsResponseDTO?> GetSupplierDetailsResponseAsync(int supplierID);
     Task<SupplierCreateResponseDto?> CreateSupplierAsync(SupplierCreateRequestDto supplierRequest);
     Task<SupplierUpdateResponseDto?> UpdateSupplier(int supplierID, SupplierUpdateRequestDto supplierUpdate);
+    Task<DeleteSupplierResponseDto?> DeleteSupplierAsync(int supplierID);
 }

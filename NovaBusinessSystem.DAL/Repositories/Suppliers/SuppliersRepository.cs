@@ -204,4 +204,29 @@ public class SuppliersRepository : ISuppliersRepository
             reader.GetDateTime(updatedAtOrdinal)
         );
     }
+
+    public async Task<DeleteSupplierResponseDto?> DeleteSupplierAsync(int supplierID)
+    {
+        using var connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+
+        using var command = new SqlCommand("[dbo].[usp_DeleteSupplier]", connection)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        command.Parameters.Add("@SupplierID", SqlDbType.Int).Value = supplierID;
+
+        await connection.OpenAsync();
+
+        using var reader = await command.ExecuteReaderAsync();
+
+        if (!await reader.ReadAsync())
+            return null;
+
+        return new DeleteSupplierResponseDto(
+            SupplierID: reader.GetInt32(reader.GetOrdinal("SupplierID")),
+            Action: reader.GetString(reader.GetOrdinal("Action")),
+            Message: reader.GetString(reader.GetOrdinal("Message"))
+        );
+    }
 }
