@@ -1,4 +1,5 @@
 
+using System.Data;
 using Microsoft.Data.SqlClient;
 using NovaBusinessSystem.BL.Interfaces;
 using NovaBusinessSystem.DTOs.Suppliers;
@@ -115,4 +116,47 @@ public class SuppliersRepository : ISuppliersRepository
         );
     }
 
+    public async Task<SupplierCreateResponseDto?> CreateSupplierAsync(SupplierCreateRequestDto supplierRequest)
+    {
+
+        using var connection = new SqlConnection(HelperDAL.HelperDAL.ConnectionString);
+        using var command = new SqlCommand("[dbo].[usp_CreateSupplier]", connection)
+        {
+            CommandType = System.Data.CommandType.StoredProcedure
+        };
+
+
+        command.Parameters.Add("@SupplierName", SqlDbType.NVarChar, 100).Value = supplierRequest.SupplierName;
+        command.Parameters.Add("@ContactName", SqlDbType.NVarChar, 100).Value = supplierRequest.ContactName;
+        command.Parameters.Add("@Email", SqlDbType.VarChar, 254).Value = (object?)supplierRequest.Email ?? DBNull.Value;
+        command.Parameters.Add("@Phone", SqlDbType.VarChar, 20).Value = (object?)supplierRequest.Phone ?? DBNull.Value;
+        command.Parameters.Add("@AddressLine", SqlDbType.NVarChar, 250).Value = (object?)supplierRequest.AddressLine ?? DBNull.Value;
+        command.Parameters.Add("@City", SqlDbType.NVarChar, 50).Value = (object?)supplierRequest.City ?? DBNull.Value;
+        command.Parameters.Add("@Country", SqlDbType.NVarChar, 100).Value = (object?)supplierRequest.Country ?? DBNull.Value;
+        command.Parameters.Add("@TaxNumber", SqlDbType.NVarChar, 100).Value = (object?)supplierRequest.TaxNumber ?? DBNull.Value;
+        command.Parameters.Add("@PaymentTermsDays", SqlDbType.Int).Value = supplierRequest.PaymentTermsDays;
+        command.Parameters.Add("@Status", SqlDbType.VarChar, 20).Value = supplierRequest.Status;
+        command.Parameters.Add("@Notes", SqlDbType.NVarChar, 1000).Value = (object?)supplierRequest.Notes ?? DBNull.Value;
+
+        var supplierIdParameter = command.Parameters.Add("@SupplierID", SqlDbType.Int);
+        supplierIdParameter.Direction = ParameterDirection.Output;
+
+        await connection.OpenAsync();
+
+        await command.ExecuteNonQueryAsync();
+
+        var supplierID = Convert.ToInt32(supplierIdParameter.Value);
+        if (supplierID <= 0)
+            return null;
+
+
+        return new SupplierCreateResponseDto(
+                supplierID,
+                supplierRequest.SupplierName,
+                supplierRequest.City,
+                supplierRequest.PaymentTermsDays,
+                supplierRequest.Status
+        );
+
+    }
 }

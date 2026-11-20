@@ -15,6 +15,13 @@ public class SuppliersService : ISuppliersService
         this._repository = suppliersRepository ?? throw new ArgumentNullException(nameof(suppliersRepository));
     }
 
+    public Task<SupplierCreateResponseDto?> CreateSupplierAsync(SupplierCreateRequestDto supplierRequest)
+    {
+        ArgumentNullException.ThrowIfNull(supplierRequest);
+
+        return _repository.CreateSupplierAsync(supplierRequest);
+    }
+
     public Task<SupplierDetailsResponseDTO?> GetSupplierDetailsResponseAsync(int supplierID)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(supplierID);

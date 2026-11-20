@@ -5,7 +5,7 @@ namespace NovaBusinessSystem.DTOs.Employees
         string FirstName,
         string LastName,
         string Department,
-        string Manager,
+        string? Manager,
         string JobTitle,
         decimal Salary,
         DateTime HireDate,

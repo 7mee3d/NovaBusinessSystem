@@ -51,4 +51,19 @@ public class SuppliersController : ControllerBase
 
         return TypedResults.Ok(SupplierDetailsResponse);
     }
+
+    [HttpPost]
+    [ProducesResponseType(typeof(SupplierCreateResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<Results<Ok<SupplierCreateResponseDto>, BadRequest<string>>> CreateSupplier(
+    [FromBody] SupplierCreateRequestDto supplierRequest)
+    {
+        var supplierResponse = await _service.CreateSupplierAsync(supplierRequest);
+
+        if (supplierResponse is null)
+            return TypedResults.BadRequest("Failed to create supplier.");
+
+        return TypedResults.Ok(supplierResponse);
+    }
 }
